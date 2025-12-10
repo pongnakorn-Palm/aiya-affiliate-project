@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Longchamp LIFF App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Longchamp LIFF App</h1>
+            <p id="userId">User ID: Loading...</p>
+        </div>
+
+        <div class="content">
+            <h2>Welcome to LIFF</h2>
+            <p>This is a LINE Front-end Framework application</p>
+
+            <button id="sendBtn" class="btn">Send Message</button>
+            <button id="closeBtn" class="btn btn-secondary">Close App</button>
+        </div>
+
+        <div id="output" class="output">
+            <p id="message"></p>
+        </div>
+    </div>
+
+    <!-- Load LIFF SDK -->
+    <script src="https://liff.line.me/sdk/web/liff.js"></script>
+    <!-- Your app script -->
+    <script src="app.js"></script>
+</body>
+</html>
