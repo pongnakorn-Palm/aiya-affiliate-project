@@ -1,20 +1,42 @@
 // LIFF ID - Replace with your actual LIFF ID
 const LIFF_ID = '2008668433-poONz00J';
 
-// Initialize LIFF
-liff
-    .init({ liffId: LIFF_ID })
-    .then(() => {
-        if (!liff.isLoggedIn()) {
-            liff.login();
-        } else {
-            displayUserInfo();
-        }
-    })
-    .catch((err) => {
-        console.log(err);
-        document.getElementById('message').textContent = 'Failed to initialize LIFF: ' + err.message;
-    });
+console.log('Starting LIFF initialization with ID:', LIFF_ID);
+console.log('Page loaded at:', new Date());
+
+// Check if LIFF SDK is loaded
+if (typeof liff === 'undefined') {
+    console.error('LIFF SDK not loaded!');
+    document.getElementById('message').textContent = 'LIFF SDK not loaded. Check console.';
+} else {
+    console.log('LIFF SDK found, initializing...');
+    
+    // Initialize LIFF
+    liff
+        .init({ liffId: LIFF_ID })
+        .then(() => {
+            console.log('✅ LIFF initialized successfully');
+            console.log('Is logged in:', liff.isLoggedIn());
+            console.log('Context:', liff.getContext());
+            
+            if (!liff.isLoggedIn()) {
+                console.log('Not logged in, attempting login');
+                liff.login();
+            } else {
+                console.log('Already logged in, displaying user info');
+                displayUserInfo();
+            }
+        })
+        .catch((err) => {
+            console.error('❌ LIFF initialization error:', err);
+            console.error('Error details:', {
+                message: err.message,
+                code: err.code,
+                fullError: err
+            });
+            document.getElementById('message').textContent = 'LIFF Error: ' + err.message;
+        });
+}
 
 // Display user information
 function displayUserInfo() {
