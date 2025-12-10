@@ -1,5 +1,5 @@
 // LIFF ID - Replace with your actual LIFF ID
-const LIFF_ID = 'YOUR_LIFF_ID_HERE';
+const LIFF_ID = '2008668433-poONz00J';
 
 // Initialize LIFF
 liff
