@@ -121,7 +121,6 @@ export default function AffiliateRegisterForm() {
     };
 
     const validateForm = (): boolean => {
-        const newErrors: FormErrors = {};
         let isValid = true;
 
         // Validate all required fields
@@ -232,55 +231,34 @@ export default function AffiliateRegisterForm() {
                         {/* Banner Image */}
                         <img
                             src="/webinar.png"
-                            alt="Master the AI Empire"
-                            className="w-full h-auto object-cover"
+                            alt="มาเป็นพันธิมิตรกับเรา"
+                            className="w-full h-auto object-cover max-h-[200px] sm:max-h-[280px] md:max-h-[320px]"
                         />
 
                         {/* Overlay Gradient */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
 
-                        {/* Slogan Overlay */}
+                        {/* Header Overlay */}
                         <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6">
                             <div className="text-center">
-                                <p className="text-white text-lg sm:text-xl md:text-2xl font-bold mb-2 drop-shadow-lg leading-tight">
-                                    เปลี่ยนคุณเป็น AI Entrepreneur ใน 48 ชม.
-                                </p>
-                                <p className="text-white/90 text-xs sm:text-sm drop-shadow-md">
-                                    แนะนำคอร์สเรียน AI และสร้างรายได้ไปพร้อมกัน
-                                </p>
+                                <h2 className="text-white text-lg sm:text-xl md:text-2xl font-bold mb-3 drop-shadow-lg leading-tight">
+                                    มาเป็นพันธิมิตรกับเรา<br />เพื่อก้าวไปข้างหน้าด้วยกัน
+                                </h2>
+                                <div className="text-white/95 text-xs sm:text-sm drop-shadow-md space-y-1.5 text-left inline-block">
+                                    <div className="flex items-start gap-2">
+                                        <span className="text-green-400">✅</span>
+                                        <span>ได้ค่าคอมมิชชั่น</span>
+                                    </div>
+                                    <div className="flex items-start gap-2">
+                                        <span className="text-green-400">✅</span>
+                                        <span>ได้ส่วนลดให้ผู้สมัครคอร์ส</span>
+                                    </div>
+                                    <div className="flex items-start gap-2">
+                                        <span className="text-green-400">✅</span>
+                                        <span>ผู้สมัครได้ความรู้ AI ช่วยธุรกิจของคุณให้สำเร็จ</span>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Header */}
-                <div className="text-center mb-6">
-                    <h1 className="text-2xl sm:text-3xl font-bold text-aiya-navy mb-2">
-                        สมัครเป็นพันธมิตร AIYA
-                    </h1>
-                    <p className="text-gray-600 text-sm sm:text-base mb-4">
-                        เริ่มสร้างรายได้จากการแนะนำคอร์สเรียน AI
-                    </p>
-                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-aiya-purple to-aiya-navy shadow-lg">
-                        <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                        </svg>
-                    </div>
-                </div>
-
-                {/* Benefits Banner */}
-                <div className="glass-card p-4 mb-6 border-l-4 border-l-aiya-purple">
-                    <div className="flex items-start gap-3">
-                        <div className="w-10 h-10 rounded-full bg-aiya-purple/10 flex items-center justify-center shrink-0">
-                            <span className="text-xl">💰</span>
-                        </div>
-                        <div>
-                            <h3 className="font-bold text-aiya-navy mb-1 text-sm sm:text-base">ประโยชน์ที่คุณจะได้รับ</h3>
-                            <ul className="text-xs sm:text-sm text-gray-600 space-y-1">
-                                <li>• รับ Commission สูงถึง 7,000 บาท/คน</li>
-                                <li>• ลูกค้าได้ส่วนลด 1,000 บาททันที</li>
-                                <li>• ติดตามยอดขายแบบ Real-time</li>
-                            </ul>
                         </div>
                     </div>
                 </div>
