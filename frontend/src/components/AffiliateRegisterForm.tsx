@@ -254,11 +254,16 @@ export default function AffiliateRegisterForm() {
     };
 
     return (
-        <div className="min-h-screen py-6 px-4 sm:px-6 lg:py-12">
-            <div className="max-w-2xl mx-auto relative z-10 w-full animate-fade-in">
+        <div className="min-h-screen px-4 py-6">
+            <div className="w-full mx-auto relative z-10 animate-fade-in">
 
-                {/* Hero Banner */}
-                <div className="mb-6 overflow-hidden rounded-2xl shadow-2xl">
+                {/* Header */}
+                <div className="mb-6">
+                    <h1 className="text-2xl font-bold text-white text-center">Registration</h1>
+                </div>
+
+                {/* Event Info Card */}
+                <div className="mb-6 overflow-hidden rounded-2xl bg-white/10 backdrop-blur-xl shadow-2xl">
                     {/* Banner Image */}
                     <img
                         src="/webinar.png"
@@ -267,12 +272,12 @@ export default function AffiliateRegisterForm() {
                     />
 
                     {/* Text Content Below Banner */}
-                    <div className="bg-gradient-to-br from-aiya-purple to-aiya-navy p-4 sm:p-6">
+                    <div className="p-4 sm:p-6">
                         <div className="text-center">
                             <h2 className="text-white text-lg sm:text-xl md:text-2xl font-bold mb-3 leading-tight">
                                 มาเป็นพันธิมิตรกับเรา<br />เพื่อก้าวไปข้างหน้าด้วยกัน
                             </h2>
-                            <div className="text-white/95 text-xs sm:text-sm space-y-1.5 text-left inline-block">
+                            <div className="text-white/80 text-xs sm:text-sm space-y-1.5 text-left inline-block">
                                 <div className="flex items-start gap-2">
                                     <span className="text-green-400">✅</span>
                                     <span>ได้ค่าคอมมิชชั่น</span>
@@ -305,7 +310,7 @@ export default function AffiliateRegisterForm() {
 
                 {/* LINE Profile Display - Only show in LINE client (LIFF) */}
                 {isReady && isInClient && isLoggedIn && profile && (
-                    <div className="mb-4 bg-white rounded-lg p-2.5 shadow-md">
+                    <div className="mb-4 bg-white/10 rounded-lg p-2.5 backdrop-blur-sm shadow-md">
                         <div className="flex items-center gap-2">
                             {profile.pictureUrl && (
                                 <img
@@ -315,10 +320,10 @@ export default function AffiliateRegisterForm() {
                                 />
                             )}
                             <div className="flex items-center gap-1.5 flex-1 min-w-0">
-                                <svg className="w-4 h-4 text-green-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <svg className="w-4 h-4 text-green-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                                 </svg>
-                                <span className="text-xs text-gray-700 truncate">
+                                <span className="text-xs text-white truncate">
                                     {profile.displayName}
                                 </span>
                             </div>
@@ -328,12 +333,12 @@ export default function AffiliateRegisterForm() {
 
                 {/* Form */}
                 <form ref={formRef} onSubmit={handleSubmit} className="glass-card p-5 sm:p-6 lg:p-8 space-y-5" noValidate>
-                    <h2 className="text-lg sm:text-xl font-bold text-aiya-navy mb-3">กรอกข้อมูลการสมัคร</h2>
+                    <h2 className="text-lg sm:text-xl font-bold text-white mb-3">กรอกข้อมูลการสมัคร</h2>
 
                     {/* Global Error */}
                     {submitError && (
-                        <div className="error-message bg-red-50 border border-red-200 text-red-700 rounded-xl p-3 flex items-start gap-2 text-sm animate-fade-in">
-                            <svg className="w-5 h-5 text-red-500 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <div className="error-message bg-red-500/20 border border-red-400/50 text-red-300 rounded-xl p-3 flex items-start gap-2 text-sm animate-fade-in">
+                            <svg className="w-5 h-5 text-red-400 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
                             </svg>
                             <span>{submitError}</span>
@@ -356,11 +361,11 @@ export default function AffiliateRegisterForm() {
                                 onBlur={() => handleBlur('name')}
                                 onKeyDown={(e) => handleKeyDown(e, emailRef)}
                                 enterKeyHint="next"
-                                className={`input-modern ${showError('name') ? 'border-red-500 ring-2 ring-red-200' : ''}`}
+                                className={`input-modern ${showError('name') ? 'ring-2 ring-red-400/50' : ''}`}
                                 placeholder="สมชาย ใจดี"
                             />
                             {showError('name') && (
-                                <p className="error-message text-red-600 text-xs mt-1.5 ml-1 flex items-center gap-1 animate-fade-in">
+                                <p className="error-message text-red-300 text-xs mt-1.5 ml-1 flex items-center gap-1 animate-fade-in">
                                     <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
                                         <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                                     </svg>
@@ -383,11 +388,11 @@ export default function AffiliateRegisterForm() {
                                 onBlur={() => handleBlur('email')}
                                 onKeyDown={(e) => handleKeyDown(e, phoneRef)}
                                 enterKeyHint="next"
-                                className={`input-modern ${showError('email') ? 'border-red-500 ring-2 ring-red-200' : ''}`}
+                                className={`input-modern ${showError('email') ? 'ring-2 ring-red-400/50' : ''}`}
                                 placeholder="example@email.com"
                             />
                             {showError('email') && (
-                                <p className="error-message text-red-600 text-xs mt-1.5 ml-1 flex items-center gap-1 animate-fade-in">
+                                <p className="error-message text-red-300 text-xs mt-1.5 ml-1 flex items-center gap-1 animate-fade-in">
                                     <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
                                         <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                                     </svg>
@@ -414,12 +419,12 @@ export default function AffiliateRegisterForm() {
                                 onKeyDown={(e) => handleKeyDown(e, affiliateCodeRef)}
                                 enterKeyHint="next"
                                 maxLength={10}
-                                className={`input-modern ${showError('phone') ? 'border-red-500 ring-2 ring-red-200' : ''}`}
+                                className={`input-modern ${showError('phone') ? 'ring-2 ring-red-400/50' : ''}`}
                                 placeholder="0812345678"
                                 inputMode="numeric"
                             />
                             {showError('phone') && (
-                                <p className="error-message text-red-600 text-xs mt-1.5 ml-1 flex items-center gap-1 animate-fade-in">
+                                <p className="error-message text-red-300 text-xs mt-1.5 ml-1 flex items-center gap-1 animate-fade-in">
                                     <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
                                         <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                                     </svg>
@@ -442,17 +447,17 @@ export default function AffiliateRegisterForm() {
                                 onBlur={() => handleBlur('affiliateCode')}
                                 onKeyDown={(e) => handleKeyDown(e, noteRef)}
                                 enterKeyHint="next"
-                                className={`input-modern font-mono tracking-wider text-base ${showError('affiliateCode') ? 'border-red-500 ring-2 ring-red-200' : ''}`}
+                                className={`input-modern font-mono tracking-wider text-base ${showError('affiliateCode') ? 'ring-2 ring-red-400/50' : ''}`}
                                 placeholder="PARTNER2025"
                             />
-                            <p className="text-xs text-gray-500 mt-1.5 ml-1 flex items-center gap-1">
+                            <p className="text-xs text-white/60 mt-1.5 ml-1 flex items-center gap-1">
                                 <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                                     <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                                 </svg>
                                 ใช้ได้เฉพาะตัวอักษร A-Z และตัวเลข 0-9
                             </p>
                             {showError('affiliateCode') && (
-                                <p className="error-message text-red-600 text-xs mt-1.5 ml-1 flex items-center gap-1 animate-fade-in">
+                                <p className="error-message text-red-300 text-xs mt-1.5 ml-1 flex items-center gap-1 animate-fade-in">
                                     <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
                                         <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                                     </svg>
@@ -465,7 +470,7 @@ export default function AffiliateRegisterForm() {
                     {/* Package Selection - Card Based */}
                     <div>
                         <label className="label-modern mb-3">
-                            เลือก Package <span className="text-red-500">*</span>
+                            เลือก Package <span className="text-red-400">*</span>
                         </label>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             {Object.entries(PACKAGE_OPTIONS).map(([key, pkg]) => (
@@ -475,48 +480,41 @@ export default function AffiliateRegisterForm() {
                                     onClick={() => handlePackageSelect(key)}
                                     className={`relative p-4 rounded-xl transition-all duration-200 text-left ${
                                         formData.selectedProduct === key
-                                            ? 'bg-aiya-purple/5 shadow-xl scale-105 ring-2 ring-aiya-purple'
-                                            : 'bg-white shadow-md hover:shadow-lg'
+                                            ? 'bg-white/15 shadow-xl'
+                                            : 'bg-white/5 shadow-md hover:bg-white/10'
                                     }`}
                                 >
-                                    {/* Radio indicator */}
+                                    {/* Checkmark Circle Indicator */}
                                     <div className="absolute top-3 right-3">
-                                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                                            formData.selectedProduct === key
-                                                ? 'border-aiya-purple bg-aiya-purple'
-                                                : 'border-gray-300'
-                                        }`}>
-                                            {formData.selectedProduct === key && (
-                                                <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                        {formData.selectedProduct === key && (
+                                            <div className="w-6 h-6 rounded-full bg-white flex items-center justify-center">
+                                                <svg className="w-4 h-4 text-aiya-navy" fill="currentColor" viewBox="0 0 20 20">
                                                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                                 </svg>
-                                            )}
-                                        </div>
+                                            </div>
+                                        )}
                                     </div>
 
-                                    {/* Icon */}
-                                    <div className="text-3xl mb-2">{pkg.icon}</div>
-
                                     {/* Package name */}
-                                    <h3 className="font-bold text-aiya-navy text-base mb-1">{pkg.label}</h3>
-                                    <p className="text-xs text-gray-500 mb-3">{pkg.subtitle}</p>
+                                    <h3 className="font-bold text-white text-lg mb-1">{pkg.label}</h3>
+                                    <p className="text-sm text-white/60 mb-3">{pkg.subtitle}</p>
 
                                     {/* Commission info */}
                                     <div className="space-y-1">
-                                        <div className="flex justify-between items-center text-xs">
-                                            <span className="text-gray-600">Commission</span>
-                                            <span className="font-bold text-green-600">{pkg.commission} บาท</span>
+                                        <div className="flex justify-between items-center text-sm">
+                                            <span className="text-white/70">Commission</span>
+                                            <span className="font-bold text-green-400">{pkg.commission} บาท</span>
                                         </div>
-                                        <div className="flex justify-between items-center text-xs">
-                                            <span className="text-gray-600">ส่วนลดลูกค้า</span>
-                                            <span className="font-semibold text-orange-600">-{pkg.customerDiscount} บาท</span>
+                                        <div className="flex justify-between items-center text-sm">
+                                            <span className="text-white/70">ส่วนลดลูกค้า</span>
+                                            <span className="font-semibold text-orange-400">-{pkg.customerDiscount} บาท</span>
                                         </div>
                                     </div>
                                 </button>
                             ))}
                         </div>
                         {showError('selectedProduct') && (
-                            <p className="error-message text-red-600 text-xs mt-2 ml-1 flex items-center gap-1 animate-fade-in">
+                            <p className="error-message text-red-300 text-xs mt-2 ml-1 flex items-center gap-1 animate-fade-in">
                                 <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                                 </svg>
@@ -553,15 +551,15 @@ export default function AffiliateRegisterForm() {
                                     }
                                 }}
                                 onBlur={() => handleBlur('pdpaConsent')}
-                                className="w-5 h-5 rounded border-gray-300 text-aiya-purple focus:ring-2 focus:ring-aiya-purple/50 cursor-pointer shrink-0 mt-0.5"
+                                className="w-5 h-5 rounded border-white/30 text-white focus:ring-2 focus:ring-white/30 cursor-pointer shrink-0 mt-0.5"
                             />
-                            <span className="text-sm text-gray-700 leading-relaxed">
+                            <span className="text-sm text-white/80 leading-relaxed">
                                 ข้าพเจ้ายอมรับ{' '}
                                 <a
                                     href="https://web.aiya.ai/privacy-policy"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="text-aiya-purple hover:text-aiya-navy underline font-medium"
+                                    className="text-blue-400 hover:text-blue-300 underline font-medium"
                                 >
                                     เงื่อนไขการใช้งาน
                                 </a>
@@ -570,15 +568,15 @@ export default function AffiliateRegisterForm() {
                                     href="https://web.aiya.ai/privacy-policy"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="text-aiya-purple hover:text-aiya-navy underline font-medium"
+                                    className="text-blue-400 hover:text-blue-300 underline font-medium"
                                 >
                                     นโยบายความเป็นส่วนตัว
                                 </a>
-                                {' '}ของ AIYA <span className="text-red-500">*</span>
+                                {' '}ของ AIYA <span className="text-red-400">*</span>
                             </span>
                         </label>
                         {showError('pdpaConsent') && (
-                            <p className="error-message text-red-600 text-xs mt-1.5 ml-1 flex items-center gap-1 animate-fade-in">
+                            <p className="error-message text-red-300 text-xs mt-1.5 ml-1 flex items-center gap-1 animate-fade-in">
                                 <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                                 </svg>
@@ -591,11 +589,11 @@ export default function AffiliateRegisterForm() {
                     <button
                         type="submit"
                         disabled={isLoading}
-                        className="btn-gradient disabled:opacity-60 disabled:cursor-not-allowed mt-2 min-h-[48px]"
+                        className="btn-light disabled:opacity-60 disabled:cursor-not-allowed mt-2 min-h-[48px]"
                     >
                         {isLoading ? (
                             <>
-                                <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <svg className="animate-spin h-5 w-5 text-aiya-navy" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                 </svg>
@@ -612,13 +610,13 @@ export default function AffiliateRegisterForm() {
                     </button>
 
                     {/* Privacy Note */}
-                    <p className="text-xs text-gray-500 text-center mt-3">
+                    <p className="text-xs text-white/60 text-center mt-3">
                         🔒 ข้อมูลของคุณจะถูกเก็บรักษาอย่างปลอดภัย
                     </p>
                 </form>
 
                 {/* Footer */}
-                <p className="text-center text-gray-400 text-xs mt-6">
+                <p className="text-center text-white/40 text-xs mt-6">
                     © 2024 AIYA Co., Ltd. สงวนลิขสิทธิ์
                 </p>
             </div>

@@ -44,27 +44,32 @@
 
 @layer base {
     body {
-        @apply font-sans bg-white text-aiya-navy antialiased selection:bg-aiya-purple selection:text-white;
+        @apply font-sans text-white antialiased selection:bg-aiya-purple selection:text-white;
         font-weight: 400;
+        background: linear-gradient(180deg, #1a1a3e 0%, #0f0f23 100%);
+        min-height: 100vh;
     }
 }
 
 @layer components {
     .glass-card {
-        @apply bg-white shadow-xl rounded-2xl;
+        @apply bg-white/5 backdrop-blur-xl shadow-2xl rounded-2xl;
     }
 
     .input-modern {
-        @apply w-full px-4 py-3 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-aiya-purple transition-all duration-200 placeholder:text-gray-400 text-base;
+        @apply w-full px-4 py-3 rounded-xl bg-white/10 text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 transition-all duration-200 text-base;
     }
 
     .btn-gradient {
         @apply w-full py-3 px-6 rounded-xl bg-gradient-to-r from-aiya-navy to-aiya-purple text-white font-bold text-lg shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-95 transition-all duration-200 flex items-center justify-center gap-2;
     }
 
-    /* Custom Label with Floating effect support if needed, or just standard clean label */
+    .btn-light {
+        @apply w-full py-3 px-6 rounded-xl bg-white text-aiya-navy font-bold text-lg shadow-lg hover:shadow-xl hover:bg-white/90 hover:scale-[1.02] active:scale-95 transition-all duration-200 flex items-center justify-center gap-2;
+    }
+
     .label-modern {
-        @apply block text-sm font-medium text-gray-600 mb-1.5 ml-1;
+        @apply block text-sm font-medium text-white/80 mb-1.5 ml-1;
     }
 }
 
