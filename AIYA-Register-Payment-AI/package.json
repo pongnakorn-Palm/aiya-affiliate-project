@@ -1,0 +1,17 @@
+{
+    "name": "aiya-event-registration-root",
+    "private": true,
+    "scripts": {
+        "build": "cd frontend && npm install && npm run build"
+    },
+    "dependencies": {
+        "elysia": "^1.0.0",
+        "@elysiajs/cors": "^1.0.0",
+        "postgres": "^3.4.0",
+        "@aws-sdk/client-ses": "^3.0.0"
+    },
+    "workspaces": [
+        "frontend",
+        "backend"
+    ]
+}
