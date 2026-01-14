@@ -1,5 +1,6 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useLiff } from '../contexts/LiffContext';
 
 interface FormData {
     name: string;
@@ -42,6 +43,7 @@ type PackageType = keyof typeof PACKAGE_OPTIONS;
 export default function AffiliateRegisterForm() {
     const navigate = useNavigate();
     const formRef = useRef<HTMLFormElement>(null);
+    const { isLoggedIn, profile, login, isReady } = useLiff();
 
     // Refs for input fields
     const nameRef = useRef<HTMLInputElement>(null);
@@ -64,6 +66,17 @@ export default function AffiliateRegisterForm() {
     const [touched, setTouched] = useState<Set<string>>(new Set());
     const [isLoading, setIsLoading] = useState(false);
     const [submitError, setSubmitError] = useState('');
+
+    // Auto-fill form data from LINE profile
+    useEffect(() => {
+        if (isLoggedIn && profile) {
+            setFormData(prev => ({
+                ...prev,
+                name: profile.displayName || prev.name,
+                email: profile.email || prev.email
+            }));
+        }
+    }, [isLoggedIn, profile]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -239,8 +252,61 @@ export default function AffiliateRegisterForm() {
     };
 
     return (
-        <div className="min-h-screen py-6 px-4 sm:px-6">
-            <div className="max-w-lg mx-auto relative z-10 w-full animate-fade-in">
+        <div className="min-h-screen py-6 px-4 sm:px-6 lg:py-12">
+            <div className="max-w-2xl mx-auto relative z-10 w-full animate-fade-in">
+
+                {/* LINE Login Button (for desktop users who are not logged in) */}
+                {isReady && !isLoggedIn && (
+                    <div className="mb-6 bg-white rounded-2xl shadow-lg p-4 sm:p-6 border-2 border-green-100">
+                        <div className="flex flex-col sm:flex-row items-center gap-4">
+                            <div className="flex-1 text-center sm:text-left">
+                                <h3 className="text-lg font-bold text-gray-800 mb-1">
+                                    เข้าสู่ระบบด้วย LINE
+                                </h3>
+                                <p className="text-sm text-gray-600">
+                                    เพื่อกรอกข้อมูลอัตโนมัติและรับความสะดวกมากขึ้น
+                                </p>
+                            </div>
+                            <button
+                                onClick={login}
+                                className="flex items-center gap-2 bg-[#06C755] hover:bg-[#05b34b] text-white font-semibold px-6 py-3 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 whitespace-nowrap"
+                            >
+                                <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/>
+                                </svg>
+                                Login with LINE
+                            </button>
+                        </div>
+                    </div>
+                )}
+
+                {/* LINE Profile Display (for logged in users) */}
+                {isReady && isLoggedIn && profile && (
+                    <div className="mb-6 bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl shadow-md p-4 border-2 border-green-200">
+                        <div className="flex items-center gap-3">
+                            {profile.pictureUrl && (
+                                <img
+                                    src={profile.pictureUrl}
+                                    alt={profile.displayName}
+                                    className="w-12 h-12 rounded-full border-2 border-white shadow-md"
+                                />
+                            )}
+                            <div className="flex-1">
+                                <div className="flex items-center gap-2">
+                                    <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                    </svg>
+                                    <span className="text-sm font-semibold text-gray-800">
+                                        เข้าสู่ระบบด้วย LINE แล้ว
+                                    </span>
+                                </div>
+                                <p className="text-sm text-gray-600 mt-0.5">
+                                    {profile.displayName}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                )}
 
                 {/* Hero Banner */}
                 <div className="mb-6 overflow-hidden rounded-2xl shadow-2xl">
@@ -276,8 +342,8 @@ export default function AffiliateRegisterForm() {
                 </div>
 
                 {/* Form */}
-                <form ref={formRef} onSubmit={handleSubmit} className="glass-card p-5 sm:p-6 space-y-5" noValidate>
-                    <h2 className="text-lg font-bold text-aiya-navy mb-3">กรอกข้อมูลการสมัคร</h2>
+                <form ref={formRef} onSubmit={handleSubmit} className="glass-card p-5 sm:p-6 lg:p-8 space-y-5" noValidate>
+                    <h2 className="text-lg sm:text-xl font-bold text-aiya-navy mb-3">กรอกข้อมูลการสมัคร</h2>
 
                     {/* Global Error */}
                     {submitError && (
@@ -289,119 +355,125 @@ export default function AffiliateRegisterForm() {
                         </div>
                     )}
 
-                    {/* ชื่อ-นามสกุล */}
-                    <div>
-                        <label className="label-modern">
-                            ชื่อ-นามสกุล <span className="text-red-500">*</span>
-                        </label>
-                        <input
-                            ref={nameRef}
-                            type="text"
-                            name="name"
-                            value={formData.name}
-                            onChange={handleChange}
-                            onBlur={() => handleBlur('name')}
-                            onKeyDown={(e) => handleKeyDown(e, emailRef)}
-                            enterKeyHint="next"
-                            className={`input-modern ${showError('name') ? 'border-red-500 ring-2 ring-red-200' : ''}`}
-                            placeholder="สมชาย ใจดี"
-                        />
-                        {showError('name') && (
-                            <p className="error-message text-red-600 text-xs mt-1.5 ml-1 flex items-center gap-1 animate-fade-in">
-                                <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                                </svg>
-                                {errors.name}
-                            </p>
-                        )}
+                    {/* Personal Information - 2 Column Layout on Desktop */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                        {/* ชื่อ-นามสกุล */}
+                        <div>
+                            <label className="label-modern">
+                                ชื่อ-นามสกุล <span className="text-red-500">*</span>
+                            </label>
+                            <input
+                                ref={nameRef}
+                                type="text"
+                                name="name"
+                                value={formData.name}
+                                onChange={handleChange}
+                                onBlur={() => handleBlur('name')}
+                                onKeyDown={(e) => handleKeyDown(e, emailRef)}
+                                enterKeyHint="next"
+                                className={`input-modern ${showError('name') ? 'border-red-500 ring-2 ring-red-200' : ''}`}
+                                placeholder="สมชาย ใจดี"
+                            />
+                            {showError('name') && (
+                                <p className="error-message text-red-600 text-xs mt-1.5 ml-1 flex items-center gap-1 animate-fade-in">
+                                    <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                    </svg>
+                                    {errors.name}
+                                </p>
+                            )}
+                        </div>
+
+                        {/* Email */}
+                        <div>
+                            <label className="label-modern">
+                                Email <span className="text-red-500">*</span>
+                            </label>
+                            <input
+                                ref={emailRef}
+                                type="email"
+                                name="email"
+                                value={formData.email}
+                                onChange={handleChange}
+                                onBlur={() => handleBlur('email')}
+                                onKeyDown={(e) => handleKeyDown(e, phoneRef)}
+                                enterKeyHint="next"
+                                className={`input-modern ${showError('email') ? 'border-red-500 ring-2 ring-red-200' : ''}`}
+                                placeholder="example@email.com"
+                            />
+                            {showError('email') && (
+                                <p className="error-message text-red-600 text-xs mt-1.5 ml-1 flex items-center gap-1 animate-fade-in">
+                                    <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                    </svg>
+                                    {errors.email}
+                                </p>
+                            )}
+                        </div>
                     </div>
 
-                    {/* Email */}
-                    <div>
-                        <label className="label-modern">
-                            Email <span className="text-red-500">*</span>
-                        </label>
-                        <input
-                            ref={emailRef}
-                            type="email"
-                            name="email"
-                            value={formData.email}
-                            onChange={handleChange}
-                            onBlur={() => handleBlur('email')}
-                            onKeyDown={(e) => handleKeyDown(e, phoneRef)}
-                            enterKeyHint="next"
-                            className={`input-modern ${showError('email') ? 'border-red-500 ring-2 ring-red-200' : ''}`}
-                            placeholder="example@email.com"
-                        />
-                        {showError('email') && (
-                            <p className="error-message text-red-600 text-xs mt-1.5 ml-1 flex items-center gap-1 animate-fade-in">
-                                <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                                </svg>
-                                {errors.email}
-                            </p>
-                        )}
-                    </div>
+                    {/* Contact & Code - 2 Column Layout on Desktop */}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                        {/* เบอร์โทรศัพท์ */}
+                        <div>
+                            <label className="label-modern">
+                                เบอร์โทรศัพท์ <span className="text-red-500">*</span>
+                            </label>
+                            <input
+                                ref={phoneRef}
+                                type="tel"
+                                name="phone"
+                                value={formData.phone}
+                                onChange={handleChange}
+                                onBlur={() => handleBlur('phone')}
+                                onKeyDown={(e) => handleKeyDown(e, affiliateCodeRef)}
+                                enterKeyHint="next"
+                                className={`input-modern ${showError('phone') ? 'border-red-500 ring-2 ring-red-200' : ''}`}
+                                placeholder="0812345678"
+                                inputMode="numeric"
+                            />
+                            {showError('phone') && (
+                                <p className="error-message text-red-600 text-xs mt-1.5 ml-1 flex items-center gap-1 animate-fade-in">
+                                    <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                    </svg>
+                                    {errors.phone}
+                                </p>
+                            )}
+                        </div>
 
-                    {/* เบอร์โทรศัพท์ */}
-                    <div>
-                        <label className="label-modern">
-                            เบอร์โทรศัพท์ <span className="text-red-500">*</span>
-                        </label>
-                        <input
-                            ref={phoneRef}
-                            type="tel"
-                            name="phone"
-                            value={formData.phone}
-                            onChange={handleChange}
-                            onBlur={() => handleBlur('phone')}
-                            onKeyDown={(e) => handleKeyDown(e, affiliateCodeRef)}
-                            enterKeyHint="next"
-                            className={`input-modern ${showError('phone') ? 'border-red-500 ring-2 ring-red-200' : ''}`}
-                            placeholder="0812345678"
-                            inputMode="numeric"
-                        />
-                        {showError('phone') && (
-                            <p className="error-message text-red-600 text-xs mt-1.5 ml-1 flex items-center gap-1 animate-fade-in">
-                                <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                        {/* Affiliate Code */}
+                        <div>
+                            <label className="label-modern">
+                                Affiliate Code <span className="text-red-500">*</span>
+                            </label>
+                            <input
+                                ref={affiliateCodeRef}
+                                type="text"
+                                name="affiliateCode"
+                                value={formData.affiliateCode}
+                                onChange={handleAffiliateCodeChange}
+                                onBlur={() => handleBlur('affiliateCode')}
+                                onKeyDown={(e) => handleKeyDown(e, noteRef)}
+                                enterKeyHint="next"
+                                className={`input-modern font-mono tracking-wider text-base ${showError('affiliateCode') ? 'border-red-500 ring-2 ring-red-200' : ''}`}
+                                placeholder="PARTNER2025"
+                            />
+                            <p className="text-xs text-gray-500 mt-1.5 ml-1 flex items-center gap-1">
+                                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                                 </svg>
-                                {errors.phone}
+                                ใช้ได้เฉพาะตัวอักษร A-Z และตัวเลข 0-9
                             </p>
-                        )}
-                    </div>
-
-                    {/* Affiliate Code */}
-                    <div>
-                        <label className="label-modern">
-                            Affiliate Code <span className="text-red-500">*</span>
-                        </label>
-                        <input
-                            ref={affiliateCodeRef}
-                            type="text"
-                            name="affiliateCode"
-                            value={formData.affiliateCode}
-                            onChange={handleAffiliateCodeChange}
-                            onBlur={() => handleBlur('affiliateCode')}
-                            onKeyDown={(e) => handleKeyDown(e, noteRef)}
-                            enterKeyHint="next"
-                            className={`input-modern font-mono tracking-wider text-base ${showError('affiliateCode') ? 'border-red-500 ring-2 ring-red-200' : ''}`}
-                            placeholder="PARTNER2025"
-                        />
-                        <p className="text-xs text-gray-500 mt-1.5 ml-1 flex items-center gap-1">
-                            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                            </svg>
-                            ใช้ได้เฉพาะตัวอักษร A-Z และตัวเลข 0-9
-                        </p>
-                        {showError('affiliateCode') && (
-                            <p className="error-message text-red-600 text-xs mt-1.5 ml-1 flex items-center gap-1 animate-fade-in">
-                                <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                                </svg>
-                                {errors.affiliateCode}
-                            </p>
-                        )}
+                            {showError('affiliateCode') && (
+                                <p className="error-message text-red-600 text-xs mt-1.5 ml-1 flex items-center gap-1 animate-fade-in">
+                                    <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                    </svg>
+                                    {errors.affiliateCode}
+                                </p>
+                            )}
+                        </div>
                     </div>
 
                     {/* Package Selection - Card Based */}
