@@ -257,16 +257,12 @@ export default function AffiliateRegisterForm() {
         <div className="min-h-screen px-4 py-6">
             <div className="w-full mx-auto relative z-10 animate-fade-in">
 
-                {/* Header */}
-                <div className="mb-6">
-                    <h1 className="text-2xl font-bold text-white text-center">Registration</h1>
-                </div>
 
                 {/* Event Info Card */}
-                <div className="mb-6 overflow-hidden rounded-2xl bg-white/10 backdrop-blur-xl shadow-2xl">
+                <div className="mb-6">
                     {/* Banner Image */}
                     <img
-                        src="/webinar.png"
+                        src="/aff-banner.png"
                         alt="มาเป็นพันธิมิตรกับเรา"
                         className="w-full h-auto object-cover max-h-[200px] sm:max-h-[280px] md:max-h-[320px]"
                     />
@@ -279,15 +275,21 @@ export default function AffiliateRegisterForm() {
                             </h2>
                             <div className="text-white/80 text-xs sm:text-sm space-y-1.5 text-left inline-block">
                                 <div className="flex items-start gap-2">
-                                    <span className="text-green-400">✅</span>
+                                    <svg className="w-5 h-5 text-green-400 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                    </svg>
                                     <span>ได้ค่าคอมมิชชั่น</span>
                                 </div>
                                 <div className="flex items-start gap-2">
-                                    <span className="text-green-400">✅</span>
+                                    <svg className="w-5 h-5 text-green-400 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                    </svg>
                                     <span>ได้ส่วนลดให้ผู้สมัครคอร์ส</span>
                                 </div>
                                 <div className="flex items-start gap-2">
-                                    <span className="text-green-400">✅</span>
+                                    <svg className="w-5 h-5 text-green-400 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                    </svg>
                                     <span>ผู้สมัครได้ความรู้ AI ช่วยธุรกิจของคุณให้สำเร็จ</span>
                                 </div>
                             </div>
@@ -539,44 +541,61 @@ export default function AffiliateRegisterForm() {
 
                     {/* PDPA Consent Checkbox */}
                     <div>
-                        <label className="flex items-start gap-3 cursor-pointer">
-                            <input
-                                type="checkbox"
-                                name="pdpaConsent"
-                                checked={formData.pdpaConsent}
-                                onChange={(e) => {
-                                    setFormData(prev => ({ ...prev, pdpaConsent: e.target.checked }));
-                                    if (errors.pdpaConsent) {
-                                        setErrors(prev => ({ ...prev, pdpaConsent: undefined }));
-                                    }
-                                }}
-                                onBlur={() => handleBlur('pdpaConsent')}
-                                className="w-5 h-5 rounded border-white/30 text-white focus:ring-2 focus:ring-white/30 cursor-pointer shrink-0 mt-0.5"
-                            />
-                            <span className="text-sm text-white/80 leading-relaxed">
-                                ข้าพเจ้ายอมรับ{' '}
-                                <a
-                                    href="https://web.aiya.ai/privacy-policy"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-blue-400 hover:text-blue-300 underline font-medium"
-                                >
-                                    เงื่อนไขการใช้งาน
-                                </a>
-                                {' '}และ{' '}
-                                <a
-                                    href="https://web.aiya.ai/privacy-policy"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-blue-400 hover:text-blue-300 underline font-medium"
-                                >
-                                    นโยบายความเป็นส่วนตัว
-                                </a>
-                                {' '}ของ AIYA <span className="text-red-400">*</span>
-                            </span>
-                        </label>
+                        <div
+                            className={`bg-white/5 border ${showError('pdpaConsent') ? 'border-red-400/50' : 'border-white/10'} rounded-xl p-4 transition-colors`}
+                        >
+                            <label className="flex items-start gap-3 cursor-pointer group">
+                                <div className="relative flex-shrink-0 mt-0.5">
+                                    <input
+                                        type="checkbox"
+                                        name="pdpaConsent"
+                                        checked={formData.pdpaConsent}
+                                        onChange={(e) => {
+                                            setFormData(prev => ({ ...prev, pdpaConsent: e.target.checked }));
+                                            if (errors.pdpaConsent) {
+                                                setErrors(prev => ({ ...prev, pdpaConsent: undefined }));
+                                            }
+                                        }}
+                                        onBlur={() => handleBlur('pdpaConsent')}
+                                        className="peer sr-only"
+                                    />
+                                    <div className="w-6 h-6 border-2 border-white/30 rounded-md flex items-center justify-center group-hover:border-white/50 peer-checked:bg-white peer-checked:border-white transition-all">
+                                        <svg
+                                            className="w-4 h-4 text-aiya-navy opacity-0 peer-checked:opacity-100 transition-opacity"
+                                            fill="currentColor"
+                                            viewBox="0 0 20 20"
+                                        >
+                                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                        </svg>
+                                    </div>
+                                </div>
+                                <span className="text-sm text-white/90 leading-relaxed">
+                                    ข้าพเจ้ายอมรับ{' '}
+                                    <a
+                                        href="https://web.aiya.ai/privacy-policy"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-blue-400 hover:text-blue-300 underline font-medium"
+                                        onClick={(e) => e.stopPropagation()}
+                                    >
+                                        เงื่อนไขการใช้งาน
+                                    </a>
+                                    {' '}และ{' '}
+                                    <a
+                                        href="https://web.aiya.ai/privacy-policy"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-blue-400 hover:text-blue-300 underline font-medium"
+                                        onClick={(e) => e.stopPropagation()}
+                                    >
+                                        นโยบายความเป็นส่วนตัว
+                                    </a>
+                                    {' '}ของ AIYA <span className="text-red-400">*</span>
+                                </span>
+                            </label>
+                        </div>
                         {showError('pdpaConsent') && (
-                            <p className="error-message text-red-300 text-xs mt-1.5 ml-1 flex items-center gap-1 animate-fade-in">
+                            <p className="error-message text-red-300 text-xs mt-2 ml-1 flex items-center gap-1 animate-fade-in">
                                 <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
                                     <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                                 </svg>
@@ -610,8 +629,11 @@ export default function AffiliateRegisterForm() {
                     </button>
 
                     {/* Privacy Note */}
-                    <p className="text-xs text-white/60 text-center mt-3">
-                        🔒 ข้อมูลของคุณจะถูกเก็บรักษาอย่างปลอดภัย
+                    <p className="text-xs text-white/60 text-center mt-3 flex items-center justify-center gap-1.5">
+                        <svg className="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                        </svg>
+                        <span>ข้อมูลของคุณจะถูกเก็บรักษาอย่างปลอดภัย</span>
                     </p>
                 </form>
 
