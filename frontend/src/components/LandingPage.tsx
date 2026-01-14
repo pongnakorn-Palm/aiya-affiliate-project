@@ -3,7 +3,7 @@ import { useLiff } from '../contexts/LiffContext';
 
 export default function LandingPage() {
     const navigate = useNavigate();
-    const { profile, isLoggedIn, login } = useLiff();
+    const { profile, isLoggedIn, login, isInClient } = useLiff();
 
     const handleRegister = () => {
         navigate('/register', {
@@ -30,30 +30,32 @@ export default function LandingPage() {
                     AIYA<span className="text-aiya-purple">.</span>
                 </div>
 
-                {/* LIFF Profile */}
-                <div className="flex items-center gap-3">
-                    {isLoggedIn && profile ? (
-                        <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-1.5 py-1.5 pr-3 rounded-full border border-white/10">
-                            {profile.pictureUrl ? (
-                                <img src={profile.pictureUrl} alt={profile.displayName} className="w-7 h-7 rounded-full ring-2 ring-white/20" />
-                            ) : (
-                                <div className="w-7 h-7 rounded-full bg-aiya-purple/50 flex items-center justify-center text-white text-xs font-bold">
-                                    {profile.displayName.charAt(0)}
-                                </div>
-                            )}
-                            <span className="text-xs font-medium text-gray-200 max-w-[80px] truncate hidden sm:block">
-                                {profile.displayName}
-                            </span>
-                        </div>
-                    ) : (
-                        <button
-                            onClick={login}
-                            className="text-xs font-bold text-white bg-white/10 px-4 py-2 rounded-full hover:bg-white/20 transition-all border border-white/5"
-                        >
-                            Login
-                        </button>
-                    )}
-                </div>
+                {/* LIFF Profile - Only show in LINE client */}
+                {isInClient && (
+                    <div className="flex items-center gap-3">
+                        {isLoggedIn && profile ? (
+                            <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md px-1.5 py-1.5 pr-3 rounded-full border border-white/10">
+                                {profile.pictureUrl ? (
+                                    <img src={profile.pictureUrl} alt={profile.displayName} className="w-7 h-7 rounded-full ring-2 ring-white/20" />
+                                ) : (
+                                    <div className="w-7 h-7 rounded-full bg-aiya-purple/50 flex items-center justify-center text-white text-xs font-bold">
+                                        {profile.displayName.charAt(0)}
+                                    </div>
+                                )}
+                                <span className="text-xs font-medium text-gray-200 max-w-[80px] truncate hidden sm:block">
+                                    {profile.displayName}
+                                </span>
+                            </div>
+                        ) : (
+                            <button
+                                onClick={login}
+                                className="text-xs font-bold text-white bg-white/10 px-4 py-2 rounded-full hover:bg-white/20 transition-all border border-white/5"
+                            >
+                                Login
+                            </button>
+                        )}
+                    </div>
+                )}
             </nav>
 
             {/* Main Content */}

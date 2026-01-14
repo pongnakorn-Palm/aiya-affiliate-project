@@ -1,7 +1,39 @@
 @font-face {
     font-family: 'LINE Seed Sans TH';
     src: url('./assets/fonts/LINESeedSansTH_W_Th.woff2') format('woff2');
-    font-weight: 100 900;
+    font-weight: 100;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'LINE Seed Sans TH';
+    src: url('./assets/fonts/LINESeedSansTH_W_Rg.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'LINE Seed Sans TH';
+    src: url('./assets/fonts/LINESeedSansTH_W_Bd.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'LINE Seed Sans TH';
+    src: url('./assets/fonts/LINESeedSansTH_W_He.woff2') format('woff2');
+    font-weight: 800;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'LINE Seed Sans TH';
+    src: url('./assets/fonts/LINESeedSansTH_W_XBd.woff2') format('woff2');
+    font-weight: 900;
     font-style: normal;
     font-display: swap;
 }
@@ -13,6 +45,7 @@
 @layer base {
     body {
         @apply font-sans bg-slate-50 text-aiya-navy antialiased selection:bg-aiya-purple selection:text-white;
+        font-weight: 400;
         background-image: radial-gradient(circle at 10% 20%, rgba(58, 35, 181, 0.1) 0%, rgba(4, 21, 39, 0) 50%),
             radial-gradient(circle at 90% 80%, rgba(58, 35, 181, 0.05) 0%, rgba(4, 21, 39, 0) 50%);
         background-attachment: fixed;

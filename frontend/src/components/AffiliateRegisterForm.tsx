@@ -43,7 +43,7 @@ type PackageType = keyof typeof PACKAGE_OPTIONS;
 export default function AffiliateRegisterForm() {
     const navigate = useNavigate();
     const formRef = useRef<HTMLFormElement>(null);
-    const { isLoggedIn, profile, login, isReady } = useLiff();
+    const { isLoggedIn, profile, login, isReady, isInClient } = useLiff();
 
     // Refs for input fields
     const nameRef = useRef<HTMLInputElement>(null);
@@ -288,8 +288,8 @@ export default function AffiliateRegisterForm() {
                     </div>
                 </div>
 
-                {/* LINE Login Button (compact minimal design) */}
-                {isReady && !isLoggedIn && (
+                {/* LINE Login Button - Only show in LINE client (LIFF) */}
+                {isReady && isInClient && !isLoggedIn && (
                     <button
                         onClick={login}
                         className="mb-4 w-full flex items-center justify-center gap-2 bg-[#06C755] hover:bg-[#05b34b] text-white font-medium px-4 py-2.5 rounded-lg transition-colors duration-200 text-sm"
@@ -301,8 +301,8 @@ export default function AffiliateRegisterForm() {
                     </button>
                 )}
 
-                {/* LINE Profile Display (compact minimal design) */}
-                {isReady && isLoggedIn && profile && (
+                {/* LINE Profile Display - Only show in LINE client (LIFF) */}
+                {isReady && isInClient && isLoggedIn && profile && (
                     <div className="mb-4 bg-green-50 rounded-lg p-2.5 border border-green-200">
                         <div className="flex items-center gap-2">
                             {profile.pictureUrl && (

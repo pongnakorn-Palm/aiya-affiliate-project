@@ -12,6 +12,7 @@ interface LiffContextType {
     liffObject: typeof liff | null;
     isLoggedIn: boolean;
     isReady: boolean;
+    isInClient: boolean;
     profile: UserProfile | null;
     error: string | null;
     login: () => void;
@@ -23,6 +24,7 @@ const LiffContext = createContext<LiffContextType | undefined>(undefined);
 export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [isReady, setIsReady] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [isInClient, setIsInClient] = useState(false);
     const [profile, setProfile] = useState<UserProfile | null>(null);
     const [error, setError] = useState<string | null>(null);
 
@@ -32,6 +34,10 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 await liff.init({ liffId: import.meta.env.VITE_LIFF_ID || '2008879589-q6KUIrLg' });
 
                 setIsReady(true);
+
+                // Check if running in LINE client (LIFF browser)
+                const inClient = liff.isInClient();
+                setIsInClient(inClient);
 
                 if (liff.isLoggedIn()) {
                     setIsLoggedIn(true);
@@ -44,6 +50,9 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
                         userId: userProfile.userId,
                         email: decodedIDToken?.email
                     });
+                } else if (inClient) {
+                    // Auto login if in LINE client but not logged in
+                    liff.login();
                 }
             } catch (err: any) {
                 console.error('LIFF Init Failed', err);
@@ -75,6 +84,7 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
             liffObject: liff,
             isLoggedIn,
             isReady,
+            isInClient,
             profile,
             error,
             login,
