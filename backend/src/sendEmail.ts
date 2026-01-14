@@ -32,7 +32,7 @@ function getEmailTemplate(firstName: string, affiliateCode: string): string {
           <!-- Header Image/Logo Area -->
           <tr>
             <td style="padding: 40px 40px 20px 40px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05);">
-              <img src="https://ai-emprie-registration.vercel.app/logo-ignite.png" alt="AIYA" style="max-width: 180px; height: auto; display: inline-block;" />
+              <img src="https://ai-emprie-registration.vercel.app/IgniteClub_Full_White_Logo.png" alt="AIYA" style="max-width: 180px; height: auto; display: inline-block;" />
               <p style="margin: 15px 0 0 0; color: #94a3b8; font-size: 13px; text-transform: uppercase; letter-spacing: 2px;">AIYA Affiliate Program</p>
             </td>
           </tr>

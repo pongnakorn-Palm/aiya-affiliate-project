@@ -33,7 +33,7 @@ const PACKAGE_OPTIONS = {
         label: 'Duo Package',
         subtitle: '2 ที่นั่ง',
         commission: '7,000',
-        customerDiscount: '1,000',
+        customerDiscount: '2,000',
         icon: '👥'
     }
 };

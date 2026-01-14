@@ -26,6 +26,8 @@ export default function ThankYou() {
         ? 'แพ็กเกจเดี่ยว (1 ที่นั่ง)'
         : 'แพ็กเกจคู่ (2 ที่นั่ง)';
 
+    const customerDiscount = selectedProduct === 'single_package' ? '1,000' : '2,000';
+
     // Generate referral link
     const baseUrl = window.location.origin;
     const referralLink = `${baseUrl}/?ref=${affiliateCode}`;
@@ -91,49 +93,18 @@ export default function ThankYou() {
                     </div>
                 </div>
 
-                {/* Referral Link Section */}
-                <div className="bg-white/5 rounded-2xl p-4 mb-5 border border-white/10">
-                    <div className="flex items-center gap-2 mb-3">
-                        <span className="text-lg">🔗</span>
-                        <h3 className="text-sm font-bold text-white">ลิงก์แนะนำของคุณ</h3>
-                    </div>
-
-                    <div className="bg-black/30 rounded-xl p-3 mb-3 border border-white/5">
-                        <p className="text-xs text-gray-300 break-all font-mono">{referralLink}</p>
-                    </div>
-
-                    <button
-                        onClick={handleCopyLink}
-                        className={`w-full py-3 rounded-xl font-semibold text-sm transition-all duration-200 flex items-center justify-center gap-2 ${
-                            copied
-                                ? 'bg-green-500/20 text-green-400 border-2 border-green-500/50'
-                                : 'bg-aiya-purple/20 text-aiya-purple border-2 border-aiya-purple/50 hover:bg-aiya-purple/30 active:scale-95'
-                        }`}
-                    >
-                        {copied ? (
-                            <>
-                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                </svg>
-                                คัดลอกแล้ว!
-                            </>
-                        ) : (
-                            <>
-                                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                                </svg>
-                                คัดลอกลิงก์
-                            </>
-                        )}
-                    </button>
-
-                    <p className="text-[10px] text-gray-500 text-center mt-2">
-                        แชร์ลิงก์นี้เพื่อให้ลูกค้าสมัครผ่านคุณ
-                    </p>
-                </div>
-
                 {/* Info Section */}
                 <div className="space-y-3 mb-6">
+                    <div className="bg-yellow-500/10 rounded-xl p-3 sm:p-4 border border-yellow-500/30 flex gap-3 items-center">
+                        <div className="w-10 h-10 rounded-full bg-yellow-500/20 flex items-center justify-center shrink-0">
+                            <span className="text-lg">⏳</span>
+                        </div>
+                        <div>
+                            <p className="text-xs sm:text-sm font-semibold text-white">รอทีมงานตรวจสอบ</p>
+                            <p className="text-[10px] sm:text-xs text-gray-400">ทีมงานจะตรวจสอบข้อมูลและติดต่อกลับภายใน 1-2 วันทำการ</p>
+                        </div>
+                    </div>
+
                     <div className="bg-white/5 rounded-xl p-3 sm:p-4 border border-white/10 flex gap-3 items-center">
                         <div className="w-10 h-10 rounded-full bg-aiya-purple/20 flex items-center justify-center shrink-0">
                             <span className="text-lg">📧</span>
@@ -150,7 +121,7 @@ export default function ThankYou() {
                         </div>
                         <div>
                             <p className="text-xs sm:text-sm font-semibold text-white">ค่าคอมมิชชั่นของคุณ</p>
-                            <p className="text-[10px] sm:text-xs text-gray-400">{commission} ต่อยอดขาย ({packageLabel})</p>
+                            <p className="text-[10px] sm:text-xs text-gray-400">{commission} บาท ต่อยอดขาย ({packageLabel})</p>
                         </div>
                     </div>
                 </div>
@@ -167,8 +138,8 @@ export default function ThankYou() {
                             <p className="text-[10px] text-gray-500 uppercase tracking-widest font-bold mb-1">แพ็กเกจที่เลือก</p>
                             <h3 className="font-bold text-white leading-tight mb-1 text-sm">{packageLabel}</h3>
                             <div className="space-y-0.5 text-xs text-gray-400">
-                                <p>💵 คอมมิชชั่น: <span className="text-green-400 font-semibold">{commission}</span></p>
-                                <p>🎁 ส่วนลดลูกค้า: <span className="text-orange-400 font-semibold">1,000 บาท</span></p>
+                                <p>💵 คอมมิชชั่น: <span className="text-green-400 font-semibold">{commission} บาท</span></p>
+                                <p>🎁 ส่วนลดลูกค้า: <span className="text-orange-400 font-semibold">{customerDiscount} บาท</span></p>
                             </div>
                         </div>
                     </div>
@@ -187,7 +158,7 @@ export default function ThankYou() {
                         </li>
                         <li className="flex items-start gap-2">
                             <span className="text-aiya-purple mt-0.5">2.</span>
-                            <span>ลูกค้าใช้รหัสเพื่อรับส่วนลด 1,000 บาท</span>
+                            <span>ลูกค้าใช้รหัสเพื่อรับส่วนลดสูงสุด {customerDiscount} บาท</span>
                         </li>
                         <li className="flex items-start gap-2">
                             <span className="text-aiya-purple mt-0.5">3.</span>
