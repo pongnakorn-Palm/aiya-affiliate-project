@@ -255,6 +255,39 @@ export default function AffiliateRegisterForm() {
         <div className="min-h-screen py-6 px-4 sm:px-6 lg:py-12">
             <div className="max-w-2xl mx-auto relative z-10 w-full animate-fade-in">
 
+                {/* Hero Banner */}
+                <div className="mb-6 overflow-hidden rounded-2xl shadow-2xl">
+                    {/* Banner Image */}
+                    <img
+                        src="/webinar.png"
+                        alt="มาเป็นพันธิมิตรกับเรา"
+                        className="w-full h-auto object-cover max-h-[200px] sm:max-h-[280px] md:max-h-[320px]"
+                    />
+
+                    {/* Text Content Below Banner */}
+                    <div className="bg-gradient-to-br from-aiya-purple to-aiya-navy p-4 sm:p-6">
+                        <div className="text-center">
+                            <h2 className="text-white text-lg sm:text-xl md:text-2xl font-bold mb-3 leading-tight">
+                                มาเป็นพันธิมิตรกับเรา<br />เพื่อก้าวไปข้างหน้าด้วยกัน
+                            </h2>
+                            <div className="text-white/95 text-xs sm:text-sm space-y-1.5 text-left inline-block">
+                                <div className="flex items-start gap-2">
+                                    <span className="text-green-400">✅</span>
+                                    <span>ได้ค่าคอมมิชชั่น</span>
+                                </div>
+                                <div className="flex items-start gap-2">
+                                    <span className="text-green-400">✅</span>
+                                    <span>ได้ส่วนลดให้ผู้สมัครคอร์ส</span>
+                                </div>
+                                <div className="flex items-start gap-2">
+                                    <span className="text-green-400">✅</span>
+                                    <span>ผู้สมัครได้ความรู้ AI ช่วยธุรกิจของคุณให้สำเร็จ</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 {/* LINE Login Button (compact minimal design) */}
                 {isReady && !isLoggedIn && (
                     <button
@@ -290,39 +323,6 @@ export default function AffiliateRegisterForm() {
                         </div>
                     </div>
                 )}
-
-                {/* Hero Banner */}
-                <div className="mb-6 overflow-hidden rounded-2xl shadow-2xl">
-                    {/* Banner Image */}
-                    <img
-                        src="/webinar.png"
-                        alt="มาเป็นพันธิมิตรกับเรา"
-                        className="w-full h-auto object-cover max-h-[200px] sm:max-h-[280px] md:max-h-[320px]"
-                    />
-
-                    {/* Text Content Below Banner */}
-                    <div className="bg-gradient-to-br from-aiya-purple to-aiya-navy p-4 sm:p-6">
-                        <div className="text-center">
-                            <h2 className="text-white text-lg sm:text-xl md:text-2xl font-bold mb-3 leading-tight">
-                                มาเป็นพันธิมิตรกับเรา<br />เพื่อก้าวไปข้างหน้าด้วยกัน
-                            </h2>
-                            <div className="text-white/95 text-xs sm:text-sm space-y-1.5 text-left inline-block">
-                                <div className="flex items-start gap-2">
-                                    <span className="text-green-400">✅</span>
-                                    <span>ได้ค่าคอมมิชชั่น</span>
-                                </div>
-                                <div className="flex items-start gap-2">
-                                    <span className="text-green-400">✅</span>
-                                    <span>ได้ส่วนลดให้ผู้สมัครคอร์ส</span>
-                                </div>
-                                <div className="flex items-start gap-2">
-                                    <span className="text-green-400">✅</span>
-                                    <span>ผู้สมัครได้ความรู้ AI ช่วยธุรกิจของคุณให้สำเร็จ</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
                 {/* Form */}
                 <form ref={formRef} onSubmit={handleSubmit} className="glass-card p-5 sm:p-6 lg:p-8 space-y-5" noValidate>
