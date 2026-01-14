@@ -43,6 +43,13 @@ export default function AffiliateRegisterForm() {
     const navigate = useNavigate();
     const formRef = useRef<HTMLFormElement>(null);
 
+    // Refs for input fields
+    const nameRef = useRef<HTMLInputElement>(null);
+    const emailRef = useRef<HTMLInputElement>(null);
+    const phoneRef = useRef<HTMLInputElement>(null);
+    const affiliateCodeRef = useRef<HTMLInputElement>(null);
+    const noteRef = useRef<HTMLTextAreaElement>(null);
+
     const [formData, setFormData] = useState<FormData>({
         name: '',
         email: '',
@@ -164,6 +171,16 @@ export default function AffiliateRegisterForm() {
         }, 100);
     };
 
+    // Handle Enter key to navigate to next field
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>, nextRef?: React.RefObject<HTMLInputElement | HTMLTextAreaElement>) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            if (nextRef?.current) {
+                nextRef.current.focus();
+            }
+        }
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -227,36 +244,31 @@ export default function AffiliateRegisterForm() {
 
                 {/* Hero Banner */}
                 <div className="mb-6 overflow-hidden rounded-2xl shadow-2xl">
-                    <div className="relative">
-                        {/* Banner Image */}
-                        <img
-                            src="/webinar.png"
-                            alt="มาเป็นพันธิมิตรกับเรา"
-                            className="w-full h-auto object-cover max-h-[200px] sm:max-h-[280px] md:max-h-[320px]"
-                        />
+                    {/* Banner Image */}
+                    <img
+                        src="/webinar.png"
+                        alt="มาเป็นพันธิมิตรกับเรา"
+                        className="w-full h-auto object-cover max-h-[200px] sm:max-h-[280px] md:max-h-[320px]"
+                    />
 
-                        {/* Overlay Gradient */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
-
-                        {/* Header Overlay */}
-                        <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6">
-                            <div className="text-center">
-                                <h2 className="text-white text-lg sm:text-xl md:text-2xl font-bold mb-3 drop-shadow-lg leading-tight">
-                                    มาเป็นพันธิมิตรกับเรา<br />เพื่อก้าวไปข้างหน้าด้วยกัน
-                                </h2>
-                                <div className="text-white/95 text-xs sm:text-sm drop-shadow-md space-y-1.5 text-left inline-block">
-                                    <div className="flex items-start gap-2">
-                                        <span className="text-green-400">✅</span>
-                                        <span>ได้ค่าคอมมิชชั่น</span>
-                                    </div>
-                                    <div className="flex items-start gap-2">
-                                        <span className="text-green-400">✅</span>
-                                        <span>ได้ส่วนลดให้ผู้สมัครคอร์ส</span>
-                                    </div>
-                                    <div className="flex items-start gap-2">
-                                        <span className="text-green-400">✅</span>
-                                        <span>ผู้สมัครได้ความรู้ AI ช่วยธุรกิจของคุณให้สำเร็จ</span>
-                                    </div>
+                    {/* Text Content Below Banner */}
+                    <div className="bg-gradient-to-br from-aiya-purple to-aiya-navy p-4 sm:p-6">
+                        <div className="text-center">
+                            <h2 className="text-white text-lg sm:text-xl md:text-2xl font-bold mb-3 leading-tight">
+                                มาเป็นพันธิมิตรกับเรา<br />เพื่อก้าวไปข้างหน้าด้วยกัน
+                            </h2>
+                            <div className="text-white/95 text-xs sm:text-sm space-y-1.5 text-left inline-block">
+                                <div className="flex items-start gap-2">
+                                    <span className="text-green-400">✅</span>
+                                    <span>ได้ค่าคอมมิชชั่น</span>
+                                </div>
+                                <div className="flex items-start gap-2">
+                                    <span className="text-green-400">✅</span>
+                                    <span>ได้ส่วนลดให้ผู้สมัครคอร์ส</span>
+                                </div>
+                                <div className="flex items-start gap-2">
+                                    <span className="text-green-400">✅</span>
+                                    <span>ผู้สมัครได้ความรู้ AI ช่วยธุรกิจของคุณให้สำเร็จ</span>
                                 </div>
                             </div>
                         </div>
@@ -283,11 +295,14 @@ export default function AffiliateRegisterForm() {
                             ชื่อ-นามสกุล <span className="text-red-500">*</span>
                         </label>
                         <input
+                            ref={nameRef}
                             type="text"
                             name="name"
                             value={formData.name}
                             onChange={handleChange}
                             onBlur={() => handleBlur('name')}
+                            onKeyDown={(e) => handleKeyDown(e, emailRef)}
+                            enterKeyHint="next"
                             className={`input-modern ${showError('name') ? 'border-red-500 ring-2 ring-red-200' : ''}`}
                             placeholder="สมชาย ใจดี"
                         />
@@ -307,11 +322,14 @@ export default function AffiliateRegisterForm() {
                             Email <span className="text-red-500">*</span>
                         </label>
                         <input
+                            ref={emailRef}
                             type="email"
                             name="email"
                             value={formData.email}
                             onChange={handleChange}
                             onBlur={() => handleBlur('email')}
+                            onKeyDown={(e) => handleKeyDown(e, phoneRef)}
+                            enterKeyHint="next"
                             className={`input-modern ${showError('email') ? 'border-red-500 ring-2 ring-red-200' : ''}`}
                             placeholder="example@email.com"
                         />
@@ -331,11 +349,14 @@ export default function AffiliateRegisterForm() {
                             เบอร์โทรศัพท์ <span className="text-red-500">*</span>
                         </label>
                         <input
+                            ref={phoneRef}
                             type="tel"
                             name="phone"
                             value={formData.phone}
                             onChange={handleChange}
                             onBlur={() => handleBlur('phone')}
+                            onKeyDown={(e) => handleKeyDown(e, affiliateCodeRef)}
+                            enterKeyHint="next"
                             className={`input-modern ${showError('phone') ? 'border-red-500 ring-2 ring-red-200' : ''}`}
                             placeholder="0812345678"
                             inputMode="numeric"
@@ -356,11 +377,14 @@ export default function AffiliateRegisterForm() {
                             Affiliate Code <span className="text-red-500">*</span>
                         </label>
                         <input
+                            ref={affiliateCodeRef}
                             type="text"
                             name="affiliateCode"
                             value={formData.affiliateCode}
                             onChange={handleAffiliateCodeChange}
                             onBlur={() => handleBlur('affiliateCode')}
+                            onKeyDown={(e) => handleKeyDown(e, noteRef)}
+                            enterKeyHint="next"
                             className={`input-modern font-mono tracking-wider text-base ${showError('affiliateCode') ? 'border-red-500 ring-2 ring-red-200' : ''}`}
                             placeholder="PARTNER2025"
                         />
@@ -447,9 +471,11 @@ export default function AffiliateRegisterForm() {
                     <div>
                         <label className="label-modern">หมายเหตุ (ไม่บังคับ)</label>
                         <textarea
+                            ref={noteRef}
                             name="note"
                             value={formData.note}
                             onChange={handleChange}
+                            enterKeyHint="done"
                             className="input-modern min-h-[80px] resize-y"
                             placeholder="บันทึกเพิ่มเติม..."
                         />
