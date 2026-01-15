@@ -32,7 +32,7 @@ export interface AffiliateData {
     email: string;
     phone: string;
     affiliateCode: string;
-    selectedProduct: string;
+    selectedProduct: string | null;
     note: string | null;
 }
 
