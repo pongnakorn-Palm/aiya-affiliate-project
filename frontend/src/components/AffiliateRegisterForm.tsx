@@ -574,7 +574,13 @@ export default function AffiliateRegisterForm() {
                             onChange={(e) =>
                                 setFormData(prev => ({ ...prev, pdpaConsent: e.target.checked }))
                             }
-                            className="peer absolute opacity-0 w-0 h-0"
+                            className="
+    peer
+    absolute
+    w-6 h-6      
+    opacity-0
+    pointer-events-none
+  "
                         />
 
                         {/* Checkbox box */}
