@@ -15,6 +15,11 @@ export default function ThankYou() {
         }
     }, [hasRegistered, navigate]);
 
+    // Scroll to top on mount
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
     // Get data from previous state
     const name = location.state?.name || '';
     const affiliateCode = location.state?.affiliateCode || '';
@@ -185,7 +190,7 @@ export default function ThankYou() {
                         className="w-full py-4 sm:py-4.5 md:py-5 lg:py-6 rounded-xl bg-gradient-to-r from-[#3A23B5] to-[#5C499D] text-white font-bold text-lg sm:text-xl md:text-2xl
                         shadow-lg shadow-aiya-purple/20 hover:shadow-aiya-purple/40 hover:scale-[1.02] active:scale-95 transition-all duration-200"
                     >
-                        เริ่มต้นใช้งาน
+                        เสร็จสิ้น
                     </button>
                 </div>
 

@@ -581,9 +581,9 @@ export default function AffiliateRegisterForm() {
 
                             {/* Custom Checkbox Visual */}
                             <div className={`
-                                relative flex-shrink-0 mt-0.5 w-5 h-5 rounded border-2 transition-all duration-200 flex items-center justify-center
-                                bg-transparent border-white/30 group-hover:border-aiya-purple/80
-                                peer-checked:bg-aiya-purple peer-checked:border-aiya-purple
+                                relative flex-shrink-0 mt-0.5 w-5 h-5 rounded flex items-center justify-center border-2 transition-all duration-200
+                                bg-white/5 border-white/40 group-hover:border-aiya-purple/80
+                                peer-checked:bg-[#7C3AED] peer-checked:border-[#7C3AED]
                                 ${showError('pdpaConsent') ? 'border-red-500' : ''}
                             `}>
                                 <svg
