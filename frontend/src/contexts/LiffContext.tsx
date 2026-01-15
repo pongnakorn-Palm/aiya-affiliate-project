@@ -31,7 +31,8 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
     useEffect(() => {
         const initLiff = async () => {
             try {
-                await liff.init({ liffId: import.meta.env.VITE_LIFF_ID || '2008879589-q6KUIrLg' });
+                // ใช้ ID จาก Env หรือ fallback (ควรเปลี่ยน fallback เป็น ID จริงของคุณ)
+                await liff.init({ liffId: import.meta.env.VITE_LIFF_ID || '2008892181-oCegxPFW' });
 
                 setIsReady(true);
 
@@ -39,25 +40,26 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 const inClient = liff.isInClient();
                 setIsInClient(inClient);
 
+                // ถ้า Login สำเร็จ (ทั้งใน LINE หรือ External Browser ที่ Login แล้ว)
                 if (liff.isLoggedIn()) {
                     setIsLoggedIn(true);
-                    const userProfile = await liff.getProfile();
-                    const decodedIDToken = liff.getDecodedIDToken();
+                    try {
+                        const userProfile = await liff.getProfile();
+                        const decodedIDToken = liff.getDecodedIDToken();
 
-                    console.log('LIFF Profile:', userProfile);
-                    console.log('LIFF ID Token:', decodedIDToken);
+                        console.log('LIFF Profile:', userProfile);
 
-                    setProfile({
-                        displayName: userProfile.displayName,
-                        pictureUrl: userProfile.pictureUrl,
-                        userId: userProfile.userId,
-                        email: decodedIDToken?.email
-                    });
-                } else if (inClient) {
-                    // Auto login if in LINE client but not logged in
-                    // Request email scope during login
-                    liff.login({ redirectUri: window.location.href });
+                        setProfile({
+                            displayName: userProfile.displayName,
+                            pictureUrl: userProfile.pictureUrl,
+                            userId: userProfile.userId,
+                            email: decodedIDToken?.email
+                        });
+                    } catch (profileError) {
+                        console.error('Error getting profile:', profileError);
+                    }
                 }
+                // ❌ ลบ else if (inClient) ออก เพื่อป้องกัน Redirect Loop
             } catch (err: any) {
                 console.error('LIFF Init Failed', err);
                 setError(err.message || 'LIFF Initialization failed');
@@ -70,7 +72,7 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const login = () => {
         if (!isLoggedIn) {
-            // Request email scope during login
+            // สั่ง Login เฉพาะตอนกดปุ่มจริงๆ (สำหรับ External Browser)
             liff.login({ redirectUri: window.location.href });
         }
     };
