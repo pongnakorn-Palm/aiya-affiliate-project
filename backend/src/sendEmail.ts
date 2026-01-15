@@ -96,9 +96,9 @@ function getEmailTemplate(firstName: string, affiliateCode: string): string {
                 
                 <h3 style="color: #9A3412; font-size: 22px; font-weight: 800; margin: 0 0 20px 0;">Generative AI Bootcamp</h3>
                 
-                <!-- Course Image (Now using Webinar Banner) -->
+                <!-- Course Image -->
                 <div style="width: 100%; border-radius: 12px; overflow: hidden; margin-bottom: 24px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);">
-                  <img src="https://ai-empire-registration.vercel.app/webinar.png" alt="Master the AI Empire" style="width: 100%; height: auto; display: block;" />
+                  <img src="https://ai-empire-registration.vercel.app/aiyacourse.jpg" alt="Master the AI Empire" style="width: 100%; height: auto; display: block;" />
                 </div>
                 
                 <p style="color: #9A3412; font-size: 14px; line-height: 1.6; margin-bottom: 24px; font-weight: 500;">

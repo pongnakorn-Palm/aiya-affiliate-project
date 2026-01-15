@@ -566,63 +566,40 @@ export default function AffiliateRegisterForm() {
                         />
                     </div>
 
-                    {/* PDPA Consent Checkbox (LIFF Mobile-First) */}
-                    <label className="relative flex gap-4 p-4 rounded-xl bg-white/5 active:bg-white/10 active:scale-[0.98] cursor-pointer">
-                        <input
-                            type="checkbox"
-                            checked={formData.pdpaConsent}
-                            onChange={(e) =>
-                                setFormData(prev => ({ ...prev, pdpaConsent: e.target.checked }))
-                            }
-                            className="
-    peer
-    absolute
-    w-6 h-6      
-    opacity-0
-    pointer-events-none
-  "
-                        />
-
-                        {/* Checkbox box */}
-                        <div
-                            className="
-      w-6 h-6 flex-shrink-0 rounded-md
-      flex items-center justify-center
-      border-2 border-white/40
-      bg-white/10
-      transition-all duration-150
-
-      peer-checked:bg-[#7C3AED]
-      peer-checked:border-[#7C3AED]
-      peer-checked:shadow-[0_0_0_4px_rgba(124,58,237,0.35)]
-    "
-                        >
-                            {/* Check icon */}
-                            <svg
-                                className="
-        w-4 h-4 text-white
-        scale-0 opacity-0
-        peer-checked:scale-100
-        peer-checked:opacity-100
-        transition-all duration-150 ease-out
-      "
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="3"
-                            >
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                            </svg>
+                    {/* PDPA Consent Checkbox */}
+                    <div>
+                        <div className="flex items-center">
+                            <input
+                                id="pdpa-checkbox"
+                                type="checkbox"
+                                checked={formData.pdpaConsent}
+                                onChange={(e) => {
+                                    setFormData(prev => ({ ...prev, pdpaConsent: e.target.checked }));
+                                    if (errors.pdpaConsent) {
+                                        setErrors(prev => ({ ...prev, pdpaConsent: undefined }));
+                                    }
+                                    setSubmitError('');
+                                }}
+                                onBlur={() => handleBlur('pdpaConsent')}
+                                className={`w-4 h-4 border rounded-md bg-white/10 focus:ring-2 focus:ring-aiya-purple/50 text-aiya-purple cursor-pointer ${showError('pdpaConsent') ? 'border-red-400' : 'border-white/40'}`}
+                            />
+                            <label htmlFor="pdpa-checkbox" className="select-none ms-2 text-sm font-medium text-white/90 cursor-pointer">
+                                ข้าพเจ้ายอมรับ{' '}
+                                <a href="#" className="text-blue-400 hover:underline">เงื่อนไขการใช้งาน</a>{' '}
+                                และ{' '}
+                                <a href="#" className="text-blue-400 hover:underline">นโยบายความเป็นส่วนตัว</a>{' '}
+                                ของ AIYA <span className="text-red-400">*</span>
+                            </label>
                         </div>
-
-                        {/* Text */}
-                        <span className="text-sm text-white/90 leading-relaxed">
-                            ข้าพเจ้ายอมรับ{' '}
-                            <span className="text-blue-400 underline">เงื่อนไขการใช้งาน</span> และ{' '}
-                            <span className="text-blue-400 underline">นโยบายความเป็นส่วนตัว</span> ของ AIYA
-                            <span className="text-red-400">*</span>
-                        </span>
-                    </label>
+                        {showError('pdpaConsent') && (
+                            <p className="error-message text-red-300 text-xs mt-1.5 ml-1 flex items-center gap-1 animate-fade-in">
+                                <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                </svg>
+                                {errors.pdpaConsent}
+                            </p>
+                        )}
+                    </div>
 
 
 
