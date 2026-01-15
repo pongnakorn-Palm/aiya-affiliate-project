@@ -81,7 +81,6 @@ const affiliateSchema = t.Object({
         maxLength: 50,
         pattern: "^[A-Z0-9]+$"  // Only uppercase A-Z and 0-9
     }),
-    note: t.Optional(t.String({ maxLength: 2000 })),
 });
 
 export const app = new Elysia()
@@ -143,7 +142,6 @@ export const app = new Elysia()
                 email: string;
                 phone: string;
                 affiliateCode: string;
-                note?: string;
             };
 
             try {
@@ -153,7 +151,6 @@ export const app = new Elysia()
                     email: data.email,
                     phone: data.phone,
                     affiliateCode: data.affiliateCode,
-                    note: data.note || null,
                 });
 
                 console.log(`Affiliate registered: ID ${affiliate.id}, Code ${data.affiliateCode}`);

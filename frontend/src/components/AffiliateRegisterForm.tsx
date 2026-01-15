@@ -7,7 +7,6 @@ interface FormData {
     email: string;
     phone: string;
     affiliateCode: string;
-    note: string;
     pdpaConsent: boolean;
 }
 
@@ -30,14 +29,12 @@ export default function AffiliateRegisterForm() {
     const emailRef = useRef<HTMLInputElement>(null);
     const phoneRef = useRef<HTMLInputElement>(null);
     const affiliateCodeRef = useRef<HTMLInputElement>(null);
-    const noteRef = useRef<HTMLTextAreaElement>(null);
 
     const [formData, setFormData] = useState<FormData>({
         name: '',
         email: '',
         phone: '',
         affiliateCode: '',
-        note: '',
         pdpaConsent: false
     });
 
@@ -134,10 +131,10 @@ export default function AffiliateRegisterForm() {
         return isValid;
     };
 
-    const checkCodeAvailability = async (code: string) => {
+    const checkCodeAvailability = async (code: string): Promise<boolean> => {
         if (!code || code.length < 3) {
             setCodeAvailability(null);
-            return;
+            return false;
         }
 
         try {
@@ -145,10 +142,13 @@ export default function AffiliateRegisterForm() {
             const response = await fetch(`${apiUrl}/api/check-affiliate?affiliateCode=${code}`);
             const data = await response.json();
 
-            setCodeAvailability(data.exists ? 'taken' : 'available');
+            const isTaken = data.exists;
+            setCodeAvailability(isTaken ? 'taken' : 'available');
+            return isTaken;
         } catch (error) {
             console.error('Error checking code availability:', error);
             setCodeAvailability(null);
+            return false;
         }
     };
 
@@ -215,6 +215,21 @@ export default function AffiliateRegisterForm() {
         if (!validateForm()) {
             scrollToError();
             return;
+        }
+
+        // Verify code availability one final time before submission
+        if (formData.affiliateCode) {
+            const isTaken = await checkCodeAvailability(formData.affiliateCode);
+
+            if (isTaken) {
+                setErrors(prev => ({
+                    ...prev,
+                    affiliateCode: 'รหัสนี้ถูกใช้งานแล้ว กรุณาเลือกรหัสอื่น'
+                }));
+                setTouched(prev => new Set(prev).add('affiliateCode'));
+                scrollToError();
+                return;
+            }
         }
 
         setIsLoading(true);
@@ -565,8 +580,7 @@ export default function AffiliateRegisterForm() {
                                     value={formData.affiliateCode}
                                     onChange={handleAffiliateCodeChange}
                                     onBlur={handleAffiliateCodeBlur}
-                                    onKeyDown={(e) => handleKeyDown(e, noteRef)}
-                                    enterKeyHint="next"
+                                    enterKeyHint="done"
                                     className={`input-modern font-mono tracking-wider text-base pr-10 ${showError('affiliateCode') ? 'ring-2 ring-red-400/50' :
                                         codeAvailability === 'available' ? 'ring-2 ring-green-400/50' :
                                             codeAvailability === 'taken' ? 'ring-2 ring-red-400/50' : ''
@@ -626,20 +640,6 @@ export default function AffiliateRegisterForm() {
                                 </p>
                             )}
                         </div>
-                    </div>
-
-                    {/* หมายเหตุ (ไม่บังคับ) */}
-                    <div>
-                        <label className="label-modern text-sm md:text-base">หมายเหตุ (ไม่บังคับ)</label>
-                        <textarea
-                            ref={noteRef}
-                            name="note"
-                            value={formData.note}
-                            onChange={handleChange}
-                            enterKeyHint="done"
-                            className="input-modern min-h-[80px] md:min-h-[100px] resize-y text-sm md:text-base"
-                            placeholder="บันทึกเพิ่มเติม..."
-                        />
                     </div>
 
                     {/* PDPA Consent Checkbox - AIYA Dark Theme */}

@@ -34,7 +34,6 @@ export async function setupDatabase() {
         email VARCHAR(255) NOT NULL UNIQUE,
         phone VARCHAR(20) NOT NULL,
         affiliate_code VARCHAR(50) NOT NULL UNIQUE,
-        note TEXT,
         created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
       )
     `;

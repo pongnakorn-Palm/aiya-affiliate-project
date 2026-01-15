@@ -32,7 +32,6 @@ export interface AffiliateData {
     email: string;
     phone: string;
     affiliateCode: string;
-    note: string | null;
 }
 
 // Insert affiliate into database
@@ -42,14 +41,12 @@ export async function insertAffiliate(data: AffiliateData) {
       name,
       email,
       phone,
-      affiliate_code,
-      note
+      affiliate_code
     ) VALUES (
       ${data.name},
       ${data.email},
       ${data.phone},
-      ${data.affiliateCode},
-      ${data.note}
+      ${data.affiliateCode}
     )
     RETURNING id, created_at
   `;
