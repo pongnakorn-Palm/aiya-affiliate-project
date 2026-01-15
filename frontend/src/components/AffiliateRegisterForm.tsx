@@ -46,13 +46,13 @@ export default function AffiliateRegisterForm() {
     const [isLoading, setIsLoading] = useState(false);
     const [submitError, setSubmitError] = useState('');
 
-    // Auto-fill form data from LINE profile
+    // Auto-fill form data from LINE profile (only if fields are empty)
     useEffect(() => {
         if (isLoggedIn && profile) {
             setFormData(prev => ({
                 ...prev,
-                name: profile.displayName || prev.name,
-                email: profile.email || prev.email
+                name: prev.name || profile.displayName || '',
+                email: prev.email || profile.email || ''
             }));
         }
     }, [isLoggedIn, profile]);
@@ -254,6 +254,18 @@ export default function AffiliateRegisterForm() {
     const showError = (fieldName: string) => {
         return touched.has(fieldName) && errors[fieldName as keyof FormErrors];
     };
+
+    // Show loading spinner while LIFF is initializing
+    if (!isReady) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#020c17] via-[#0a1628] to-[#020c17]">
+                <div className="text-center">
+                    <div className="inline-block animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-aiya-purple mb-4"></div>
+                    <p className="text-white/70 text-sm">กำลังโหลด...</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen px-4 py-6">

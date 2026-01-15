@@ -1,8 +1,7 @@
 import { Elysia, t } from "elysia";
 import { cors } from "@elysiajs/cors";
-import { sql, insertAffiliate, checkConnection, checkAffiliate, createOrder } from "./db.js";
+import { sql, insertAffiliate, checkConnection, checkAffiliate } from "./db.js";
 import { sendConfirmationEmail } from "./sendEmail.js";
-import { sendLineNotify } from "./lineNotify.js";
 import {
     registerAffiliate,
     checkMainSystemConnection,
@@ -176,20 +175,6 @@ export const app = new Elysia()
                     console.log(`Confirmation email sent: ${emailResult.messageId}`);
                 }
 
-                // ========================================
-                // SEND LINE NOTIFY (FIRE-AND-FORGET)
-                // ========================================
-                sendLineNotify({
-                    affiliateName: data.name,
-                    email: data.email,
-                    phone: data.phone,
-                    affiliateCode: data.affiliateCode,
-                    selectedProduct: "ใช้ได้ทั้ง 2 แพ็กเกจ (Single & Duo)",
-                    commission: "3,000 บาท (Single) / 7,000 บาท (Duo)",
-                }).catch((error) => {
-                    console.error("LINE Notify failed (non-blocking):", error);
-                });
-
                 return {
                     success: true,
                     message: "ลงทะเบียนสำเร็จ",
@@ -269,67 +254,6 @@ export const app = new Elysia()
             : await checkAffiliate(undefined, affiliateCode);
 
         return { exists };
-    })
-    // Order endpoint
-    .post("/api/orders", async ({ body, set }) => {
-        const data = body as {
-            firstName: string;
-            lastName: string;
-            email: string;
-            phone: string;
-            amount: number;
-            packageType: string;
-            referralCode?: string;
-        };
-
-        try {
-            const order = await createOrder({
-                firstName: data.firstName,
-                lastName: data.lastName,
-                email: data.email,
-                phone: data.phone,
-                amount: data.amount,
-                packageType: data.packageType || 'SINGLE',
-                referralCode: data.referralCode,
-            });
-
-            // --- INTEGRATION POINT: Sync Order to Company API ---
-            // Fire-and-forget: Do not await this if you don't want to block the user
-            (async () => {
-                try {
-                    // TODO: Replace with your actual Company API URL
-                    // const response = await fetch('https://api.yourcompany.com/v1/orders/sync', {
-                    //     method: 'POST',
-                    //     headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer YOUR_TOKEN' },
-                    //     body: JSON.stringify({
-                    //         external_id: order.id,
-                    //         customer: {
-                    //             first_name: data.firstName,
-                    //             last_name: data.lastName,
-                    //             email: data.email,
-                    //             phone: data.phone
-                    //         },
-                    //         items: [{
-                    //             sku: data.packageType,
-                    //             price: data.amount,
-                    //             quantity: 1
-                    //         }],
-                    //         referral_code: data.referralCode
-                    //     })
-                    // });
-                    // if (!response.ok) console.error('Failed to sync order to company API');
-                    console.log('Syncing order to company API... (Mock)');
-                } catch (err) {
-                    console.error('Error syncing order:', err);
-                }
-            })();
-
-            return { success: true, orderId: order.id };
-        } catch (error) {
-            console.error(error);
-            set.status = 500;
-            return { success: false, message: "Order failed" };
-        }
     })
     // Register Affiliate to Main System endpoint
     .post(
