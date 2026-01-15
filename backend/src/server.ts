@@ -3,6 +3,12 @@ import { cors } from "@elysiajs/cors";
 import { sql, insertAffiliate, checkConnection, checkAffiliate, createOrder } from "./db.js";
 import { sendConfirmationEmail } from "./sendEmail.js";
 import { sendLineNotify } from "./lineNotify.js";
+import {
+    registerAffiliate,
+    checkMainSystemConnection,
+    checkAffiliateCodeExists,
+    checkAffiliateEmailExists
+} from "./mainSystemDb.js";
 
 // ========================================
 // RATE LIMITING CONFIGURATION
@@ -102,10 +108,12 @@ export const app = new Elysia()
     // Health check endpoint
     .get("/health", async () => {
         const dbConnected = await checkConnection();
+        const mainSystemDbConnected = await checkMainSystemConnection();
         return {
             status: "ok",
             timestamp: new Date().toISOString(),
             database: dbConnected ? "connected" : "disconnected",
+            mainSystemDatabase: mainSystemDbConnected ? "connected" : "disconnected",
         };
     })
     // Affiliate registration endpoint
@@ -322,7 +330,162 @@ export const app = new Elysia()
             set.status = 500;
             return { success: false, message: "Order failed" };
         }
-    });
+    })
+    // Register Affiliate to Main System endpoint
+    .post(
+        "/api/register-affiliate-main",
+        async ({ body, set }) => {
+            const data = body as {
+                name: string;
+                email: string;
+                tel: string;
+                generatedCode: string;
+            };
+
+            // ========================================
+            // VALIDATION
+            // ========================================
+            if (!data.name || data.name.trim().length === 0) {
+                set.status = 400;
+                return {
+                    success: false,
+                    message: "กรุณากรอกชื่อ-นามสกุล",
+                    field: "name",
+                };
+            }
+
+            if (!data.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+                set.status = 400;
+                return {
+                    success: false,
+                    message: "กรุณากรอก Email ที่ถูกต้อง",
+                    field: "email",
+                };
+            }
+
+            if (!data.tel || data.tel.length < 9) {
+                set.status = 400;
+                return {
+                    success: false,
+                    message: "กรุณากรอกเบอร์โทรศัพท์ที่ถูกต้อง",
+                    field: "tel",
+                };
+            }
+
+            if (!data.generatedCode || !/^[A-Z0-9]+$/.test(data.generatedCode)) {
+                set.status = 400;
+                return {
+                    success: false,
+                    message: "รหัส Affiliate ไม่ถูกต้อง (ใช้ได้เฉพาะ A-Z และ 0-9)",
+                    field: "generatedCode",
+                };
+            }
+
+            try {
+                // ========================================
+                // CHECK FOR DUPLICATES
+                // ========================================
+                const [codeExists, emailExists] = await Promise.all([
+                    checkAffiliateCodeExists(data.generatedCode),
+                    checkAffiliateEmailExists(data.email),
+                ]);
+
+                if (codeExists) {
+                    set.status = 409;
+                    return {
+                        success: false,
+                        message: "รหัส Affiliate นี้ถูกใช้งานแล้ว",
+                        field: "generatedCode",
+                        errorType: "duplicate",
+                    };
+                }
+
+                if (emailExists) {
+                    set.status = 409;
+                    return {
+                        success: false,
+                        message: "Email นี้ถูกลงทะเบียนแล้ว",
+                        field: "email",
+                        errorType: "duplicate",
+                    };
+                }
+
+                // ========================================
+                // REGISTER AFFILIATE
+                // ========================================
+                const result = await registerAffiliate({
+                    name: data.name,
+                    email: data.email,
+                    tel: data.tel,
+                    generatedCode: data.generatedCode,
+                });
+
+                console.log(
+                    `✅ Affiliate registered to main system: ID ${result.id}, Code ${result.code}`
+                );
+
+                return {
+                    success: true,
+                    message: "ลงทะเบียนสำเร็จ",
+                    data: {
+                        id: result.id,
+                        code: result.code,
+                    },
+                };
+            } catch (error: any) {
+                console.error("❌ Affiliate registration error:", error);
+
+                // Handle specific errors
+                if (error.message === "DUPLICATE_CODE") {
+                    set.status = 409;
+                    return {
+                        success: false,
+                        message: "รหัส Affiliate นี้ถูกใช้งานแล้ว",
+                        field: "generatedCode",
+                        errorType: "duplicate",
+                    };
+                }
+
+                if (error.message === "DUPLICATE_ENTRY") {
+                    set.status = 409;
+                    return {
+                        success: false,
+                        message: "ข้อมูลนี้ถูกลงทะเบียนแล้ว",
+                        errorType: "duplicate",
+                    };
+                }
+
+                // Generic error
+                set.status = 500;
+                return {
+                    success: false,
+                    message: "การลงทะเบียนล้มเหลว กรุณาลองใหม่อีกครั้ง",
+                };
+            }
+        },
+        {
+            body: t.Object({
+                name: t.String({ minLength: 1, maxLength: 255 }),
+                email: t.String({ format: "email" }),
+                tel: t.String({ minLength: 9, maxLength: 20 }),
+                generatedCode: t.String({
+                    minLength: 1,
+                    maxLength: 50,
+                    pattern: "^[A-Z0-9]+$",
+                }),
+            }),
+            error({ code, error, set }) {
+                if (code === "VALIDATION") {
+                    set.status = 400;
+                    return {
+                        success: false,
+                        message: "ข้อมูลไม่ถูกต้อง กรุณาตรวจสอบและลองใหม่",
+                        errors: error.all,
+                    };
+                }
+            },
+        }
+    );
 
 // Only listen when running directly (not via export)
 // @ts-ignore
