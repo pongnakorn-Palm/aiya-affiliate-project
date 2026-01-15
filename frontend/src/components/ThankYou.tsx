@@ -123,8 +123,10 @@ export default function ThankYou() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
                         {/* Single Package */}
                         <div className="bg-white/5 rounded-xl p-4 md:p-6 border border-white/10">
-                            <div className="flex items-center gap-2 mb-2">
-                                <span className="text-xl md:text-2xl">👤</span>
+                            <div className="flex items-center gap-3 mb-2">
+                                <svg className="w-6 h-6 text-aiya-purple" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                </svg>
                                 <h3 className="font-bold text-white text-sm sm:text-base md:text-lg">Single Package</h3>
                             </div>
                             <p className="text-white/60 text-xs sm:text-sm md:text-base mb-3">1 ที่นั่ง</p>
@@ -142,8 +144,10 @@ export default function ThankYou() {
 
                         {/* Duo Package */}
                         <div className="bg-white/5 rounded-xl p-4 md:p-6 border border-white/10">
-                            <div className="flex items-center gap-2 mb-2">
-                                <span className="text-xl md:text-2xl">👥</span>
+                            <div className="flex items-center gap-3 mb-2">
+                                <svg className="w-6 h-6 text-aiya-purple" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                                </svg>
                                 <h3 className="font-bold text-white text-sm sm:text-base md:text-lg">Duo Package</h3>
                             </div>
                             <p className="text-white/60 text-xs sm:text-sm md:text-base mb-3">2 ที่นั่ง</p>
