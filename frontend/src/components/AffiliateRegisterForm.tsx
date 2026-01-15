@@ -566,9 +566,19 @@ export default function AffiliateRegisterForm() {
                         />
                     </div>
 
-                    {/* PDPA Consent Checkbox */}
+                    {/* PDPA Consent Checkbox (LIFF Mobile-First) */}
                     <div className="mt-4">
-                        <label className="flex items-start gap-3 cursor-pointer group relative">
+                        <label
+                            className={`
+      relative flex gap-4 p-4 rounded-xl
+      cursor-pointer select-none
+      transition-all duration-150
+      bg-white/5
+      active:scale-[0.98]
+      active:bg-white/10
+      ${showError('pdpaConsent') ? 'ring-1 ring-red-400/60' : ''}
+    `}
+                        >
                             <input
                                 type="checkbox"
                                 name="pdpaConsent"
@@ -583,15 +593,34 @@ export default function AffiliateRegisterForm() {
                                 className="peer sr-only"
                             />
 
-                            {/* Custom Checkbox Visual */}
-                            <div className={`
-                                relative flex-shrink-0 mt-0.5 w-5 h-5 rounded flex items-center justify-center border-2 transition-all duration-200
-                                bg-white/5 border-white/40 group-hover:border-aiya-purple/80
-                                peer-checked:bg-[#7C3AED] peer-checked:border-[#7C3AED]
-                                ${showError('pdpaConsent') ? 'border-red-500' : ''}
-                            `}>
+                            {/* Checkbox */}
+                            <div
+                                className={`
+        mt-1 w-6 h-6 flex-shrink-0 rounded-md
+        flex items-center justify-center
+        border-2 transition-all duration-150
+
+        bg-white/10 border-white/40
+        peer-checked:bg-[#7C3AED]
+        peer-checked:border-[#7C3AED]
+
+        shadow-sm
+        peer-checked:shadow-[0_0_0_4px_rgba(124,58,237,0.3)]
+
+        peer-focus-visible:ring-2
+        peer-focus-visible:ring-[#7C3AED]/70
+        peer-focus-visible:ring-offset-2
+        peer-focus-visible:ring-offset-[#0F1020]
+      `}
+                            >
                                 <svg
-                                    className="w-3.5 h-3.5 text-white opacity-0 peer-checked:opacity-100 transition-opacity duration-200"
+                                    className="
+          w-4 h-4 text-white
+          opacity-0 scale-50
+          peer-checked:opacity-100
+          peer-checked:scale-100
+          transition-all duration-150
+        "
                                     fill="none"
                                     viewBox="0 0 24 24"
                                     stroke="currentColor"
@@ -601,41 +630,40 @@ export default function AffiliateRegisterForm() {
                                 </svg>
                             </div>
 
-                            <span className="text-sm text-white/80 leading-relaxed select-none">
+                            {/* Text */}
+                            <span className="text-sm text-white/90 leading-relaxed">
                                 ข้าพเจ้ายอมรับ{' '}
                                 <a
                                     href="https://web.aiya.ai/privacy-policy"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="text-blue-400 hover:text-blue-300 underline font-medium transition-colors"
+                                    className="text-blue-400 underline font-medium"
                                     onClick={(e) => e.stopPropagation()}
                                 >
                                     เงื่อนไขการใช้งาน
-                                </a>
-                                {' '}และ{' '}
+                                </a>{' '}
+                                และ{' '}
                                 <a
                                     href="https://web.aiya.ai/privacy-policy"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="text-blue-400 hover:text-blue-300 underline font-medium transition-colors"
+                                    className="text-blue-400 underline font-medium"
                                     onClick={(e) => e.stopPropagation()}
                                 >
                                     นโยบายความเป็นส่วนตัว
-                                </a>
-                                {' '}ของ AIYA <span className="text-red-400">*</span>
+                                </a>{' '}
+                                ของ AIYA <span className="text-red-400">*</span>
                             </span>
                         </label>
 
-                        {/* Error Message */}
+                        {/* Error */}
                         {showError('pdpaConsent') && (
-                            <p className="error-message text-red-300 text-xs mt-2 ml-1 flex items-center gap-1 animate-fade-in">
-                                <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                                </svg>
+                            <p className="text-red-300 text-xs mt-2 ml-2 animate-fade-in">
                                 {errors.pdpaConsent}
                             </p>
                         )}
                     </div>
+
 
                     {/* Submit Button */}
                     <button
