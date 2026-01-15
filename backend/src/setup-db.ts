@@ -31,7 +31,7 @@ async function setup() {
         email VARCHAR(255) NOT NULL UNIQUE,
         phone VARCHAR(20) NOT NULL,
         affiliate_code VARCHAR(50) NOT NULL UNIQUE,
-        selected_product VARCHAR(50) NOT NULL,
+        selected_product VARCHAR(50),
         note TEXT,
         created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
       )
