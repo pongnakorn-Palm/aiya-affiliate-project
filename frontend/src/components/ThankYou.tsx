@@ -37,99 +37,89 @@ export default function ThankYou() {
             <div className="relative z-10 w-full max-w-md bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl animate-scale-in">
 
                 {/* Success Icon */}
-                <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-5 relative">
+                <div className="w-24 h-24 sm:w-28 sm:h-28 mx-auto mb-6 relative">
                     <div className="absolute inset-0 bg-green-500/20 rounded-full blur-xl animate-pulse"></div>
                     <div className="relative w-full h-full bg-gradient-to-tr from-green-400 to-emerald-600 rounded-full flex items-center justify-center shadow-lg shadow-green-500/30">
-                        <svg className="w-8 h-8 sm:w-10 sm:h-10 text-white drop-shadow-md" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg className="w-12 h-12 sm:w-14 sm:h-14 text-white drop-shadow-md" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                         </svg>
                     </div>
                 </div>
 
                 {/* Text Content */}
-                <div className="text-center space-y-2 mb-6">
-                    <h2 className="text-2xl sm:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-white to-gray-300">
+                <div className="text-center space-y-2.5 mb-6">
+                    <h2 className="text-3xl sm:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-white to-gray-300">
                         ลงทะเบียนสำเร็จ! 🎉
                     </h2>
-                    <p className="text-gray-400 text-sm">
+                    <p className="text-gray-400 text-base sm:text-lg">
                         ขอบคุณครับ คุณ <span className="text-white font-semibold">{name}</span>
                     </p>
-                    <p className="text-gray-500 text-xs sm:text-sm">
+                    <p className="text-gray-500 text-sm sm:text-base">
                         คุณได้เป็นพันธมิตรของ AIYA แล้ว
                     </p>
                 </div>
 
                 {/* Affiliate Code Display */}
-                <div className="bg-gradient-to-r from-aiya-purple/20 to-aiya-navy/20 rounded-2xl p-4 sm:p-5 mb-5 border border-aiya-purple/30 relative overflow-hidden">
+                <div className="bg-gradient-to-r from-aiya-purple/20 to-aiya-navy/20 rounded-2xl p-5 sm:p-6 mb-6 border border-aiya-purple/30 relative overflow-hidden">
                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-aiya-purple to-aiya-navy"></div>
 
                     <div className="text-center">
-                        <p className="text-[10px] sm:text-xs text-gray-400 uppercase tracking-widest font-bold mb-2">รหัสพันธมิตรของคุณ</p>
-                        <p className="text-xl sm:text-2xl font-bold text-white font-mono tracking-wider mb-1 break-all">{affiliateCode}</p>
-                        <p className="text-xs text-gray-400">แชร์รหัสนี้เพื่อรับค่าคอมมิชชั่น</p>
+                        <p className="text-xs sm:text-sm text-gray-400 uppercase tracking-widest font-bold mb-3">รหัสพันธมิตรของคุณ</p>
+                        <p className="text-2xl sm:text-3xl font-bold text-white font-mono tracking-wider mb-2 break-all">{affiliateCode}</p>
+                        <p className="text-sm sm:text-base text-gray-400">แชร์รหัสนี้เพื่อรับค่าคอมมิชชั่น</p>
                     </div>
                 </div>
 
                 {/* Info Section */}
                 <div className="space-y-3 mb-6">
-                    <div className="bg-yellow-500/10 rounded-xl p-3 sm:p-4 border border-yellow-500/30 flex gap-3 items-center">
-                        <div className="w-10 h-10 rounded-full bg-yellow-500/20 flex items-center justify-center shrink-0">
-                            <span className="text-lg">⏳</span>
+                    <div className="bg-white/5 rounded-xl p-4 sm:p-5 border border-white/10 flex gap-3 items-center">
+                        <div className="w-12 h-12 rounded-full bg-aiya-purple/20 flex items-center justify-center shrink-0">
+                            <span className="text-2xl">📧</span>
                         </div>
                         <div>
-                            <p className="text-xs sm:text-sm font-semibold text-white">รอทีมงานตรวจสอบ</p>
-                            <p className="text-[10px] sm:text-xs text-gray-400">ทีมงานจะตรวจสอบข้อมูลและติดต่อกลับภายใน 1-2 วันทำการ</p>
+                            <p className="text-sm sm:text-base font-semibold text-white mb-0.5">ตรวจสอบอีเมลของคุณ</p>
+                            <p className="text-xs sm:text-sm text-gray-400">เราได้ส่งรหัสพันธมิตรและรายละเอียดไปที่อีเมลแล้ว</p>
                         </div>
                     </div>
 
-                    <div className="bg-white/5 rounded-xl p-3 sm:p-4 border border-white/10 flex gap-3 items-center">
-                        <div className="w-10 h-10 rounded-full bg-aiya-purple/20 flex items-center justify-center shrink-0">
-                            <span className="text-lg">📧</span>
+                    <div className="bg-white/5 rounded-xl p-4 sm:p-5 border border-white/10 flex gap-3 items-center">
+                        <div className="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center shrink-0">
+                            <span className="text-2xl">💰</span>
                         </div>
                         <div>
-                            <p className="text-xs sm:text-sm font-semibold text-white">ตรวจสอบอีเมลของคุณ</p>
-                            <p className="text-[10px] sm:text-xs text-gray-400">เราได้ส่งรหัสพันธมิตรและรายละเอียดไปที่อีเมลแล้ว</p>
-                        </div>
-                    </div>
-
-                    <div className="bg-white/5 rounded-xl p-3 sm:p-4 border border-white/10 flex gap-3 items-center">
-                        <div className="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center shrink-0">
-                            <span className="text-lg">💰</span>
-                        </div>
-                        <div>
-                            <p className="text-xs sm:text-sm font-semibold text-white">ค่าคอมมิชชั่นของคุณ</p>
-                            <p className="text-[10px] sm:text-xs text-gray-400">รหัสของคุณใช้ได้ทั้ง 2 แพ็กเกจ</p>
+                            <p className="text-sm sm:text-base font-semibold text-white mb-0.5">ค่าคอมมิชชั่นของคุณ</p>
+                            <p className="text-xs sm:text-sm text-gray-400">รหัสของคุณใช้ได้ทั้ง 2 แพ็กเกจ</p>
                         </div>
                     </div>
                 </div>
 
                 {/* Package Info Card - Both Packages */}
-                <div className="bg-black/20 rounded-2xl p-4 mb-6 border border-white/5 relative overflow-hidden">
+                <div className="bg-black/20 rounded-2xl p-5 sm:p-6 mb-6 border border-white/5 relative overflow-hidden">
                     <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-aiya-purple to-aiya-navy"></div>
 
-                    <div className="mb-3">
-                        <div className="flex items-center gap-2 mb-2">
-                            <div className="w-8 h-8 rounded-xl bg-white/5 flex items-center justify-center shrink-0 border border-white/5">
-                                <span className="text-lg">🎁</span>
+                    <div className="mb-4">
+                        <div className="flex items-center gap-2.5 mb-3">
+                            <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center shrink-0 border border-white/5">
+                                <span className="text-xl">🎁</span>
                             </div>
-                            <p className="text-xs text-gray-500 uppercase tracking-widest font-bold">รหัสของคุณใช้ได้ทั้ง 2 แพ็กเกจ</p>
+                            <p className="text-sm sm:text-base text-gray-400 uppercase tracking-wide font-bold">รหัสของคุณใช้ได้ทั้ง 2 แพ็กเกจ</p>
                         </div>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         {/* Single Package */}
-                        <div className="bg-white/5 rounded-xl p-3 border border-white/10">
+                        <div className="bg-white/5 rounded-xl p-4 border border-white/10">
                             <div className="flex items-center gap-2 mb-2">
-                                <span className="text-base">👤</span>
-                                <h3 className="font-bold text-white text-xs">Single Package</h3>
+                                <span className="text-xl">👤</span>
+                                <h3 className="font-bold text-white text-sm sm:text-base">Single Package</h3>
                             </div>
-                            <p className="text-white/60 text-[10px] mb-2">1 ที่นั่ง</p>
-                            <div className="space-y-1">
-                                <div className="flex justify-between items-center text-[10px]">
+                            <p className="text-white/60 text-xs sm:text-sm mb-3">1 ที่นั่ง</p>
+                            <div className="space-y-2">
+                                <div className="flex justify-between items-center text-xs sm:text-sm">
                                     <span className="text-white/70">คอมมิชชั่น</span>
                                     <span className="font-bold text-green-400">3,000 บาท</span>
                                 </div>
-                                <div className="flex justify-between items-center text-[10px]">
+                                <div className="flex justify-between items-center text-xs sm:text-sm">
                                     <span className="text-white/70">ส่วนลดลูกค้า</span>
                                     <span className="font-semibold text-orange-400">-1,000 บาท</span>
                                 </div>
@@ -137,20 +127,20 @@ export default function ThankYou() {
                         </div>
 
                         {/* Duo Package */}
-                        <div className="bg-white/5 rounded-xl p-3 border border-white/10">
+                        <div className="bg-white/5 rounded-xl p-4 border border-white/10">
                             <div className="flex items-center gap-2 mb-2">
-                                <span className="text-base">👥</span>
-                                <h3 className="font-bold text-white text-xs">Duo Package</h3>
+                                <span className="text-xl">👥</span>
+                                <h3 className="font-bold text-white text-sm sm:text-base">Duo Package</h3>
                             </div>
-                            <p className="text-white/60 text-[10px] mb-2">2 ที่นั่ง</p>
-                            <div className="space-y-1">
-                                <div className="flex justify-between items-center text-[10px]">
+                            <p className="text-white/60 text-xs sm:text-sm mb-3">2 ที่นั่ง</p>
+                            <div className="space-y-2">
+                                <div className="flex justify-between items-center text-xs sm:text-sm">
                                     <span className="text-white/70">คอมมิชชั่น</span>
                                     <span className="font-bold text-green-400">7,000 บาท</span>
                                 </div>
-                                <div className="flex justify-between items-center text-[10px]">
+                                <div className="flex justify-between items-center text-xs sm:text-sm">
                                     <span className="text-white/70">ส่วนลดลูกค้า</span>
-                                    <span className="font-semibold text-orange-400">-1,000 บาท</span>
+                                    <span className="font-semibold text-orange-400">-2,000 บาท</span>
                                 </div>
                             </div>
                         </div>
@@ -158,22 +148,22 @@ export default function ThankYou() {
                 </div>
 
                 {/* Next Steps */}
-                <div className="bg-white/5 rounded-xl p-4 border border-white/10 mb-6">
-                    <h3 className="text-sm font-bold text-white mb-3 flex items-center gap-2">
-                        <span>🚀</span>
+                <div className="bg-white/5 rounded-xl p-5 sm:p-6 border border-white/10 mb-6">
+                    <h3 className="text-base sm:text-lg font-bold text-white mb-4 flex items-center gap-2.5">
+                        <span className="text-xl">🚀</span>
                         <span>ขั้นตอนต่อไป</span>
                     </h3>
-                    <ul className="space-y-2 text-xs text-gray-300">
-                        <li className="flex items-start gap-2">
-                            <span className="text-aiya-purple mt-0.5">1.</span>
+                    <ul className="space-y-3 text-sm sm:text-base text-gray-300">
+                        <li className="flex items-start gap-3">
+                            <span className="text-aiya-purple font-bold mt-0.5 text-base">1.</span>
                             <span>แชร์รหัสพันธมิตรให้กับลูกค้าของคุณ</span>
                         </li>
-                        <li className="flex items-start gap-2">
-                            <span className="text-aiya-purple mt-0.5">2.</span>
-                            <span>ลูกค้าใช้รหัสเพื่อรับส่วนลด 1,000 บาท (ทั้ง 2 แพ็กเกจ)</span>
+                        <li className="flex items-start gap-3">
+                            <span className="text-aiya-purple font-bold mt-0.5 text-base">2.</span>
+                            <span>ลูกค้าใช้รหัสเพื่อรับส่วนลด 1,000 บาท (Single) หรือ 2,000 บาท (Duo)</span>
                         </li>
-                        <li className="flex items-start gap-2">
-                            <span className="text-aiya-purple mt-0.5">3.</span>
+                        <li className="flex items-start gap-3">
+                            <span className="text-aiya-purple font-bold mt-0.5 text-base">3.</span>
                             <span>คุณจะได้รับค่าคอมมิชชั่นทันทีเมื่อยอดขายสำเร็จ</span>
                         </li>
                     </ul>
@@ -183,14 +173,14 @@ export default function ThankYou() {
                 <div className="space-y-3">
                     <button
                         onClick={handleClose}
-                        className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#3A23B5] to-[#5C499D] text-white font-bold text-base sm:text-lg
+                        className="w-full py-4 sm:py-4.5 rounded-xl bg-gradient-to-r from-[#3A23B5] to-[#5C499D] text-white font-bold text-lg sm:text-xl
                         shadow-lg shadow-aiya-purple/20 hover:shadow-aiya-purple/40 hover:scale-[1.02] active:scale-95 transition-all duration-200"
                     >
                         เริ่มต้นใช้งาน
                     </button>
                 </div>
 
-                <p className="text-center text-gray-600 text-[10px] mt-6">
+                <p className="text-center text-gray-600 text-xs sm:text-sm mt-6">
                     *หากไม่ได้รับอีเมล กรุณาตรวจสอบโฟลเดอร์ Spam/Junk
                 </p>
 
