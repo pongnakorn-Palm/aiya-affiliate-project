@@ -114,13 +114,12 @@ export default function ThankYou() {
                 )}
 
                 {/* HERO: Affiliate Code Display */}
-                <div className="bg-gradient-to-r from-aiya-purple/20 to-aiya-navy/20 rounded-2xl p-5 mb-5 border border-aiya-purple/30 relative overflow-hidden">
-                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-aiya-purple to-aiya-navy"></div>
+                <div className="w-full rounded-2xl bg-white/5 border border-white/10 p-6 relative overflow-hidden backdrop-blur-sm mb-5">
 
                     {/* Copy Button - Top Right Corner */}
                     <button
                         onClick={handleCopyCode}
-                        className="absolute top-3 right-3 p-2 h-8 w-8 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/30 transition-all duration-200 active:scale-95 group flex items-center justify-center"
+                        className="absolute top-4 right-4 p-2 h-8 w-8 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/30 transition-all duration-200 active:scale-95 group flex items-center justify-center"
                         title="Copy code"
                     >
                         {copied ? (
@@ -135,14 +134,14 @@ export default function ThankYou() {
                     </button>
                     {/* Copied Notification */}
                     {copied && (
-                        <span className="absolute top-12 right-3 bg-green-500 text-white text-xs px-2 py-1 rounded whitespace-nowrap animate-fade-in">
+                        <span className="absolute top-12 right-4 bg-green-500 text-white text-xs px-2 py-1 rounded whitespace-nowrap animate-fade-in">
                             คัดลอกแล้ว!
                         </span>
                     )}
 
                     <div className="text-center">
                         <p className="text-xs text-gray-400 uppercase tracking-widest font-bold mb-3">รหัสพันธมิตรของคุณ</p>
-                        <p className="text-4xl font-bold text-white font-mono tracking-wider break-all mb-2">{affiliateCode}</p>
+                        <p className="text-4xl font-bold text-white font-mono tracking-wider break-all text-center pr-12 mb-2">{affiliateCode}</p>
                         <p className="text-sm text-gray-400">แชร์รหัสนี้เพื่อรับค่าคอมมิชชั่น</p>
                     </div>
                 </div>

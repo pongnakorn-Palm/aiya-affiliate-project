@@ -244,8 +244,7 @@ export default function AffiliateRegisterForm() {
     } else {
       // User kept existing code - validate it immediately
       setCodeAvailability("checking");
-      checkCodeAvailability(formData.affiliateCode).catch((error) => {
-        console.error("Unhandled error in checkCodeAvailability:", error);
+      checkCodeAvailability(formData.affiliateCode).catch(() => {
         setCodeAvailability(null);
       });
     }
@@ -317,7 +316,6 @@ export default function AffiliateRegisterForm() {
         return false;
       }
 
-      console.error("Error checking code availability:", error);
       setCodeAvailability(null);
 
       // Clear long loading timer and state on error
@@ -369,8 +367,7 @@ export default function AffiliateRegisterForm() {
   const handleAffiliateCodeBlur = () => {
     handleBlur("affiliateCode");
     if (formData.affiliateCode.length >= 3) {
-      checkCodeAvailability(formData.affiliateCode).catch((error) => {
-        console.error("Unhandled error in checkCodeAvailability:", error);
+      checkCodeAvailability(formData.affiliateCode).catch(() => {
         setCodeAvailability(null);
       });
     }
@@ -438,7 +435,6 @@ export default function AffiliateRegisterForm() {
       try {
         eventDbData = await eventDbResponse.json();
       } catch (parseError) {
-        console.error("Failed to parse API response:", parseError);
         if (!eventDbResponse.ok) {
           throw new Error(
             `การลงทะเบียนล้มเหลว (Status: ${eventDbResponse.status})`
@@ -462,8 +458,6 @@ export default function AffiliateRegisterForm() {
           eventDbData.message || "การลงทะเบียนล้มเหลว กรุณาลองใหม่อีกครั้ง"
         );
       }
-
-      console.log("✅ Event DB registered:", eventDbData);
 
       // ========================================
       // STEP 2: ยิงไปที่ Main System DB (ให้ affiliate code ใช้งานได้จริง)
@@ -489,27 +483,17 @@ export default function AffiliateRegisterForm() {
         try {
           mainSystemData = await mainSystemResponse.json();
         } catch (parseError) {
-          console.error(
-            "Failed to parse main system API response:",
-            parseError
-          );
           mainSystemSuccess = false;
         }
 
         if (mainSystemData && !mainSystemResponse.ok) {
-          console.warn(
-            "⚠️ Main System DB registration failed:",
-            mainSystemData
-          );
           mainSystemSuccess = false;
           // ไม่ throw error เพราะข้อมูลถูกบันทึกที่ event DB แล้ว
           // แจ้งเตือนแต่ให้ดำเนินการต่อ
         } else {
-          console.log("✅ Main System DB registered:", mainSystemData);
           mainSystemSuccess = true;
         }
       } catch (mainSystemError) {
-        console.error("❌ Main System DB error:", mainSystemError);
         mainSystemSuccess = false;
         // ไม่ throw error เพราะข้อมูลถูกบันทึกที่ event DB แล้ว
       }
@@ -519,16 +503,6 @@ export default function AffiliateRegisterForm() {
       // ========================================
       // Check email status and pass it to thank-you page
       const emailSent = eventDbData.emailSent ?? true; // Default to true for backward compatibility
-
-      if (!emailSent) {
-        console.warn("⚠️ Confirmation email failed to send");
-      }
-
-      if (!mainSystemSuccess) {
-        console.warn(
-          "⚠️ Main system registration failed - affiliate code may not work in production"
-        );
-      }
 
       navigate("/thank-you", {
         state: {
@@ -977,6 +951,7 @@ export default function AffiliateRegisterForm() {
                     onChange={handleAffiliateCodeChange}
                     onBlur={handleAffiliateCodeBlur}
                     enterKeyHint="done"
+                    maxLength={20}
                     inputMode="text"
                     lang="en"
                     spellCheck="false"
