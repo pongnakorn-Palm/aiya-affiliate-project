@@ -190,7 +190,10 @@ export default function AffiliateRegisterForm() {
 
     // Auto-generate affiliate code if empty
     if (!formData.affiliateCode.trim()) {
-      const generatedCode = generateAffiliateCode(formData.name, formData.phone);
+      const generatedCode = generateAffiliateCode(
+        formData.name,
+        formData.phone
+      );
       setFormData((prev) => ({ ...prev, affiliateCode: generatedCode }));
 
       // Trigger code availability check
@@ -486,7 +489,8 @@ export default function AffiliateRegisterForm() {
                     <p className="text-white/90 text-sm sm:text-base md:text-lg leading-relaxed">
                       สร้างรายได้เสริมง่ายๆ แค่บอกต่อ!{" "}
                       <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-300 via-emerald-400 to-green-500 text-lg sm:text-xl md:text-2xl block mt-1">
-                        รับค่าคอมมิชชั่นสูงสุด 7,000 บาท
+                        รับค่าคอมมิชชั่นสูงสุด{" "}
+                        <span className="whitespace-nowrap">7,000 บาท</span>
                       </span>
                     </p>
                   </div>
@@ -516,7 +520,8 @@ export default function AffiliateRegisterForm() {
                     <p className="text-white/90 text-sm sm:text-base md:text-lg leading-relaxed">
                       ผู้สมัครได้ความรู้ AI ช่วยธุรกิจของคุณให้สำเร็จ{" "}
                       <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 text-lg sm:text-xl md:text-2xl block mt-1">
-                        ลูกค้ารับส่วนลดสูงสุด 2,000 บาท
+                        ลูกค้ารับส่วนลดสูงสุด{" "}
+                        <span className="whitespace-nowrap">2,000 บาท</span>
                       </span>
                     </p>
                   </div>
@@ -598,7 +603,11 @@ export default function AffiliateRegisterForm() {
                   }`}
                 >
                   {currentStep > 1 ? (
-                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                    <svg
+                      className="w-4 h-4"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
                       <path
                         fillRule="evenodd"
                         d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
@@ -691,7 +700,7 @@ export default function AffiliateRegisterForm() {
                     className={`input-modern ${
                       showError("name") ? "ring-2 ring-red-400/50" : ""
                     }`}
-                    placeholder="สมชาย ใจดี"
+                    placeholder="Somchai Jaidee"
                   />
                   {showError("name") && (
                     <p className="error-message text-red-300 text-xs mt-1.5 ml-1 flex items-center gap-1 animate-fade-in">
@@ -766,7 +775,7 @@ export default function AffiliateRegisterForm() {
                   className={`input-modern ${
                     showError("phone") ? "ring-2 ring-red-400/50" : ""
                   }`}
-                  placeholder="0812345678"
+                  placeholder="08x-xxx-xxxx"
                   inputMode="numeric"
                 />
                 {showError("phone") && (
@@ -839,7 +848,7 @@ export default function AffiliateRegisterForm() {
                     }`}
                     placeholder="AIYABOY"
                     style={{
-                      caretColor: '#a78bfa',
+                      caretColor: "#a78bfa",
                     }}
                   />
                   {/* Status/Edit Indicator - Always visible on right side */}
@@ -978,15 +987,11 @@ export default function AffiliateRegisterForm() {
                 )}
               </div>
 
-              {/* PDPA Consent Checkbox - AIYA Dark Theme */}
-              <div>
+              {/* PDPA Consent Checkbox - Minimalist Style */}
+              <div className="mb-4">
                 <label
                   htmlFor="pdpa-checkbox"
-                  className={`flex items-start gap-3 p-4 rounded-xl border cursor-pointer transition-all duration-200 select-none ${
-                    showError("pdpaConsent")
-                      ? "border-red-400/50 bg-red-500/5"
-                      : "border-white/20 bg-white/5 hover:border-aiya-purple/50 hover:bg-white/10"
-                  }`}
+                  className="flex items-start gap-3 cursor-pointer select-none"
                 >
                   <div className="relative shrink-0 mt-0.5">
                     <input
@@ -1010,12 +1015,12 @@ export default function AffiliateRegisterForm() {
                       className="peer sr-only"
                     />
                     <div
-                      className={`w-5 h-5 rounded border transition-all duration-200 flex items-center justify-center ${
+                      className={`w-5 h-5 rounded border-2 transition-all duration-200 flex items-center justify-center ${
                         formData.pdpaConsent
-                          ? "bg-gradient-to-br from-aiya-purple to-[#5C499D] border-aiya-purple"
+                          ? "border-aiya-purple bg-aiya-purple"
                           : showError("pdpaConsent")
-                          ? "bg-white/5 border-red-400"
-                          : "bg-white/5 border-white/30 peer-hover:border-aiya-purple/50"
+                          ? "border-red-400 bg-transparent"
+                          : "border-white/30 bg-transparent peer-hover:border-white/50"
                       }`}
                     >
                       {formData.pdpaConsent && (
@@ -1024,7 +1029,7 @@ export default function AffiliateRegisterForm() {
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
-                          strokeWidth="3"
+                          strokeWidth="2.5"
                         >
                           <path
                             strokeLinecap="round"
@@ -1035,14 +1040,14 @@ export default function AffiliateRegisterForm() {
                       )}
                     </div>
                   </div>
-                  <span className="text-sm md:text-base font-medium text-white/90 leading-relaxed">
+                  <span className="text-sm text-white/60 leading-relaxed">
                     ข้าพเจ้ายอมรับ{" "}
                     <a
                       href="https://web.aiya.ai/privacy-policy"
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={(e) => e.stopPropagation()}
-                      className="text-blue-400 hover:text-blue-300 hover:underline transition-colors"
+                      className="text-blue-400 hover:text-blue-300 underline transition-colors"
                     >
                       เงื่อนไขการใช้งาน
                     </a>{" "}
@@ -1052,7 +1057,7 @@ export default function AffiliateRegisterForm() {
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={(e) => e.stopPropagation()}
-                      className="text-blue-400 hover:text-blue-300 hover:underline transition-colors"
+                      className="text-blue-400 hover:text-blue-300 underline transition-colors"
                     >
                       นโยบายความเป็นส่วนตัว
                     </a>{" "}
@@ -1104,7 +1109,11 @@ export default function AffiliateRegisterForm() {
                 {/* Submit Button */}
                 <button
                   type="submit"
-                  disabled={isLoading || codeAvailability === "taken" || !formData.pdpaConsent}
+                  disabled={
+                    isLoading ||
+                    codeAvailability === "taken" ||
+                    !formData.pdpaConsent
+                  }
                   className="flex-1 btn-gradient disabled:opacity-60 disabled:cursor-not-allowed min-h-[48px] md:min-h-[56px] text-base md:text-lg"
                 >
                   {isLoading ? (
