@@ -48,6 +48,11 @@ export default function AffiliateRegisterForm() {
     null
   );
   const [currentStep, setCurrentStep] = useState<1 | 2>(1);
+  const [isLongLoading, setIsLongLoading] = useState(false);
+
+  // Ref for AbortController to cancel pending requests
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const longLoadingTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Auto-fill form data from LINE profile (only if fields are empty)
   useEffect(() => {
@@ -68,6 +73,18 @@ export default function AffiliateRegisterForm() {
       }
     };
   }, [debounceTimer]);
+
+  // Cleanup abort controller and long loading timer on unmount
+  useEffect(() => {
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+      if (longLoadingTimerRef.current) {
+        clearTimeout(longLoadingTimerRef.current);
+      }
+    };
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -244,22 +261,65 @@ export default function AffiliateRegisterForm() {
   const checkCodeAvailability = async (code: string): Promise<boolean> => {
     if (!code || code.length < 3) {
       setCodeAvailability(null);
+      setIsLongLoading(false);
       return false;
     }
+
+    // Cancel previous request if it exists
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    // Clear previous long loading timer
+    if (longLoadingTimerRef.current) {
+      clearTimeout(longLoadingTimerRef.current);
+      setIsLongLoading(false);
+    }
+
+    // Create new AbortController for this request
+    const abortController = new AbortController();
+    abortControllerRef.current = abortController;
+
+    // Set timeout to show long loading message after 3 seconds
+    longLoadingTimerRef.current = setTimeout(() => {
+      setIsLongLoading(true);
+    }, 3000);
 
     try {
       const apiUrl = import.meta.env.VITE_API_URL || "";
       const response = await fetch(
-        `${apiUrl}/api/check-affiliate?affiliateCode=${code}`
+        `${apiUrl}/api/check-affiliate?affiliateCode=${code}`,
+        { signal: abortController.signal }
       );
       const data = await response.json();
 
       const isTaken = data.exists;
       setCodeAvailability(isTaken ? "taken" : "available");
+
+      // Clear long loading timer and state on success
+      if (longLoadingTimerRef.current) {
+        clearTimeout(longLoadingTimerRef.current);
+        longLoadingTimerRef.current = null;
+      }
+      setIsLongLoading(false);
+
       return isTaken;
-    } catch (error) {
+    } catch (error: any) {
+      // Ignore abort errors (these are intentional cancellations)
+      if (error.name === "AbortError") {
+        return false;
+      }
+
       console.error("Error checking code availability:", error);
       setCodeAvailability(null);
+
+      // Clear long loading timer and state on error
+      if (longLoadingTimerRef.current) {
+        clearTimeout(longLoadingTimerRef.current);
+        longLoadingTimerRef.current = null;
+      }
+      setIsLongLoading(false);
+
       return false;
     }
   };
@@ -1009,6 +1069,23 @@ export default function AffiliateRegisterForm() {
                   </svg>
                   ใช้ได้เฉพาะตัวอักษร A-Z และตัวเลข 0-9
                 </p>
+                {/* Long Loading Message - Show after 3 seconds of checking */}
+                {codeAvailability === "checking" && isLongLoading && (
+                  <p className="text-amber-400 text-sm mt-3 flex items-center justify-center gap-2 animate-fade-in">
+                    <svg
+                      className="w-4 h-4"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    ระบบกำลังเริ่มต้นทำงาน อาจใช้เวลาสักครู่...
+                  </p>
+                )}
                 {codeAvailability === "available" &&
                   !showError("affiliateCode") && (
                     <p className="text-green-300 text-sm mt-2 flex items-center justify-center gap-1 animate-fade-in">
@@ -1064,7 +1141,7 @@ export default function AffiliateRegisterForm() {
               <div className="mb-4">
                 <label
                   htmlFor="pdpa-checkbox"
-                  className="flex items-start gap-3 cursor-pointer select-none"
+                  className="flex items-start gap-4 cursor-pointer select-none"
                 >
                   <div className="relative shrink-0 mt-0.5">
                     <input
@@ -1091,7 +1168,7 @@ export default function AffiliateRegisterForm() {
                       aria-label="ยอมรับเงื่อนไขการใช้งานและนโยบายความเป็นส่วนตัว"
                     />
                     <div
-                      className={`w-5 h-5 rounded border-2 transition-all duration-200 flex items-center justify-center ${
+                      className={`w-6 h-6 rounded border-2 transition-all duration-200 flex items-center justify-center ${
                         formData.pdpaConsent
                           ? "border-aiya-purple bg-aiya-purple"
                           : showError("pdpaConsent")
@@ -1101,7 +1178,7 @@ export default function AffiliateRegisterForm() {
                     >
                       {formData.pdpaConsent && (
                         <svg
-                          className="w-3.5 h-3.5 text-white"
+                          className="w-4 h-4 text-white"
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
