@@ -196,8 +196,18 @@ export default function AffiliateRegisterForm() {
       );
       setFormData((prev) => ({ ...prev, affiliateCode: generatedCode }));
 
-      // Set to null to show Pencil Icon (user knows they can edit)
+      // Set to null to show Pencil Icon (neutral state, no false "available" flash)
       setCodeAvailability(null);
+
+      // Clear any previous errors for affiliateCode to prevent false "Please enter code" error
+      setErrors((prev) => ({ ...prev, affiliateCode: undefined }));
+
+      // Remove affiliateCode from touched set to prevent validation errors
+      setTouched((prev) => {
+        const newTouched = new Set(prev);
+        newTouched.delete("affiliateCode");
+        return newTouched;
+      });
     }
 
     setCurrentStep(2);
@@ -798,22 +808,25 @@ export default function AffiliateRegisterForm() {
               <button
                 type="button"
                 onClick={handleNextStep}
-                className="btn-gradient mt-2 min-h-[48px] md:min-h-[56px] text-base md:text-lg"
+                className="btn-gradient mt-2 min-h-[48px] md:min-h-[56px] text-base md:text-lg relative group"
               >
-                ถัดไป
-                <svg
-                  className="w-5 h-5 ml-2"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
+                <span>ถัดไป</span>
+                {/* Absolute Positioned Chevron Icon */}
+                <div className="absolute right-5 top-1/2 -translate-y-1/2 text-white/80 group-hover:text-white transition-colors">
+                  <svg
+                    className="w-6 h-6 group-hover:translate-x-1 transition-transform"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M8.25 4.5l7.5 7.5-7.5 7.5"
+                    />
+                  </svg>
+                </div>
               </button>
             </>
           )}
