@@ -124,9 +124,9 @@ export default function AffiliateRegisterForm() {
         break;
       case "email":
         if (!value || value.trim().length === 0) {
-          error = "กรุณากรอก อีเมล";
+          error = "กรุณากรอกอีเมล";
         } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-          error = "รูปแบบ อีเมล ไม่ถูกต้อง";
+          error = "รูปแบบอีเมลไม่ถูกต้อง";
         }
         break;
       case "phone":
@@ -962,7 +962,7 @@ export default function AffiliateRegisterForm() {
 
           {/* ==================== STEP 2: Affiliate Code & Confirmation ==================== */}
           {currentStep === 2 && (
-            <div className="animate-slide-in-right">
+            <div className="flex flex-col gap-5 animate-slide-in-right">
               {/* Affiliate Code - Prominent Display */}
               <div className="text-center">
                 <p className="text-white/70 text-sm mb-2">
@@ -1145,7 +1145,7 @@ export default function AffiliateRegisterForm() {
               </div>
 
               {/* PDPA Consent Checkbox - Minimalist Style */}
-              <div className="mb-4">
+              <div>
                 <label
                   htmlFor="pdpa-checkbox"
                   className="flex items-start gap-4 cursor-pointer select-none"
@@ -1243,7 +1243,7 @@ export default function AffiliateRegisterForm() {
               </div>
 
               {/* Action Buttons - Back and Submit */}
-              <div className="flex flex-col sm:flex-row gap-3 mt-4">
+              <div className="flex flex-col sm:flex-row gap-3">
                 {/* Back Button */}
                 <button
                   type="button"
