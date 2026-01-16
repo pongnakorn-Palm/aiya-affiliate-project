@@ -55,10 +55,13 @@ export default function AffiliateRegisterForm() {
   );
   const [currentStep, setCurrentStep] = useState<1 | 2>(1);
   const [isLongLoading, setIsLongLoading] = useState(false);
+  const [isShaking, setIsShaking] = useState(false);
+  const [showStatusText, setShowStatusText] = useState(false);
 
   // Ref for AbortController to cancel pending requests
   const abortControllerRef = useRef<AbortController | null>(null);
   const longLoadingTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const statusTextTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Auto-fill form data from LINE profile (only if fields are empty)
   useEffect(() => {
@@ -92,8 +95,42 @@ export default function AffiliateRegisterForm() {
       if (longLoadingTimerRef.current) {
         clearTimeout(longLoadingTimerRef.current);
       }
+      if (statusTextTimerRef.current) {
+        clearTimeout(statusTextTimerRef.current);
+      }
     };
   }, []);
+
+  // Show status text for 3 seconds when code availability changes
+  useEffect(() => {
+    if (codeAvailability === "available" || codeAvailability === "taken") {
+      setShowStatusText(true);
+
+      // Clear previous timer if exists
+      if (statusTextTimerRef.current) {
+        clearTimeout(statusTextTimerRef.current);
+      }
+
+      // Hide status text after 3 seconds
+      statusTextTimerRef.current = setTimeout(() => {
+        setShowStatusText(false);
+      }, 3000);
+    }
+
+    return () => {
+      if (statusTextTimerRef.current) {
+        clearTimeout(statusTextTimerRef.current);
+      }
+    };
+  }, [codeAvailability]);
+
+  // Trigger shake animation
+  const triggerShake = () => {
+    setIsShaking(true);
+    setTimeout(() => {
+      setIsShaking(false);
+    }, 500);
+  };
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -338,6 +375,22 @@ export default function AffiliateRegisterForm() {
     setErrors((prev) => ({ ...prev, affiliateCode: undefined }));
 
     setCurrentStep(1);
+
+    // Scroll to the form smoothly after state update
+    setTimeout(() => {
+      if (formRef.current) {
+        const formBottom = formRef.current.getBoundingClientRect().bottom;
+        const viewportHeight = window.innerHeight;
+
+        // If form bottom is not visible, scroll to make it visible
+        if (formBottom > viewportHeight) {
+          formRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
+        } else {
+          // Otherwise scroll to top of form
+          formRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }
+    }, 100);
   };
 
   const checkCodeAvailability = async (code: string): Promise<boolean> => {
@@ -499,6 +552,7 @@ export default function AffiliateRegisterForm() {
     e.preventDefault();
 
     if (!validateForm()) {
+      triggerShake();
       scrollToError();
       return;
     }
@@ -510,6 +564,7 @@ export default function AffiliateRegisterForm() {
       const isTaken = await checkCodeAvailability(formData.affiliateCode);
 
       if (isTaken) {
+        triggerShake();
         scrollToError();
         return;
       }
@@ -1137,7 +1192,7 @@ export default function AffiliateRegisterForm() {
                         : codeAvailability === "taken"
                         ? "border-red-400/50 ring-2 ring-red-400/50"
                         : "border-aiya-purple/60 focus:border-aiya-purple"
-                    }`}
+                    } ${isShaking ? "animate-shake" : ""}`}
                     placeholder="AIYABOY"
                     style={{
                       caretColor: "#a78bfa",
@@ -1232,7 +1287,8 @@ export default function AffiliateRegisterForm() {
                   </p>
                 )}
                 {codeAvailability === "available" &&
-                  !showError("affiliateCode") && (
+                  !showError("affiliateCode") &&
+                  showStatusText && (
                     <p className="text-green-300 text-sm mt-2 flex items-center justify-center gap-1 animate-fade-in">
                       <svg
                         className="w-4 h-4"
@@ -1248,7 +1304,7 @@ export default function AffiliateRegisterForm() {
                       รหัสนี้ว่าง สามารถใช้งานได้
                     </p>
                   )}
-                {codeAvailability === "taken" && (
+                {codeAvailability === "taken" && showStatusText && (
                   <p className="error-message text-red-300 text-sm mt-2 flex items-center justify-center gap-1 animate-fade-in">
                     <svg
                       className="w-4 h-4"
@@ -1396,7 +1452,11 @@ export default function AffiliateRegisterForm() {
                     codeAvailability === "taken" ||
                     !formData.pdpaConsent
                   }
-                  className="flex-1 btn-gradient disabled:opacity-60 disabled:cursor-not-allowed min-h-[48px] md:min-h-[56px] text-base md:text-lg"
+                  className={`flex-1 btn-gradient disabled:opacity-60 disabled:cursor-not-allowed min-h-[48px] md:min-h-[56px] text-base md:text-lg ${
+                    codeAvailability === "available" && !isLoading
+                      ? "animate-glow-pulse"
+                      : ""
+                  }`}
                 >
                   {isLoading ? (
                     <>
