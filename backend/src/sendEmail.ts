@@ -32,7 +32,7 @@ function getEmailTemplate(firstName: string, affiliateCode: string): string {
           <!-- Header Image/Logo Area -->
           <tr>
             <td style="padding: 40px 40px 20px 40px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05);">
-              <img src="https://ai-empire-registration.vercel.app/logo-ignite-white.png" alt="AIYA" style="max-width: 180px; height: auto; display: inline-block;" />
+              <img src="https://aiya-affiliate-frontend.vercel.app/logo-ignite-white.png" alt="AIYA" style="max-width: 180px; height: auto; display: inline-block;" />
               <p style="margin: 15px 0 0 0; color: #94a3b8; font-size: 13px; text-transform: uppercase; letter-spacing: 2px;">AIYA Affiliate Program</p>
             </td>
           </tr>
@@ -98,8 +98,8 @@ function getEmailTemplate(firstName: string, affiliateCode: string): string {
                 
                 <!-- Course Image -->
                 <div style="width: 100%; border-radius: 12px; overflow: hidden; margin-bottom: 24px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);">
-                  <img src="https://ai-empire-registration.vercel.app/aiyacourse.jpg" alt="Master the AI Empire" style="width: 100%; height: auto; display: block;" />
-                </div>
+                  <img src="https://aiya-affiliate-frontend.vercel.app/aiyacourse.jpg" alt="Master the AI Empire" style="width: 100%; height: auto; display: block;" />
+                </div>ห
                 
                 <p style="color: #9A3412; font-size: 14px; line-height: 1.6; margin-bottom: 24px; font-weight: 500;">
                   อยากเก่ง AI แบบเจาะลึก? เรียนรู้การสร้าง AI Agent และ Automation เพื่อธุรกิจของคุณแบบเข้มข้น กับหลักสูตรที่ดีที่สุดจาก AIYA
@@ -122,7 +122,7 @@ function getEmailTemplate(firstName: string, affiliateCode: string): string {
           <tr>
             <td style="background-color: #0f172a; padding: 20px; text-align: center; border-top: 1px solid #1e293b;">
               <p style="color: #64748b; font-size: 12px; margin: 0;">
-                © 2026 AIYA Co., Ltd. สงวนลิขสิทธิ์
+                © Copyright 2025 MeGenius Company Limited. All rights reserved
               </p>
             </td>
           </tr>
@@ -153,7 +153,9 @@ export async function sendConfirmationEmail(
     // Construct sender with display name
     // Format: "Display Name" <email@address.com>
     // If SENDER_EMAIL already includes the format, use it directly
-    const sender = SENDER_EMAIL.includes('<') ? SENDER_EMAIL : `AIYA <${SENDER_EMAIL}>`;
+    const sender = SENDER_EMAIL.includes("<")
+      ? SENDER_EMAIL
+      : `AIYA <${SENDER_EMAIL}>`;
 
     const command = new SendEmailCommand({
       Source: sender, // Changed from SENDER_EMAIL to sender variable
@@ -186,7 +188,10 @@ export async function sendConfirmationEmail(
       messageId: response.MessageId,
     };
   } catch (error: any) {
-    console.error("Failed to send email FULL ERROR:", JSON.stringify(error, null, 2));
+    console.error(
+      "Failed to send email FULL ERROR:",
+      JSON.stringify(error, null, 2)
+    );
     return {
       success: false,
       error: error instanceof Error ? error.message : "Unknown error",
