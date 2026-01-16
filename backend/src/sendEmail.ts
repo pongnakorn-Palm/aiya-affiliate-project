@@ -11,8 +11,24 @@ const sesClient = new SESClient({
 
 const SENDER_EMAIL = process.env.SENDER_EMAIL || "no-reply@aiya.ai";
 
+// HTML escape function to prevent XSS in email templates
+function escapeHtml(text: string): string {
+  const htmlEscapeMap: Record<string, string> = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+    '/': '&#x2F;'
+  };
+  return text.replace(/[&<>"'\/]/g, (char) => htmlEscapeMap[char] || char);
+}
+
 // HTML email template with "AIYA Dark Premium" branding for affiliate registration
 function getEmailTemplate(firstName: string, affiliateCode: string): string {
+  // Escape user inputs to prevent HTML injection
+  const safeFirstName = escapeHtml(firstName);
+  const safeAffiliateCode = escapeHtml(affiliateCode);
   return `
 <!DOCTYPE html>
 <html lang="th">
@@ -80,7 +96,7 @@ function getEmailTemplate(firstName: string, affiliateCode: string): string {
               <h2 class="text-white" style="color: #ffffff !important; font-size: 24px; margin-bottom: 24px; text-align: center;">ยินดีต้อนรับสู่ AIYA Affiliate Program! 🎉</h2>
 
               <p class="text-light" style="color: #cbd5e1 !important; font-size: 16px; line-height: 1.6; margin-bottom: 24px;">
-                สวัสดีครับ คุณ <strong class="text-white" style="color: #ffffff !important;">${firstName}</strong>,
+                สวัสดีครับ คุณ <strong class="text-white" style="color: #ffffff !important;">${safeFirstName}</strong>,
               </p>
 
               <p class="text-light" style="color: #cbd5e1 !important; font-size: 16px; line-height: 1.6; margin-bottom: 32px;">
@@ -95,7 +111,7 @@ function getEmailTemplate(firstName: string, affiliateCode: string): string {
 
                     <div style="background-color: rgba(255,255,255,0.15) !important; border-radius: 12px; padding: 20px; margin: 20px 0;">
                       <p style="color: rgba(255,255,255,0.8) !important; font-size: 14px; text-transform: uppercase; margin: 0 0 10px 0;">YOUR AFFILIATE CODE</p>
-                      <p class="text-white" style="color: #ffffff !important; font-size: 32px; font-weight: 700; margin: 0; letter-spacing: 3px; font-family: 'Courier New', monospace;">${affiliateCode}</p>
+                      <p class="text-white" style="color: #ffffff !important; font-size: 32px; font-weight: 700; margin: 0; letter-spacing: 3px; font-family: 'Courier New', monospace;">${safeAffiliateCode}</p>
                     </div>
 
                     <p style="color: rgba(255,255,255,0.9) !important; font-size: 14px; line-height: 1.6; margin: 20px 0 0 0;">
@@ -136,7 +152,7 @@ function getEmailTemplate(firstName: string, affiliateCode: string): string {
                 <!-- Course Image -->
                 <div style="width: 100%; border-radius: 12px; overflow: hidden; margin-bottom: 24px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);">
                   <img src="https://aiya-affiliate-frontend.vercel.app/aiyacourse.jpg" alt="Master the AI Empire" style="width: 100%; height: auto; display: block;" />
-                </div>ห
+                </div>
                 
                 <p style="color: #9A3412; font-size: 14px; line-height: 1.6; margin-bottom: 24px; font-weight: 500;">
                   อยากเก่ง AI แบบเจาะลึก? เรียนรู้การสร้าง AI Agent และ Automation เพื่อธุรกิจของคุณแบบเข้มข้น กับหลักสูตรที่ดีที่สุดจาก AIYA

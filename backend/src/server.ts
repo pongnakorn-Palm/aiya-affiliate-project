@@ -6,7 +6,8 @@ import {
     registerAffiliate,
     checkMainSystemConnection,
     checkAffiliateCodeExists,
-    checkAffiliateEmailExists
+    checkAffiliateEmailExists,
+    mainSystemSql
 } from "./mainSystemDb.js";
 
 // ========================================
@@ -77,7 +78,7 @@ const affiliateSchema = t.Object({
     email: t.String({ format: "email" }),
     phone: t.String({ minLength: 9, maxLength: 20 }),
     affiliateCode: t.String({
-        minLength: 1,
+        minLength: 3,  // Match frontend validation (requires at least 3 characters)
         maxLength: 50,
         pattern: "^[A-Z0-9]+$"  // Only uppercase A-Z and 0-9
     }),
@@ -404,7 +405,7 @@ export const app = new Elysia()
                 email: t.String({ format: "email" }),
                 tel: t.String({ minLength: 9, maxLength: 20 }),
                 generatedCode: t.String({
-                    minLength: 1,
+                    minLength: 3,  // Match frontend validation (requires at least 3 characters)
                     maxLength: 50,
                     pattern: "^[A-Z0-9]+$",
                 }),
@@ -430,6 +431,42 @@ if (import.meta.main) {
     console.log(
         `🚀 AIYA Event Registration API running on port ${port}`
     );
+
+    // Graceful shutdown handler
+    const gracefulShutdown = async (signal: string) => {
+        console.log(`\n${signal} received. Starting graceful shutdown...`);
+
+        try {
+            // Close database connections
+            console.log("Closing database connections...");
+            await Promise.all([
+                sql.end({ timeout: 5 }),
+                mainSystemSql.end({ timeout: 5 })
+            ]);
+            console.log("✅ Database connections closed successfully");
+
+            console.log("👋 Graceful shutdown completed");
+            process.exit(0);
+        } catch (error) {
+            console.error("❌ Error during graceful shutdown:", error);
+            process.exit(1);
+        }
+    };
+
+    // Register shutdown handlers
+    process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
+    process.on("SIGINT", () => gracefulShutdown("SIGINT"));
+
+    // Handle uncaught errors
+    process.on("uncaughtException", (error) => {
+        console.error("💥 Uncaught Exception:", error);
+        gracefulShutdown("UNCAUGHT_EXCEPTION");
+    });
+
+    process.on("unhandledRejection", (reason, promise) => {
+        console.error("💥 Unhandled Rejection at:", promise, "reason:", reason);
+        gracefulShutdown("UNHANDLED_REJECTION");
+    });
 }
 
 export type App = typeof app;

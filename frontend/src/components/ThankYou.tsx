@@ -24,6 +24,8 @@ export default function ThankYou() {
     // Get data from previous state
     const name = location.state?.name || '';
     const affiliateCode = location.state?.affiliateCode || '';
+    const emailSent = location.state?.emailSent ?? true; // Default to true for backward compatibility
+    const mainSystemSuccess = location.state?.mainSystemSuccess ?? true; // Default to true for backward compatibility
 
     const handleCopyCode = async () => {
         try {
@@ -83,6 +85,40 @@ export default function ThankYou() {
                         คุณได้เป็นพันธมิตรของ AIYA แล้ว
                     </p>
                 </div>
+
+                {/* Email Warning (if email failed to send) */}
+                {!emailSent && (
+                    <div className="mb-6 md:mb-8 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-xl flex items-start gap-3">
+                        <svg className="w-6 h-6 text-yellow-500 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                        </svg>
+                        <div className="flex-1">
+                            <p className="text-yellow-200 font-semibold text-sm sm:text-base mb-1">
+                                ⚠️ อีเมลยืนยันไม่สามารถส่งได้
+                            </p>
+                            <p className="text-yellow-300/80 text-xs sm:text-sm">
+                                การลงทะเบียนของคุณสำเร็จแล้ว แต่ระบบไม่สามารถส่งอีเมลยืนยันได้ กรุณาบันทึกรหัสพันธมิตรด้านล่างไว้
+                            </p>
+                        </div>
+                    </div>
+                )}
+
+                {/* Main System Warning (if main system registration failed) */}
+                {!mainSystemSuccess && (
+                    <div className="mb-6 md:mb-8 p-4 bg-red-500/10 border border-red-500/30 rounded-xl flex items-start gap-3">
+                        <svg className="w-6 h-6 text-red-500 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                        </svg>
+                        <div className="flex-1">
+                            <p className="text-red-200 font-semibold text-sm sm:text-base mb-1">
+                                ⚠️ รหัสพันธมิตรอาจยังไม่พร้อมใช้งาน
+                            </p>
+                            <p className="text-red-300/80 text-xs sm:text-sm">
+                                การลงทะเบียนของคุณบันทึกเรียบร้อยแล้ว แต่ระบบหลักไม่สามารถเปิดใช้งานรหัสได้ในขณะนี้ กรุณาติดต่อทีมงานเพื่อเปิดใช้งานรหัส: <span className="font-mono font-bold">{affiliateCode}</span>
+                            </p>
+                        </div>
+                    </div>
+                )}
 
                 {/* Affiliate Code Display */}
                 <div className="bg-gradient-to-r from-aiya-purple/20 to-aiya-navy/20 rounded-2xl p-5 sm:p-6 md:p-8 mb-6 md:mb-8 border border-aiya-purple/30 relative overflow-hidden">

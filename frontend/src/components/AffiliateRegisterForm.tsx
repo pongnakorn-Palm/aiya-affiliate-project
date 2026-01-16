@@ -60,13 +60,29 @@ export default function AffiliateRegisterForm() {
     }
   }, [isLoggedIn, profile]);
 
+  // Cleanup debounce timer on unmount to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      if (debounceTimer) {
+        clearTimeout(debounceTimer);
+      }
+    };
+  }, [debounceTimer]);
+
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
     >
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    // Filter phone field to only accept numeric input
+    let filteredValue = value;
+    if (name === "phone") {
+      filteredValue = value.replace(/\D/g, ""); // Remove all non-digit characters
+    }
+
+    setFormData((prev) => ({ ...prev, [name]: filteredValue }));
 
     // Clear error for this field when user starts typing
     if (errors[name as keyof FormErrors]) {
@@ -215,6 +231,13 @@ export default function AffiliateRegisterForm() {
 
   // Handle Back button click (Step 2 -> Step 1)
   const handleBackStep = () => {
+    // Reset code availability state to give user a clean slate
+    // but preserve the affiliate code they entered
+    setCodeAvailability(null);
+
+    // Clear any errors for affiliate code
+    setErrors((prev) => ({ ...prev, affiliateCode: undefined }));
+
     setCurrentStep(1);
   };
 
@@ -264,7 +287,10 @@ export default function AffiliateRegisterForm() {
 
       // Debounce the API call
       const timer = setTimeout(() => {
-        checkCodeAvailability(value);
+        checkCodeAvailability(value).catch((error) => {
+          console.error("Unhandled error in checkCodeAvailability:", error);
+          setCodeAvailability(null);
+        });
       }, 500);
 
       setDebounceTimer(timer);
@@ -276,7 +302,10 @@ export default function AffiliateRegisterForm() {
   const handleAffiliateCodeBlur = () => {
     handleBlur("affiliateCode");
     if (formData.affiliateCode.length >= 3) {
-      checkCodeAvailability(formData.affiliateCode);
+      checkCodeAvailability(formData.affiliateCode).catch((error) => {
+        console.error("Unhandled error in checkCodeAvailability:", error);
+        setCodeAvailability(null);
+      });
     }
   };
 
@@ -310,15 +339,10 @@ export default function AffiliateRegisterForm() {
       return;
     }
 
-    // ถ้า real-time validation แสดงว่า code taken อยู่แล้ว ไม่ต้อง submit
-    if (codeAvailability === "taken") {
-      scrollToError();
-      return;
-    }
-
-    // Verify code availability one final time before submission
-    // Skip check if null (auto-generated, treated as valid) or already marked as available
-    if (formData.affiliateCode && codeAvailability !== "available" && codeAvailability !== null) {
+    // Always perform final availability check to prevent race conditions (TOCTOU)
+    // Even if the code was "available" during real-time validation, another user
+    // could have registered it between then and now
+    if (formData.affiliateCode) {
       const isTaken = await checkCodeAvailability(formData.affiliateCode);
 
       if (isTaken) {
@@ -342,7 +366,17 @@ export default function AffiliateRegisterForm() {
         body: JSON.stringify(formData),
       });
 
-      const eventDbData = await eventDbResponse.json();
+      // Safely parse JSON response - handle cases where server returns non-JSON
+      let eventDbData: any;
+      try {
+        eventDbData = await eventDbResponse.json();
+      } catch (parseError) {
+        console.error("Failed to parse API response:", parseError);
+        if (!eventDbResponse.ok) {
+          throw new Error(`การลงทะเบียนล้มเหลว (Status: ${eventDbResponse.status})`);
+        }
+        throw new Error("การลงทะเบียนล้มเหลว กรุณาลองใหม่อีกครั้ง");
+      }
 
       if (!eventDbResponse.ok) {
         // Handle 409 Conflict (duplicate data)
@@ -365,6 +399,7 @@ export default function AffiliateRegisterForm() {
       // ========================================
       // STEP 2: ยิงไปที่ Main System DB (ให้ affiliate code ใช้งานได้จริง)
       // ========================================
+      let mainSystemSuccess = false;
       try {
         const mainSystemResponse = await fetch(
           `${apiUrl}/api/register-affiliate-main`,
@@ -380,30 +415,53 @@ export default function AffiliateRegisterForm() {
           }
         );
 
-        const mainSystemData = await mainSystemResponse.json();
+        // Safely parse JSON response
+        let mainSystemData: any = null;
+        try {
+          mainSystemData = await mainSystemResponse.json();
+        } catch (parseError) {
+          console.error("Failed to parse main system API response:", parseError);
+          mainSystemSuccess = false;
+        }
 
-        if (!mainSystemResponse.ok) {
+        if (mainSystemData && !mainSystemResponse.ok) {
           console.warn(
             "⚠️ Main System DB registration failed:",
             mainSystemData
           );
+          mainSystemSuccess = false;
           // ไม่ throw error เพราะข้อมูลถูกบันทึกที่ event DB แล้ว
           // แจ้งเตือนแต่ให้ดำเนินการต่อ
         } else {
           console.log("✅ Main System DB registered:", mainSystemData);
+          mainSystemSuccess = true;
         }
       } catch (mainSystemError) {
         console.error("❌ Main System DB error:", mainSystemError);
+        mainSystemSuccess = false;
         // ไม่ throw error เพราะข้อมูลถูกบันทึกที่ event DB แล้ว
       }
 
       // ========================================
       // STEP 3: Navigate to Thank You page
       // ========================================
+      // Check email status and pass it to thank-you page
+      const emailSent = eventDbData.emailSent ?? true; // Default to true for backward compatibility
+
+      if (!emailSent) {
+        console.warn("⚠️ Confirmation email failed to send");
+      }
+
+      if (!mainSystemSuccess) {
+        console.warn("⚠️ Main system registration failed - affiliate code may not work in production");
+      }
+
       navigate("/thank-you", {
         state: {
           name: formData.name,
           affiliateCode: formData.affiliateCode,
+          emailSent: emailSent,
+          mainSystemSuccess: mainSystemSuccess,
         },
       });
     } catch (err: any) {
@@ -1007,8 +1065,10 @@ export default function AffiliateRegisterForm() {
                   <div className="relative shrink-0 mt-0.5">
                     <input
                       id="pdpa-checkbox"
+                      name="pdpaConsent"
                       type="checkbox"
                       checked={formData.pdpaConsent}
+                      required
                       onChange={(e) => {
                         setFormData((prev) => ({
                           ...prev,
@@ -1024,6 +1084,7 @@ export default function AffiliateRegisterForm() {
                       }}
                       onBlur={() => handleBlur("pdpaConsent")}
                       className="peer sr-only"
+                      aria-label="ยอมรับเงื่อนไขการใช้งานและนโยบายความเป็นส่วนตัว"
                     />
                     <div
                       className={`w-5 h-5 rounded border-2 transition-all duration-200 flex items-center justify-center ${
