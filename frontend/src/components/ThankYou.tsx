@@ -21,6 +21,11 @@ export default function ThankYou() {
         window.scrollTo(0, 0);
     }, []);
 
+    // Early return if not registered - prevent rendering before redirect
+    if (!hasRegistered) {
+        return null;
+    }
+
     // Get data from previous state
     const affiliateCode = location.state?.affiliateCode || '';
     const emailSent = location.state?.emailSent ?? true;
@@ -112,31 +117,32 @@ export default function ThankYou() {
                 <div className="bg-gradient-to-r from-aiya-purple/20 to-aiya-navy/20 rounded-2xl p-5 mb-5 border border-aiya-purple/30 relative overflow-hidden">
                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-aiya-purple to-aiya-navy"></div>
 
+                    {/* Copy Button - Top Right Corner */}
+                    <button
+                        onClick={handleCopyCode}
+                        className="absolute top-3 right-3 p-2 h-8 w-8 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/30 transition-all duration-200 active:scale-95 group flex items-center justify-center"
+                        title="Copy code"
+                    >
+                        {copied ? (
+                            <svg className="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                            </svg>
+                        ) : (
+                            <svg className="w-4 h-4 text-white/80 group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                            </svg>
+                        )}
+                    </button>
+                    {/* Copied Notification */}
+                    {copied && (
+                        <span className="absolute top-12 right-3 bg-green-500 text-white text-xs px-2 py-1 rounded whitespace-nowrap animate-fade-in">
+                            คัดลอกแล้ว!
+                        </span>
+                    )}
+
                     <div className="text-center">
                         <p className="text-xs text-gray-400 uppercase tracking-widest font-bold mb-3">รหัสพันธมิตรของคุณ</p>
-                        <div className="flex items-center justify-center gap-3 mb-2">
-                            <p className="text-4xl font-bold text-white font-mono tracking-wider break-all">{affiliateCode}</p>
-                            <button
-                                onClick={handleCopyCode}
-                                className="shrink-0 p-2 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/30 transition-all duration-200 active:scale-95 group relative"
-                                title="Copy code"
-                            >
-                                {copied ? (
-                                    <svg className="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                    </svg>
-                                ) : (
-                                    <svg className="w-5 h-5 text-white/80 group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                                    </svg>
-                                )}
-                                {copied && (
-                                    <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-green-500 text-white text-xs px-2 py-1 rounded whitespace-nowrap animate-fade-in">
-                                        คัดลอกแล้ว!
-                                    </span>
-                                )}
-                            </button>
-                        </div>
+                        <p className="text-4xl font-bold text-white font-mono tracking-wider break-all mb-2">{affiliateCode}</p>
                         <p className="text-sm text-gray-400">แชร์รหัสนี้เพื่อรับค่าคอมมิชชั่น</p>
                     </div>
                 </div>
@@ -154,12 +160,10 @@ export default function ThankYou() {
                             <p>เช็คอีเมลเพื่อดูคู่มือและรายละเอียด</p>
                         </div>
 
-                        {/* Step 2 - CRITICAL (Highlighted) */}
-                        <div className="flex items-start gap-3 bg-blue-500/20 border border-blue-500/30 rounded-lg p-3 -mx-1">
+                        {/* Step 2 - Payment Info */}
+                        <div className="flex items-start gap-3">
                             <span className="text-lg shrink-0">🏦</span>
-                            <p className="font-semibold text-blue-200">
-                                ทีมงานจะติดต่อขอเลขบัญชีเมื่อมียอดขาย
-                            </p>
+                            <p>ทีมงานจะติดต่อขอเลขบัญชีเมื่อมียอดขาย</p>
                         </div>
 
                         {/* Step 3 */}
