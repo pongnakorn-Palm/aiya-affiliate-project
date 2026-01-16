@@ -19,49 +19,86 @@ function getEmailTemplate(firstName: string, affiliateCode: string): string {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <meta name="supported-color-schemes" content="light dark">
   <title>ยืนยันการลงทะเบียนพันธมิตร - Affiliate Registration Confirmed</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      supported-color-schemes: light dark;
+    }
+    body, table, td, p, h1, h2, h3, div, span, a {
+      -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+    }
+    /* Prevent iOS/Gmail dark mode from inverting colors */
+    @media (prefers-color-scheme: dark) {
+      body, .email-container {
+        background-color: #020c17 !important;
+        color: #ffffff !important;
+      }
+      .dark-card {
+        background-color: #0b1623 !important;
+      }
+      .text-light {
+        color: #cbd5e1 !important;
+      }
+      .text-white {
+        color: #ffffff !important;
+      }
+    }
+    /* Gmail dark mode fix */
+    u + .body .email-container {
+      background-color: #020c17 !important;
+    }
+    /* Force colors on all clients */
+    [data-ogsc] body, [data-ogsc] .email-container {
+      background-color: #020c17 !important;
+      color: #ffffff !important;
+    }
+  </style>
 </head>
-<body style="margin: 0; padding: 0; font-family: 'Sukhumvit Set', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #020c17;">
-  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="width: 100%; background-color: #020c17; color: #ffffff;">
+<body class="body" style="margin: 0; padding: 0; font-family: 'Sukhumvit Set', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #020c17 !important;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" class="email-container" style="width: 100%; background-color: #020c17 !important; color: #ffffff !important;">
     <tr>
       <td align="center" style="padding: 40px 0;">
         
         <!-- Main Card -->
-        <table role="presentation" width="600" cellspacing="0" cellpadding="0" style="max-width: 600px; width: 100%; background-color: #0b1623; border: 1px solid #1e293b; border-radius: 24px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);">
-          
+        <table role="presentation" width="600" cellspacing="0" cellpadding="0" class="dark-card" style="max-width: 600px; width: 100%; background-color: #0b1623 !important; border: 1px solid #1e293b; border-radius: 24px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);">
+
           <!-- Header Image/Logo Area -->
           <tr>
             <td style="padding: 40px 40px 20px 40px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05);">
               <img src="https://aiya-affiliate-frontend.vercel.app/logo-ignite-white.png" alt="AIYA" style="max-width: 180px; height: auto; display: inline-block;" />
-              <p style="margin: 15px 0 0 0; color: #94a3b8; font-size: 13px; text-transform: uppercase; letter-spacing: 2px;">AIYA Affiliate Program</p>
+              <p class="text-light" style="margin: 15px 0 0 0; color: #94a3b8 !important; font-size: 13px; text-transform: uppercase; letter-spacing: 2px;">AIYA Affiliate Program</p>
             </td>
           </tr>
 
           <!-- Content -->
           <tr>
             <td style="padding: 20px 40px 40px 40px;">
-              <h2 style="color: #ffffff; font-size: 24px; margin-bottom: 24px; text-align: center;">ยินดีต้อนรับสู่ AIYA Affiliate Program! 🎉</h2>
+              <h2 class="text-white" style="color: #ffffff !important; font-size: 24px; margin-bottom: 24px; text-align: center;">ยินดีต้อนรับสู่ AIYA Affiliate Program! 🎉</h2>
 
-              <p style="color: #cbd5e1; font-size: 16px; line-height: 1.6; margin-bottom: 24px;">
-                สวัสดีครับ คุณ <strong style="color: #ffffff;">${firstName}</strong>,
+              <p class="text-light" style="color: #cbd5e1 !important; font-size: 16px; line-height: 1.6; margin-bottom: 24px;">
+                สวัสดีครับ คุณ <strong class="text-white" style="color: #ffffff !important;">${firstName}</strong>,
               </p>
 
-              <p style="color: #cbd5e1; font-size: 16px; line-height: 1.6; margin-bottom: 32px;">
+              <p class="text-light" style="color: #cbd5e1 !important; font-size: 16px; line-height: 1.6; margin-bottom: 32px;">
                 ขอบคุณที่สมัครเป็นพันธมิตรกับเรา! คุณสามารถเริ่มแนะนำลูกค้าและรับค่าคอมมิชชั่นได้ทันที
               </p>
 
               <!-- Affiliate Code Card -->
-              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background: linear-gradient(135deg, #3A23B5 0%, #5C499D 100%); border-radius: 16px; margin-bottom: 32px; overflow: hidden; box-shadow: 0 10px 15px -3px rgba(58, 35, 181, 0.3);">
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background: linear-gradient(135deg, #3A23B5 0%, #5C499D 100%) !important; border-radius: 16px; margin-bottom: 32px; overflow: hidden; box-shadow: 0 10px 15px -3px rgba(58, 35, 181, 0.3);">
                 <tr>
                   <td style="padding: 30px; text-align: center;">
-                    <h3 style="color: #ffffff; margin: 0 0 20px 0; font-size: 18px; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px;">🔑 รหัสพันธมิตรของคุณ</h3>
+                    <h3 class="text-white" style="color: #ffffff !important; margin: 0 0 20px 0; font-size: 18px; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px;">🔑 รหัสพันธมิตรของคุณ</h3>
 
-                    <div style="background-color: rgba(255,255,255,0.15); border-radius: 12px; padding: 20px; margin: 20px 0;">
-                      <p style="color: rgba(255,255,255,0.8); font-size: 14px; text-transform: uppercase; margin: 0 0 10px 0;">YOUR AFFILIATE CODE</p>
-                      <p style="color: #ffffff; font-size: 32px; font-weight: 700; margin: 0; letter-spacing: 3px; font-family: 'Courier New', monospace;">${affiliateCode}</p>
+                    <div style="background-color: rgba(255,255,255,0.15) !important; border-radius: 12px; padding: 20px; margin: 20px 0;">
+                      <p style="color: rgba(255,255,255,0.8) !important; font-size: 14px; text-transform: uppercase; margin: 0 0 10px 0;">YOUR AFFILIATE CODE</p>
+                      <p class="text-white" style="color: #ffffff !important; font-size: 32px; font-weight: 700; margin: 0; letter-spacing: 3px; font-family: 'Courier New', monospace;">${affiliateCode}</p>
                     </div>
 
-                    <p style="color: rgba(255,255,255,0.9); font-size: 14px; line-height: 1.6; margin: 20px 0 0 0;">
+                    <p style="color: rgba(255,255,255,0.9) !important; font-size: 14px; line-height: 1.6; margin: 20px 0 0 0;">
                       ใช้รหัสนี้เพื่อแนะนำลูกค้าและรับค่าคอมมิชชั่น<br/>
                       ลูกค้าของคุณจะได้รับส่วนลดเมื่อใช้รหัสนี้
                     </p>
@@ -69,9 +106,9 @@ function getEmailTemplate(firstName: string, affiliateCode: string): string {
                 </tr>
               </table>
 
-              <div style="background-color: rgba(255,255,255,0.03); border-left: 4px solid #3A23B5; padding: 20px; border-radius: 8px; margin-bottom: 32px;">
-                <h3 style="color: #ffffff; margin: 0 0 10px 0; font-size: 18px;">💰 ประโยชน์ที่คุณจะได้รับ</h3>
-                <ul style="color: #cbd5e1; font-size: 14px; line-height: 1.8; margin: 10px 0; padding-left: 20px;">
+              <div style="background-color: rgba(255,255,255,0.03) !important; border-left: 4px solid #3A23B5; padding: 20px; border-radius: 8px; margin-bottom: 32px;">
+                <h3 class="text-white" style="color: #ffffff !important; margin: 0 0 10px 0; font-size: 18px;">💰 ประโยชน์ที่คุณจะได้รับ</h3>
+                <ul class="text-light" style="color: #cbd5e1 !important; font-size: 14px; line-height: 1.8; margin: 10px 0; padding-left: 20px;">
                   <li>รับค่าคอมมิชชั่นทุกครั้งที่ลูกค้าใช้รหัสของคุณ</li>
                   <li>ลูกค้าได้รับส่วนลดพิเศษ 1,000 บาท</li>
                   <li>ติดตามยอดขายและรายได้แบบ Real-time</li>
@@ -79,7 +116,7 @@ function getEmailTemplate(firstName: string, affiliateCode: string): string {
                 </ul>
               </div>
 
-              <p style="color: #94a3b8; font-size: 14px; text-align: center; margin-bottom: 0;">
+              <p class="text-light" style="color: #94a3b8 !important; font-size: 14px; text-align: center; margin-bottom: 0;">
                 หากมีคำถามหรือต้องการความช่วยเหลือ กรุณาติดต่อทีมงานของเรา
               </p>
             </td>
@@ -120,8 +157,8 @@ function getEmailTemplate(firstName: string, affiliateCode: string): string {
 
           <!-- Footer -->
           <tr>
-            <td style="background-color: #0f172a; padding: 20px; text-align: center; border-top: 1px solid #1e293b;">
-              <p style="color: #64748b; font-size: 12px; margin: 0;">
+            <td style="background-color: #0f172a !important; padding: 20px; text-align: center; border-top: 1px solid #1e293b;">
+              <p style="color: #64748b !important; font-size: 12px; margin: 0;">
                 © Copyright 2025 MeGenius Company Limited. All rights reserved
               </p>
             </td>
@@ -129,7 +166,7 @@ function getEmailTemplate(firstName: string, affiliateCode: string): string {
         </table>
 
         <!-- Unsubscribe / Extra Info -->
-        <p style="color: #475569; font-size: 12px; margin-top: 20px;">
+        <p style="color: #475569 !important; font-size: 12px; margin-top: 20px;">
           จดหมายนี้ถูกส่งโดยระบบอัตโนมัติ กรุณาอย่าตอบกลับ
         </p>
 

@@ -196,11 +196,8 @@ export default function AffiliateRegisterForm() {
       );
       setFormData((prev) => ({ ...prev, affiliateCode: generatedCode }));
 
-      // Trigger code availability check
-      setCodeAvailability("checking");
-      setTimeout(() => {
-        checkCodeAvailability(generatedCode);
-      }, 100);
+      // Set to null to show Pencil Icon (user knows they can edit)
+      setCodeAvailability(null);
     }
 
     setCurrentStep(2);
@@ -309,8 +306,9 @@ export default function AffiliateRegisterForm() {
       return;
     }
 
-    // Verify code availability one final time before submission (เฉพาะกรณียังไม่เคยเช็ค)
-    if (formData.affiliateCode && codeAvailability !== "available") {
+    // Verify code availability one final time before submission
+    // Skip check if null (auto-generated, treated as valid) or already marked as available
+    if (formData.affiliateCode && codeAvailability !== "available" && codeAvailability !== null) {
       const isTaken = await checkCodeAvailability(formData.affiliateCode);
 
       if (isTaken) {
