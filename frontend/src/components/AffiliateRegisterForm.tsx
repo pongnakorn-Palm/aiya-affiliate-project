@@ -841,7 +841,7 @@ export default function AffiliateRegisterForm() {
                   className={`input-modern ${
                     showError("phone") ? "ring-2 ring-red-400/50" : ""
                   }`}
-                  placeholder="08x-xxx-xxxx"
+                  placeholder="0812345678"
                   inputMode="numeric"
                 />
                 {showError("phone") && (

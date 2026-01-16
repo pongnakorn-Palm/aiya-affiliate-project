@@ -33,9 +33,14 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     const initLiff = async () => {
       try {
-        // ใช้ ID จาก Env หรือ fallback (ควรเปลี่ยน fallback เป็น ID จริงของคุณ)
+        // Validate LIFF ID is configured
+        const liffId = import.meta.env.VITE_LIFF_ID;
+        if (!liffId || liffId.trim() === '') {
+          throw new Error('VITE_LIFF_ID environment variable is not set');
+        }
+
         await liff.init({
-          liffId: import.meta.env.VITE_LIFF_ID || "2008892181-oCegxPFW",
+          liffId: liffId,
         });
 
         setIsReady(true);
