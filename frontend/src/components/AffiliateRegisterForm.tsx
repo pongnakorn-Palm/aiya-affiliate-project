@@ -282,18 +282,35 @@ export default function AffiliateRegisterForm() {
       }
     }
 
-    // Auto-generate affiliate code if empty
+    // Auto-generate affiliate code if empty with Smart Auto-Retry
     if (!formData.affiliateCode.trim()) {
-      const generatedCode = generateAffiliateCode(
-        formData.name,
-        formData.phone
-      );
-      setFormData((prev) => ({ ...prev, affiliateCode: generatedCode }));
+      const baseCode = generateAffiliateCode(formData.name, formData.phone);
+      let finalCode = baseCode;
+      let isAvailable = false;
 
-      // Set to null to show Pencil Icon (neutral state, no false "available" flash)
-      setCodeAvailability(null);
+      // Smart retry: Check availability and auto-append number if taken (max 6 attempts: 0-5)
+      for (let attempt = 0; attempt <= 5; attempt++) {
+        const codeToCheck = attempt === 0 ? baseCode : `${baseCode}${attempt}`;
+        const isTaken = await checkCodeAvailability(codeToCheck);
 
-      // Clear any previous errors for affiliateCode to prevent false "Please enter code" error
+        if (!isTaken) {
+          // Found an available code!
+          finalCode = codeToCheck;
+          isAvailable = true;
+          break;
+        }
+      }
+
+      // Set the final code (either available or last attempt)
+      setFormData((prev) => ({ ...prev, affiliateCode: finalCode }));
+
+      // If couldn't find available code after all attempts, set to null for manual editing
+      if (!isAvailable) {
+        setCodeAvailability(null);
+      }
+      // Note: checkCodeAvailability already sets availability state when code is found
+
+      // Clear any previous errors for affiliateCode
       setErrors((prev) => ({ ...prev, affiliateCode: undefined }));
 
       // Remove affiliateCode from touched set to prevent validation errors
@@ -305,9 +322,7 @@ export default function AffiliateRegisterForm() {
     } else {
       // User kept existing code - validate it immediately
       setCodeAvailability("checking");
-      checkCodeAvailability(formData.affiliateCode).catch(() => {
-        setCodeAvailability(null);
-      });
+      await checkCodeAvailability(formData.affiliateCode);
     }
 
     setCurrentStep(2);
@@ -856,7 +871,7 @@ export default function AffiliateRegisterForm() {
           </div>
 
           <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-white mb-3 md:mb-4">
-            {currentStep === 1 ? "กรอกข้อมูลส่วนตัว" : "สร้างรหัส Affiliate"}
+            {currentStep === 1 ? "กรอกข้อมูลส่วนตัว" : "รหัส Affiliate ของคุณ"}
           </h2>
 
           {/* Global Error */}
@@ -1099,9 +1114,6 @@ export default function AffiliateRegisterForm() {
             <div className="flex flex-col gap-5 animate-slide-in-right">
               {/* Affiliate Code - Prominent Display */}
               <div className="text-center">
-                <p className="text-white/70 text-sm mb-2">
-                  รหัส Affiliate ของคุณ (แก้ไขได้)
-                </p>
                 <div className="relative max-w-md mx-auto">
                   <input
                     ref={affiliateCodeRef}
@@ -1117,14 +1129,14 @@ export default function AffiliateRegisterForm() {
                     spellCheck="false"
                     autoCorrect="off"
                     autoCapitalize="characters"
-                    className={`input-modern font-mono font-bold tracking-widest text-2xl md:text-3xl text-center py-4 px-12 transition-all duration-200 focus:shadow-lg focus:shadow-aiya-purple/20 ${
+                    className={`input-modern font-mono font-bold tracking-widest text-3xl md:text-4xl text-center py-5 md:py-6 px-12 transition-all duration-200 focus:shadow-lg focus:shadow-aiya-purple/20 border-2 bg-white/5 ${
                       showError("affiliateCode")
-                        ? "ring-2 ring-red-400/50"
+                        ? "border-red-400/50 ring-2 ring-red-400/50"
                         : codeAvailability === "available"
-                        ? "ring-2 ring-green-400/50"
+                        ? "border-green-400/50 ring-2 ring-green-400/50"
                         : codeAvailability === "taken"
-                        ? "ring-2 ring-red-400/50"
-                        : ""
+                        ? "border-red-400/50 ring-2 ring-red-400/50"
+                        : "border-aiya-purple/60 focus:border-aiya-purple"
                     }`}
                     placeholder="AIYABOY"
                     style={{
@@ -1202,20 +1214,6 @@ export default function AffiliateRegisterForm() {
                     )}
                   </div>
                 </div>
-                <p className="text-xs text-white/60 mt-2 flex items-center justify-center gap-1">
-                  <svg
-                    className="w-3 h-3"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  ใช้ได้เฉพาะตัวอักษร A-Z และตัวเลข 0-9
-                </p>
                 {/* Long Loading Message - Show after 3 seconds of checking */}
                 {codeAvailability === "checking" && isLongLoading && (
                   <p className="text-amber-400 text-sm mt-3 flex items-center justify-center gap-2 animate-fade-in">
@@ -1284,11 +1282,11 @@ export default function AffiliateRegisterForm() {
                 )}
               </div>
 
-              {/* PDPA Consent Checkbox - Minimalist Style */}
+              {/* PDPA Consent Checkbox - De-emphasized Style */}
               <div>
                 <label
                   htmlFor="pdpa-checkbox"
-                  className="flex items-start gap-4 cursor-pointer select-none"
+                  className="flex items-start gap-2 cursor-pointer select-none"
                 >
                   <div className="relative shrink-0 mt-0.5">
                     <input
@@ -1315,21 +1313,21 @@ export default function AffiliateRegisterForm() {
                       aria-label="ยอมรับเงื่อนไขการใช้งานและนโยบายความเป็นส่วนตัว"
                     />
                     <div
-                      className={`w-6 h-6 rounded border-2 transition-all duration-200 flex items-center justify-center ${
+                      className={`w-4 h-4 rounded border transition-all duration-200 flex items-center justify-center ${
                         formData.pdpaConsent
                           ? "border-aiya-purple bg-aiya-purple"
                           : showError("pdpaConsent")
                           ? "border-red-400 bg-transparent"
-                          : "border-white/30 bg-transparent peer-hover:border-white/50"
+                          : "border-white/20 bg-transparent peer-hover:border-white/30"
                       }`}
                     >
                       {formData.pdpaConsent && (
                         <svg
-                          className="w-4 h-4 text-white"
+                          className="w-3 h-3 text-white"
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"
-                          strokeWidth="2.5"
+                          strokeWidth="3"
                         >
                           <path
                             strokeLinecap="round"
@@ -1340,14 +1338,14 @@ export default function AffiliateRegisterForm() {
                       )}
                     </div>
                   </div>
-                  <span className="text-sm text-white/60 leading-relaxed">
+                  <span className="text-xs text-white/50 leading-snug">
                     ข้าพเจ้ายอมรับ{" "}
                     <a
                       href="https://web.aiya.ai/privacy-policy"
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={(e) => e.stopPropagation()}
-                      className="text-blue-400 hover:text-blue-300 underline transition-colors"
+                      className="text-white/50 hover:text-white/70 transition-colors"
                     >
                       เงื่อนไขการใช้งาน
                     </a>{" "}
@@ -1357,41 +1355,26 @@ export default function AffiliateRegisterForm() {
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={(e) => e.stopPropagation()}
-                      className="text-blue-400 hover:text-blue-300 underline transition-colors"
+                      className="text-white/50 hover:text-white/70 transition-colors"
                     >
                       นโยบายความเป็นส่วนตัว
                     </a>{" "}
-                    ของ AIYA <span className="text-red-400">*</span>
+                    ของ AIYA <span className="text-red-400/70">*</span>
                   </span>
                 </label>
-                {showError("pdpaConsent") && (
-                  <p className="error-message text-red-300 text-xs mt-2 ml-1 flex items-center gap-1 animate-fade-in">
-                    <svg
-                      className="w-3.5 h-3.5"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                    {errors.pdpaConsent}
-                  </p>
-                )}
               </div>
 
               {/* Action Buttons - Back and Submit */}
-              <div className="flex flex-col sm:flex-row gap-3">
-                {/* Back Button */}
+              <div className="flex flex-row gap-3 items-stretch">
+                {/* Back Button - Icon Only (Small Square) */}
                 <button
                   type="button"
                   onClick={handleBackStep}
-                  className="flex-1 flex items-center justify-center gap-2 px-6 py-3 min-h-[48px] md:min-h-[56px] rounded-xl border border-white/20 bg-white/5 text-white font-medium hover:bg-white/10 hover:border-white/30 transition-all duration-200 text-base md:text-lg"
+                  className="flex items-center justify-center w-12 md:w-14 min-h-[48px] md:min-h-[56px] rounded-xl border border-white/20 bg-white/5 text-white hover:bg-white/10 hover:border-white/30 transition-all duration-200 shrink-0"
+                  aria-label="ย้อนกลับ"
                 >
                   <svg
-                    className="w-5 h-5"
+                    className="w-5 h-5 md:w-6 md:h-6"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -1403,10 +1386,9 @@ export default function AffiliateRegisterForm() {
                       d="M15 19l-7-7 7-7"
                     />
                   </svg>
-                  ย้อนกลับ
                 </button>
 
-                {/* Submit Button */}
+                {/* Submit Button - Takes remaining space */}
                 <button
                   type="submit"
                   disabled={
