@@ -373,7 +373,9 @@ export default function AffiliateRegisterForm() {
       } catch (parseError) {
         console.error("Failed to parse API response:", parseError);
         if (!eventDbResponse.ok) {
-          throw new Error(`การลงทะเบียนล้มเหลว (Status: ${eventDbResponse.status})`);
+          throw new Error(
+            `การลงทะเบียนล้มเหลว (Status: ${eventDbResponse.status})`
+          );
         }
         throw new Error("การลงทะเบียนล้มเหลว กรุณาลองใหม่อีกครั้ง");
       }
@@ -420,7 +422,10 @@ export default function AffiliateRegisterForm() {
         try {
           mainSystemData = await mainSystemResponse.json();
         } catch (parseError) {
-          console.error("Failed to parse main system API response:", parseError);
+          console.error(
+            "Failed to parse main system API response:",
+            parseError
+          );
           mainSystemSuccess = false;
         }
 
@@ -453,7 +458,9 @@ export default function AffiliateRegisterForm() {
       }
 
       if (!mainSystemSuccess) {
-        console.warn("⚠️ Main system registration failed - affiliate code may not work in production");
+        console.warn(
+          "⚠️ Main system registration failed - affiliate code may not work in production"
+        );
       }
 
       navigate("/thank-you", {
@@ -584,7 +591,7 @@ export default function AffiliateRegisterForm() {
                   {/* Text */}
                   <div className="flex-1">
                     <p className="text-white/90 text-sm sm:text-base md:text-lg leading-relaxed">
-                      ผู้สมัครได้ความรู้ AI ช่วยธุรกิจของคุณให้สำเร็จ{" "}
+                      รับความรู้ AI ต่อยอดธุรกิจให้สำเร็จ{" "}
                       <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-yellow-400 to-amber-500 text-lg sm:text-xl md:text-2xl block mt-1">
                         ลูกค้ารับส่วนลดสูงสุด{" "}
                         <span className="whitespace-nowrap">2,000 บาท</span>
@@ -866,25 +873,22 @@ export default function AffiliateRegisterForm() {
               <button
                 type="button"
                 onClick={handleNextStep}
-                className="btn-gradient mt-2 min-h-[48px] md:min-h-[56px] text-base md:text-lg relative group"
+                className="btn-gradient mt-2 min-h-[48px] md:min-h-[56px] text-base md:text-lg group"
               >
                 <span>ถัดไป</span>
-                {/* Absolute Positioned Chevron Icon */}
-                <div className="absolute right-5 top-1/2 -translate-y-1/2 text-white/80 group-hover:text-white transition-colors">
-                  <svg
-                    className="w-6 h-6 group-hover:translate-x-1 transition-transform"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M8.25 4.5l7.5 7.5-7.5 7.5"
-                    />
-                  </svg>
-                </div>
+                <svg
+                  className="w-6 h-6 group-hover:translate-x-1 transition-transform"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M8.25 4.5l7.5 7.5-7.5 7.5"
+                  />
+                </svg>
               </button>
             </>
           )}
