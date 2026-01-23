@@ -173,13 +173,27 @@ export default function ThankYou() {
                     </div>
                 </div>
 
-                {/* Action Button */}
-                <button
-                    onClick={handleClose}
-                    className="w-full py-4 rounded-xl bg-gradient-to-r from-[#3A23B5] to-[#5C499D] text-white font-bold text-lg shadow-lg shadow-aiya-purple/20 hover:shadow-aiya-purple/40 hover:scale-[1.02] active:scale-95 transition-all duration-200"
-                >
-                    เสร็จสิ้น
-                </button>
+                {/* Action Buttons */}
+                <div className="space-y-3">
+                    {/* Primary CTA: Go to Dashboard */}
+                    <button
+                        onClick={() => navigate('/portal')}
+                        className="w-full py-4 rounded-xl bg-gradient-to-r from-[#3A23B5] to-[#5C499D] text-white font-bold text-lg shadow-lg shadow-aiya-purple/20 hover:shadow-aiya-purple/40 hover:scale-[1.02] active:scale-95 transition-all duration-200 flex items-center justify-center gap-2"
+                    >
+                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
+                        ดูสถิติของฉัน
+                    </button>
+
+                    {/* Secondary: Close */}
+                    <button
+                        onClick={handleClose}
+                        className="w-full py-4 rounded-xl bg-white/5 border border-white/10 text-white font-semibold text-base hover:bg-white/10 hover:scale-[1.02] active:scale-95 transition-all duration-200"
+                    >
+                        ปิด
+                    </button>
+                </div>
 
             </div>
         </div>
