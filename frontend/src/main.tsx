@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
+import { HelmetProvider } from 'react-helmet-async'
 import App from './App'
 import './index.css'
 import { LiffProvider } from './contexts/LiffContext'
@@ -17,10 +18,12 @@ console.log('✅ API URL configured:', API_URL);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
-        <LiffProvider>
-            <BrowserRouter>
-                <App />
-            </BrowserRouter>
-        </LiffProvider>
+        <HelmetProvider>
+            <LiffProvider>
+                <BrowserRouter>
+                    <App />
+                </BrowserRouter>
+            </LiffProvider>
+        </HelmetProvider>
     </React.StrictMode>,
 )

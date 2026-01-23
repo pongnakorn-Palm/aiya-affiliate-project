@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useLiff } from "../contexts/LiffContext";
 import DashboardSkeleton from "./DashboardSkeleton";
+import SEOHead from "./SEOHead";
+import ReferralHistory from "./ReferralHistory";
 
 interface DashboardData {
   affiliate: {
@@ -19,7 +21,7 @@ interface DashboardData {
 }
 
 export default function PartnerPortal() {
-  const { isLoggedIn, profile, login, isReady, liffObject } = useLiff();
+  const { isLoggedIn, profile, login, isReady, liffObject, isInClient } = useLiff();
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(
     null
   );
@@ -28,6 +30,7 @@ export default function PartnerPortal() {
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [isSharing, setIsSharing] = useState(false);
 
   // Fetch dashboard data when logged in
   useEffect(() => {
@@ -101,28 +104,52 @@ export default function PartnerPortal() {
 
   // Share to LINE
   const shareToLine = async () => {
-    if (!liffObject || !dashboardData) return;
+    if (!liffObject || !dashboardData || isSharing) return;
+
+    setIsSharing(true);
 
     try {
+      // Check if running in LINE client
+      if (!isInClient) {
+        alert("กรุณาเปิดในแอป LINE เพื่อใช้ฟีเจอร์แชร์");
+        setIsSharing(false);
+        return;
+      }
+
+      // Check if shareTargetPicker is available
+      if (!liffObject.isApiAvailable("shareTargetPicker")) {
+        alert("ฟีเจอร์แชร์ไม่พร้อมใช้งาน กรุณาอัปเดต LINE เป็นเวอร์ชันล่าสุด");
+        setIsSharing(false);
+        return;
+      }
+
       const referralLink = `https://aiya-bootcamp.vercel.app/tickets?referral=${dashboardData.affiliate.affiliateCode}`;
+      const shareMessage = `🎉 มาร่วม AI EMPIRE Bootcamp กับเราสิ!\n\n✨ เรียนรู้ AI ให้เป็นมืออาชีพ\n💰 รับส่วนลดพิเศษเมื่อใช้รหัสของฉัน\n\n🔑 รหัส: ${dashboardData.affiliate.affiliateCode}\n🔗 ลิงก์: ${referralLink}\n\n#AIBootcamp #AIYA #AIEmpire`;
 
       const result = await liffObject.shareTargetPicker([
         {
           type: "text",
-          text: `🎉 มาร่วม AI EMPIRE Bootcamp กับเราสิ!\n\n✨ เรียนรู้ AI ให้เป็นมืออาชีพ\n💰 รับส่วนลดพิเศษเมื่อใช้รหัสของฉัน\n\n🔑 รหัส: ${dashboardData.affiliate.affiliateCode}\n🔗 ลิงก์: ${referralLink}\n\n#AIBootcamp #AIYA #AIEmpire`,
+          text: shareMessage,
         },
       ]);
 
       if (result) {
-        // Share successful
         console.log("Shared successfully");
+        // Optional: Show success message
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Share error:", error);
-      // Fallback to copy link
-      copyToClipboard(
-        `https://aiya-bootcamp.vercel.app/tickets?referral=${dashboardData.affiliate.affiliateCode}`
-      );
+
+      // User cancelled or other error
+      if (error.message && error.message.includes("CANCEL")) {
+        // User cancelled, do nothing
+        console.log("Share cancelled by user");
+      } else {
+        // Other error - show error message and copy link as fallback
+        alert("ไม่สามารถแชร์ได้ กรุณาลองอีกครั้ง");
+      }
+    } finally {
+      setIsSharing(false);
     }
   };
 
@@ -260,8 +287,13 @@ export default function PartnerPortal() {
     : "";
 
   return (
-    <div className="min-h-screen px-4 py-6 md:px-6 lg:px-8 bg-gradient-to-br from-[#020c17] via-[#0a1628] to-[#020c17]">
-      <div className="w-full max-w-4xl mx-auto">
+    <>
+      <SEOHead
+        title={`${dashboardData?.affiliate.name || "สถิติของฉัน"} - AIYA Affiliate`}
+        description={`ดูสถิติและค่าคอมมิชชั่นของคุณ | จำนวนผู้สมัคร: ${dashboardData?.stats.totalRegistrations || 0} คน | รายได้: ${dashboardData ? formatCommission(dashboardData.stats.totalCommission) : 0} บาท`}
+      />
+      <div className="min-h-screen px-4 py-6 md:px-6 lg:px-8 bg-gradient-to-br from-[#020c17] via-[#0a1628] to-[#020c17]">
+        <div className="w-full max-w-4xl mx-auto">
         {/* Header with Refresh Button */}
         <div className="mb-6 flex items-start justify-between">
           <div>
@@ -490,15 +522,50 @@ export default function PartnerPortal() {
             </div>
 
             {/* Share to LINE Button */}
-            {liffObject && (
+            {liffObject && isInClient && (
               <button
                 onClick={shareToLine}
-                className="w-full flex items-center justify-center gap-2 bg-[#06C755] hover:bg-[#05b34b] text-white font-medium px-4 py-3 rounded-lg transition-colors duration-200"
+                disabled={isSharing}
+                className={`w-full flex items-center justify-center gap-2 bg-[#06C755] hover:bg-[#05b34b] text-white font-medium px-4 py-3 rounded-lg transition-colors duration-200 ${
+                  isSharing ? "opacity-50 cursor-not-allowed" : ""
+                }`}
               >
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314" />
-                </svg>
-                แชร์ไปยัง LINE
+                {isSharing ? (
+                  <>
+                    <svg
+                      className="animate-spin h-5 w-5"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
+                    </svg>
+                    กำลังแชร์...
+                  </>
+                ) : (
+                  <>
+                    <svg
+                      className="w-5 h-5"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                    >
+                      <path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314" />
+                    </svg>
+                    แชร์ไปยัง LINE
+                  </>
+                )}
               </button>
             )}
 
@@ -508,11 +575,17 @@ export default function PartnerPortal() {
           </div>
         )}
 
+        {/* Referral History */}
+        {dashboardData && profile?.userId && (
+          <ReferralHistory lineUserId={profile.userId} />
+        )}
+
         {/* Footer */}
         <p className="text-center text-white/40 text-xs mt-8">
           © 2025 MeGenius Company Limited. All rights reserved
         </p>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

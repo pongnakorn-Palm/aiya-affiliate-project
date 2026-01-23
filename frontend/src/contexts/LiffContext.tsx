@@ -35,6 +35,26 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({
       try {
         // Validate LIFF ID is configured
         const liffId = import.meta.env.VITE_LIFF_ID;
+        const useMockMode = import.meta.env.VITE_USE_MOCK_LIFF === 'true';
+
+        // Development Mode: Use mock profile
+        if (useMockMode) {
+          console.log("🔧 Development Mode: Using mock LIFF profile");
+          setIsReady(true);
+          setIsLoggedIn(true);
+          setIsInClient(false);
+
+          // Mock profile for testing
+          setProfile({
+            displayName: "Test User",
+            pictureUrl: "https://via.placeholder.com/150",
+            userId: "U1234567890abcdef1234567890abcdef",
+            email: "test@example.com",
+          });
+
+          return;
+        }
+
         if (!liffId || liffId.trim() === '') {
           throw new Error('VITE_LIFF_ID environment variable is not set');
         }

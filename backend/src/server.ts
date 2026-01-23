@@ -22,12 +22,37 @@ const rateLimitMap = new Map<string, RateLimitEntry>();
 const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute in milliseconds
 const RATE_LIMIT_MAX_REQUESTS = 3; // Max 3 requests per minute per IP
 
+// Dashboard rate limiting - more generous
+const dashboardRateLimitMap = new Map<string, RateLimitEntry>();
+const DASHBOARD_RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
+const DASHBOARD_RATE_LIMIT_MAX_REQUESTS = 10; // Max 10 requests per minute
+
+// Dashboard cache
+interface DashboardCacheEntry {
+    data: any;
+    timestamp: number;
+}
+const dashboardCache = new Map<string, DashboardCacheEntry>();
+const DASHBOARD_CACHE_TTL = 60 * 1000; // 60 seconds cache
+
 // Clean up expired entries every 5 minutes
 setInterval(() => {
     const now = Date.now();
     for (const [ip, entry] of rateLimitMap.entries()) {
         if (now > entry.resetTime) {
             rateLimitMap.delete(ip);
+        }
+    }
+    // Clean up dashboard rate limits
+    for (const [ip, entry] of dashboardRateLimitMap.entries()) {
+        if (now > entry.resetTime) {
+            dashboardRateLimitMap.delete(ip);
+        }
+    }
+    // Clean up expired cache
+    for (const [key, cache] of dashboardCache.entries()) {
+        if (now - cache.timestamp > DASHBOARD_CACHE_TTL) {
+            dashboardCache.delete(key);
         }
     }
 }, 5 * 60 * 1000);
@@ -54,6 +79,41 @@ function checkRateLimit(ip: string): { allowed: boolean; retryAfter?: number } {
     // Increment count
     entry.count++;
     return { allowed: true };
+}
+
+function checkDashboardRateLimit(ip: string): { allowed: boolean; retryAfter?: number } {
+    const now = Date.now();
+    const entry = dashboardRateLimitMap.get(ip);
+
+    if (!entry || now > entry.resetTime) {
+        dashboardRateLimitMap.set(ip, {
+            count: 1,
+            resetTime: now + DASHBOARD_RATE_LIMIT_WINDOW,
+        });
+        return { allowed: true };
+    }
+
+    if (entry.count >= DASHBOARD_RATE_LIMIT_MAX_REQUESTS) {
+        const retryAfter = Math.ceil((entry.resetTime - now) / 1000);
+        return { allowed: false, retryAfter };
+    }
+
+    entry.count++;
+    return { allowed: true };
+}
+
+// ========================================
+// INPUT VALIDATION & SANITIZATION
+// ========================================
+function validateLineUserId(lineUserId: string): boolean {
+    // LINE User ID format: U + 32 hex characters
+    const lineUserIdRegex = /^U[0-9a-f]{32}$/i;
+    return lineUserIdRegex.test(lineUserId);
+}
+
+function sanitizeString(input: string): string {
+    // Remove any potential SQL injection characters
+    return input.replace(/[;'"\\]/g, "");
 }
 
 // ========================================
@@ -426,9 +486,12 @@ export const app = new Elysia()
         }
     )
     // Partner Dashboard endpoint
-    .get("/api/affiliate/dashboard/:lineUserId", async ({ params, set }) => {
+    .get("/api/affiliate/dashboard/:lineUserId", async ({ params, set, request }) => {
         const { lineUserId } = params;
 
+        // ========================================
+        // INPUT VALIDATION
+        // ========================================
         if (!lineUserId) {
             set.status = 400;
             return {
@@ -437,9 +500,55 @@ export const app = new Elysia()
             };
         }
 
+        // Validate LINE User ID format
+        if (!validateLineUserId(lineUserId)) {
+            set.status = 400;
+            return {
+                success: false,
+                message: "Invalid LINE User ID format",
+            };
+        }
+
+        // Sanitize lineUserId (extra safety)
+        const sanitizedLineUserId = sanitizeString(lineUserId);
+
+        // ========================================
+        // RATE LIMITING CHECK
+        // ========================================
+        const clientIP = request.headers.get("x-forwarded-for")?.split(",")[0] ||
+            request.headers.get("x-real-ip") ||
+            "unknown";
+
+        const rateLimitResult = checkDashboardRateLimit(clientIP);
+        if (!rateLimitResult.allowed) {
+            set.status = 429;
+            set.headers["Retry-After"] = rateLimitResult.retryAfter?.toString() || "60";
+            return {
+                success: false,
+                message: `กรุณารอ ${rateLimitResult.retryAfter} วินาที ก่อนรีเฟรชอีกครั้ง`,
+                retryAfter: rateLimitResult.retryAfter,
+            };
+        }
+
+        // ========================================
+        // CACHE CHECK
+        // ========================================
+        const cacheKey = `dashboard:${sanitizedLineUserId}`;
+        const cachedData = dashboardCache.get(cacheKey);
+        const now = Date.now();
+
+        if (cachedData && (now - cachedData.timestamp) < DASHBOARD_CACHE_TTL) {
+            // Return cached data
+            return {
+                success: true,
+                data: cachedData.data,
+                cached: true,
+            };
+        }
+
         try {
             // Step 1: Query local DB to get affiliate_code using lineUserId
-            const localAffiliate = await getAffiliateByLineUserId(lineUserId);
+            const localAffiliate = await getAffiliateByLineUserId(sanitizedLineUserId);
 
             if (!localAffiliate) {
                 set.status = 404;
@@ -471,23 +580,32 @@ export const app = new Elysia()
                 pending_commission: 0,
             };
 
+            const responseData = {
+                affiliate: {
+                    name: localAffiliate.name,
+                    email: localAffiliate.email,
+                    phone: localAffiliate.phone,
+                    affiliateCode: localAffiliate.affiliate_code,
+                    createdAt: localAffiliate.created_at,
+                },
+                stats: {
+                    totalRegistrations: stats.total_registrations,
+                    totalCommission: stats.total_commission,
+                    approvedCommission: stats.approved_commission,
+                    pendingCommission: stats.pending_commission,
+                },
+            };
+
+            // Cache the response
+            dashboardCache.set(cacheKey, {
+                data: responseData,
+                timestamp: Date.now(),
+            });
+
             return {
                 success: true,
-                data: {
-                    affiliate: {
-                        name: localAffiliate.name,
-                        email: localAffiliate.email,
-                        phone: localAffiliate.phone,
-                        affiliateCode: localAffiliate.affiliate_code,
-                        createdAt: localAffiliate.created_at,
-                    },
-                    stats: {
-                        totalRegistrations: stats.total_registrations,
-                        totalCommission: stats.total_commission,
-                        approvedCommission: stats.approved_commission,
-                        pendingCommission: stats.pending_commission,
-                    },
-                },
+                data: responseData,
+                cached: false,
             };
         } catch (error: any) {
             console.error("Dashboard API error:", error);
@@ -495,6 +613,103 @@ export const app = new Elysia()
             return {
                 success: false,
                 message: "Failed to fetch dashboard data",
+            };
+        }
+    })
+    // Referral History endpoint
+    .get("/api/affiliate/referrals/:lineUserId", async ({ params, set, request }) => {
+        const { lineUserId } = params;
+
+        // ========================================
+        // INPUT VALIDATION
+        // ========================================
+        if (!lineUserId) {
+            set.status = 400;
+            return {
+                success: false,
+                message: "LINE User ID is required",
+            };
+        }
+
+        if (!validateLineUserId(lineUserId)) {
+            set.status = 400;
+            return {
+                success: false,
+                message: "Invalid LINE User ID format",
+            };
+        }
+
+        const sanitizedLineUserId = sanitizeString(lineUserId);
+
+        // ========================================
+        // RATE LIMITING CHECK
+        // ========================================
+        const clientIP = request.headers.get("x-forwarded-for")?.split(",")[0] ||
+            request.headers.get("x-real-ip") ||
+            "unknown";
+
+        const rateLimitResult = checkDashboardRateLimit(clientIP);
+        if (!rateLimitResult.allowed) {
+            set.status = 429;
+            set.headers["Retry-After"] = rateLimitResult.retryAfter?.toString() || "60";
+            return {
+                success: false,
+                message: `กรุณารอ ${rateLimitResult.retryAfter} วินาที ก่อนลองอีกครั้ง`,
+                retryAfter: rateLimitResult.retryAfter,
+            };
+        }
+
+        try {
+            // Step 1: Get affiliate code from local DB
+            const localAffiliate = await getAffiliateByLineUserId(sanitizedLineUserId);
+
+            if (!localAffiliate) {
+                set.status = 404;
+                return {
+                    success: false,
+                    message: "Affiliate not found",
+                };
+            }
+
+            // Step 2: Query referral history from main system DB
+            const referrals = await mainSystemSql`
+                SELECT
+                    id,
+                    first_name,
+                    last_name,
+                    email,
+                    package_type,
+                    commission_amount,
+                    commission_status,
+                    created_at
+                FROM bootcamp_registrations
+                WHERE referral_code = ${localAffiliate.affiliate_code}
+                ORDER BY created_at DESC
+                LIMIT 100
+            `;
+
+            return {
+                success: true,
+                data: {
+                    referrals: referrals.map((r: any) => ({
+                        id: r.id,
+                        firstName: r.first_name,
+                        lastName: r.last_name,
+                        email: r.email,
+                        packageType: r.package_type,
+                        commissionAmount: r.commission_amount,
+                        commissionStatus: r.commission_status,
+                        createdAt: r.created_at,
+                    })),
+                    total: referrals.length,
+                },
+            };
+        } catch (error: any) {
+            console.error("Referral history error:", error);
+            set.status = 500;
+            return {
+                success: false,
+                message: "Failed to fetch referral history",
             };
         }
     });
