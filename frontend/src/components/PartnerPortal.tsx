@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useLiff } from "../contexts/LiffContext";
 import DashboardSkeleton from "./DashboardSkeleton";
 import SEOHead from "./SEOHead";
-import ReferralHistory from "./ReferralHistory";
 
 interface DashboardData {
   affiliate: {
@@ -29,6 +28,7 @@ export default function PartnerPortal() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [isSharing, setIsSharing] = useState(false);
 
@@ -135,17 +135,13 @@ export default function PartnerPortal() {
 
       if (result) {
         console.log("Shared successfully");
-        // Optional: Show success message
       }
     } catch (error: any) {
       console.error("Share error:", error);
 
-      // User cancelled or other error
       if (error.message && error.message.includes("CANCEL")) {
-        // User cancelled, do nothing
         console.log("Share cancelled by user");
       } else {
-        // Other error - show error message and copy link as fallback
         alert("ไม่สามารถแชร์ได้ กรุณาลองอีกครั้ง");
       }
     } finally {
@@ -161,30 +157,30 @@ export default function PartnerPortal() {
     });
   };
 
-  // Format last updated time
-  const formatLastUpdated = () => {
-    if (!lastUpdated) return "";
+  // Copy referral link
+  const copyReferralLink = () => {
+    if (!dashboardData) return;
+    const referralLink = `https://aiya-bootcamp.vercel.app/tickets?referral=${dashboardData.affiliate.affiliateCode}`;
+    navigator.clipboard.writeText(referralLink).then(() => {
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2000);
+    });
+  };
 
-    const now = new Date();
-    const diff = Math.floor((now.getTime() - lastUpdated.getTime()) / 1000);
-
-    if (diff < 60) return "เมื่อสักครู่";
-    if (diff < 3600) return `${Math.floor(diff / 60)} นาทีที่แล้ว`;
-    if (diff < 86400) return `${Math.floor(diff / 3600)} ชั่วโมงที่แล้ว`;
-    return lastUpdated.toLocaleDateString("th-TH", {
-      day: "numeric",
-      month: "short",
-      hour: "2-digit",
-      minute: "2-digit",
+  // Format commission (stored in cents, convert to baht)
+  const formatCommission = (cents: number) => {
+    return (cents / 100).toLocaleString("th-TH", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
     });
   };
 
   // Show loading spinner while LIFF is initializing
   if (!isReady) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#020c17] via-[#0a1628] to-[#020c17]">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#0f172a] via-[#171536] to-[#1e1b4b]">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-aiya-purple mb-4"></div>
+          <div className="inline-block animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-primary mb-4"></div>
           <p className="text-white/70 text-sm">กำลังโหลด...</p>
         </div>
       </div>
@@ -194,11 +190,11 @@ export default function PartnerPortal() {
   // Show login prompt if not logged in
   if (!isLoggedIn) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#020c17] via-[#0a1628] to-[#020c17] px-4">
-        <div className="glass-card p-8 max-w-md w-full text-center">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#0f172a] via-[#171536] to-[#1e1b4b] px-4">
+        <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-8 max-w-md w-full text-center">
           <div className="mb-6">
             <svg
-              className="w-20 h-20 mx-auto text-aiya-purple"
+              className="w-20 h-20 mx-auto text-primary"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -219,7 +215,7 @@ export default function PartnerPortal() {
           </p>
           <button
             onClick={login}
-            className="w-full flex items-center justify-center gap-2 bg-[#06C755] hover:bg-[#05b34b] text-white font-medium px-6 py-3 rounded-lg transition-colors duration-200"
+            className="w-full flex items-center justify-center gap-2 bg-line-green hover:bg-[#05b34b] text-white font-medium px-6 py-3 rounded-full transition-colors duration-200"
           >
             <svg
               className="w-6 h-6"
@@ -238,8 +234,8 @@ export default function PartnerPortal() {
   // Show error state
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#020c17] via-[#0a1628] to-[#020c17] px-4">
-        <div className="glass-card p-8 max-w-md w-full text-center">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#0f172a] via-[#171536] to-[#1e1b4b] px-4">
+        <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-8 max-w-md w-full text-center">
           <div className="mb-6">
             <svg
               className="w-20 h-20 mx-auto text-red-400"
@@ -259,7 +255,7 @@ export default function PartnerPortal() {
           <p className="text-white/70 mb-6">{error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="btn-gradient w-full"
+            className="w-full bg-primary hover:bg-primary/80 text-white font-bold py-3 px-6 rounded-full transition-colors"
           >
             ลองใหม่อีกครั้ง
           </button>
@@ -273,18 +269,10 @@ export default function PartnerPortal() {
     return <DashboardSkeleton />;
   }
 
-  // Format commission (stored in cents, convert to baht)
-  const formatCommission = (cents: number) => {
-    return (cents / 100).toLocaleString("th-TH", {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    });
-  };
-
-  // Generate referral link
-  const referralLink = dashboardData
-    ? `https://aiya-bootcamp.vercel.app/tickets?referral=${dashboardData.affiliate.affiliateCode}`
-    : "";
+  // Calculate paid commission
+  const paidCommission = dashboardData
+    ? dashboardData.stats.totalCommission - dashboardData.stats.pendingCommission
+    : 0;
 
   return (
     <>
@@ -292,299 +280,185 @@ export default function PartnerPortal() {
         title={`${dashboardData?.affiliate.name || "สถิติของฉัน"} - AIYA Affiliate`}
         description={`ดูสถิติและค่าคอมมิชชั่นของคุณ | จำนวนผู้สมัคร: ${dashboardData?.stats.totalRegistrations || 0} คน | รายได้: ${dashboardData ? formatCommission(dashboardData.stats.totalCommission) : 0} บาท`}
       />
-      <div className="min-h-screen px-4 py-6 md:px-6 lg:px-8 bg-gradient-to-br from-[#020c17] via-[#0a1628] to-[#020c17]">
-        <div className="w-full max-w-4xl mx-auto">
-        {/* Header with Refresh Button */}
-        <div className="mb-6 flex items-start justify-between">
-          <div>
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
-              สถิติของฉัน 📊
-            </h1>
-            <div className="flex items-center gap-2">
-              <p className="text-white/60">ยินดีต้อนรับกลับมา 👋</p>
-              {lastUpdated && (
-                <span className="text-white/40 text-xs">
-                  • อัปเดต{formatLastUpdated()}
-                </span>
+      <div className="relative flex min-h-screen w-full flex-col bg-gradient-to-b from-[#0f172a] via-[#171536] to-[#1e1b4b] text-white overflow-x-hidden pb-24 font-display">
+
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 pt-14 pb-6">
+          <div className="flex items-center gap-4">
+            <div className="relative size-14 overflow-hidden rounded-full border-2 border-white/20">
+              {profile?.pictureUrl ? (
+                <img
+                  alt="Profile"
+                  className="size-full object-cover"
+                  src={profile.pictureUrl}
+                />
+              ) : (
+                <div className="size-full bg-gradient-to-br from-primary to-orange-600 flex items-center justify-center text-white text-2xl font-bold">
+                  {profile?.displayName?.charAt(0)}
+                </div>
               )}
+              <div className="absolute bottom-0 right-0 size-3.5 rounded-full bg-green-500 border-2 border-[#0f172a]"></div>
+            </div>
+            <div>
+              <p className="text-white/60 text-sm font-medium leading-tight mb-0.5">Welcome back,</p>
+              <p className="text-white text-xl font-bold leading-tight">
+                {profile?.displayName || "Partner"}
+              </p>
             </div>
           </div>
           <button
             onClick={refreshStats}
             disabled={isRefreshing}
-            className={`p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-all duration-200 ${
-              isRefreshing ? "opacity-50 cursor-not-allowed" : ""
-            }`}
-            title="รีเฟรชข้อมูล"
+            className="flex items-center justify-center size-11 rounded-full bg-white/5 hover:bg-white/10 transition-colors border border-white/5"
           >
-            <svg
-              className={`w-5 h-5 ${isRefreshing ? "animate-spin" : ""}`}
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-              />
-            </svg>
+            <span className="material-symbols-outlined text-white" style={{ fontSize: '24px' }}>
+              {isRefreshing ? 'refresh' : 'notifications'}
+            </span>
           </button>
         </div>
 
-        {/* Profile Card */}
-        {profile && (
-          <div className="glass-card p-6 mb-6">
-            <div className="flex items-center gap-4">
-              {profile.pictureUrl ? (
-                <img
-                  src={profile.pictureUrl}
-                  alt={profile.displayName}
-                  className="w-16 h-16 rounded-full border-2 border-aiya-purple"
-                />
-              ) : (
-                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-aiya-purple to-aiya-navy flex items-center justify-center text-white text-2xl font-bold">
-                  {profile.displayName?.charAt(0)}
+        {/* Hero Card - Total Commission */}
+        {dashboardData && (
+          <div className="px-5 mt-2 mb-2">
+            <div className="relative w-full overflow-hidden rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 shadow-[0_12px_40px_rgba(245,158,11,0.25)]">
+              <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] mix-blend-overlay"></div>
+              <div className="relative p-7 flex flex-col gap-2">
+                <div className="flex justify-between items-start">
+                  <p className="text-white/90 text-base font-medium tracking-wide">Total Commission</p>
+                  <div className="flex items-center gap-1.5 bg-white/20 backdrop-blur-md px-2.5 py-1 rounded-lg border border-white/10">
+                    <span className="material-symbols-outlined text-white text-sm">trending_up</span>
+                    <span className="text-white text-xs font-bold">Active</span>
+                  </div>
                 </div>
-              )}
-              <div>
-                <h2 className="text-xl font-bold text-white">
-                  {profile.displayName}
-                </h2>
-                {dashboardData && (
-                  <p className="text-white/60 text-sm">
-                    {dashboardData.affiliate.email}
+                <div className="mt-3">
+                  <h1 className="text-white text-[2.75rem] font-extrabold tracking-tight leading-none">
+                    ฿ {formatCommission(dashboardData.stats.totalCommission)}
+                  </h1>
+                  <p className="text-white/80 text-sm font-medium mt-2">
+                    Updated {lastUpdated ? 'just now' : 'recently'}
                   </p>
-                )}
+                </div>
+                <div className="mt-8 flex items-center justify-between">
+                  <div className="h-1.5 w-full bg-black/10 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-white/90 rounded-full transition-all duration-500"
+                      style={{ width: `${Math.min((dashboardData.stats.totalCommission / 2000000) * 100, 100)}%` }}
+                    ></div>
+                  </div>
+                  <span className="text-xs font-bold text-white ml-4 whitespace-nowrap">Goal: ฿ 20k</span>
+                </div>
               </div>
             </div>
           </div>
         )}
 
-        {/* Affiliate Code Card */}
+        {/* Stats Cards - Pending & Paid */}
         {dashboardData && (
-          <div className="glass-card p-6 mb-6 text-center bg-gradient-to-br from-aiya-purple/20 to-aiya-navy/20">
-            <p className="text-white/60 text-sm mb-2">รหัส Affiliate ของคุณ</p>
-            <div className="relative inline-block">
-              <p className="text-4xl md:text-5xl font-mono font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 tracking-widest">
-                {dashboardData.affiliate.affiliateCode}
-              </p>
+          <div className="flex flex-wrap gap-5 p-5">
+            <div className="flex min-w-[140px] flex-1 flex-col gap-4 rounded-2xl p-6 bg-[#1e293b]/60 backdrop-blur-md border border-white/5 shadow-sm">
+              <div className="size-11 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400">
+                <span className="material-symbols-outlined">pending</span>
+              </div>
+              <div>
+                <p className="text-slate-400 text-sm font-medium leading-normal mb-1">Pending</p>
+                <p className="text-white tracking-tight text-2xl font-bold leading-tight">
+                  ฿ {formatCommission(dashboardData.stats.pendingCommission)}
+                </p>
+              </div>
             </div>
-            <button
-              onClick={() =>
-                copyToClipboard(dashboardData.affiliate.affiliateCode)
-              }
-              className="mt-4 px-6 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors duration-200 flex items-center gap-2 mx-auto"
-            >
-              {copied ? (
-                <>
-                  <svg
-                    className="w-5 h-5 text-green-400"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  คัดลอกแล้ว!
-                </>
-              ) : (
-                <>
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                    />
-                  </svg>
-                  คัดลอกรหัส
-                </>
-              )}
+            <div className="flex min-w-[140px] flex-1 flex-col gap-4 rounded-2xl p-6 bg-[#1e293b]/60 backdrop-blur-md border border-white/5 shadow-sm">
+              <div className="size-11 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400">
+                <span className="material-symbols-outlined">check_circle</span>
+              </div>
+              <div>
+                <p className="text-slate-400 text-sm font-medium leading-normal mb-1">Paid</p>
+                <p className="text-white tracking-tight text-2xl font-bold leading-tight">
+                  ฿ {formatCommission(paidCommission)}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Referral Code Section */}
+        {dashboardData && (
+          <div className="px-5 pb-6">
+            <label className="text-sm text-slate-400 font-medium ml-1 mb-3 block">Your Referral Code</label>
+            <div className="flex items-center justify-between bg-[#1e293b] rounded-2xl border border-white/10 p-2 pl-6 shadow-sm">
+              <span className="text-primary font-bold text-xl tracking-widest font-mono">
+                {dashboardData.affiliate.affiliateCode}
+              </span>
+              <button
+                onClick={() => copyToClipboard(dashboardData.affiliate.affiliateCode)}
+                className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white transition-colors"
+              >
+                <span className="material-symbols-outlined text-xl">
+                  {copied ? 'check' : 'content_copy'}
+                </span>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Action Buttons */}
+        <div className="flex flex-col gap-4 px-5 pb-8 flex-grow justify-end">
+          <button
+            onClick={shareToLine}
+            disabled={isSharing}
+            className={`relative w-full cursor-pointer overflow-hidden rounded-full h-14 bg-line-green hover:bg-[#05b34c] transition-colors text-white shadow-lg shadow-green-900/30 group ${
+              isSharing ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
+          >
+            <div className="flex items-center justify-center gap-3 px-5 h-full w-full">
+              <span className="material-symbols-outlined fill-current text-2xl">chat_bubble</span>
+              <span className="text-lg font-bold tracking-wide">
+                {isSharing ? 'กำลังแชร์...' : 'Share via LINE'}
+              </span>
+            </div>
+          </button>
+          <button
+            onClick={copyReferralLink}
+            className="w-full cursor-pointer items-center justify-center overflow-hidden rounded-full h-14 border border-white/20 bg-white/5 hover:bg-white/10 text-white transition-all"
+          >
+            <div className="flex items-center justify-center gap-3 px-5">
+              <span className="material-symbols-outlined text-2xl">
+                {copiedLink ? 'check' : 'link'}
+              </span>
+              <span className="text-lg font-semibold">
+                {copiedLink ? 'Copied!' : 'Copy Referral Link'}
+              </span>
+            </div>
+          </button>
+        </div>
+
+        {/* Bottom Navigation */}
+        <div className="fixed bottom-0 left-0 z-50 w-full bg-[#0f172a]/95 backdrop-blur-xl border-t border-white/5" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+          <div className="flex h-16 items-center justify-around px-2">
+            <button className="flex flex-col items-center justify-center gap-1 p-2 text-primary">
+              <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>dashboard</span>
+              <span className="text-[10px] font-bold">Dashboard</span>
+            </button>
+            <button className="flex flex-col items-center justify-center gap-1 p-2 text-slate-400 hover:text-white transition-colors">
+              <span className="material-symbols-outlined">bar_chart</span>
+              <span className="text-[10px] font-medium">Reports</span>
+            </button>
+            <button className="flex flex-col items-center justify-center gap-1 p-2 text-slate-400 hover:text-white transition-colors">
+              <span className="material-symbols-outlined">person</span>
+              <span className="text-[10px] font-medium">Profile</span>
             </button>
           </div>
-        )}
-
-        {/* Stats Grid */}
-        {dashboardData && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-            {/* Total Registrations */}
-            <div className="glass-card p-6">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
-                  <svg
-                    className="w-6 h-6 text-blue-400"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                    />
-                  </svg>
-                </div>
-                <div>
-                  <p className="text-white/60 text-sm">จำนวนผู้สมัคร</p>
-                  <p className="text-3xl font-bold text-white">
-                    {dashboardData.stats.totalRegistrations}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Total Commission */}
-            <div className="glass-card p-6">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center">
-                  <svg
-                    className="w-6 h-6 text-green-400"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                </div>
-                <div>
-                  <p className="text-white/60 text-sm">ค่าคอมมิชชั่นทั้งหมด</p>
-                  <p className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-500">
-                    ฿{formatCommission(dashboardData.stats.totalCommission)}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Referral Link Card */}
-        {dashboardData && (
-          <div className="glass-card p-6 mb-6">
-            <h3 className="text-lg font-bold text-white mb-3">
-              🔗 ลิงก์แนะนำของคุณ
-            </h3>
-            <div className="flex gap-2 mb-3">
-              <input
-                type="text"
-                value={referralLink}
-                readOnly
-                className="flex-1 bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:ring-2 focus:ring-aiya-purple"
-              />
-              <button
-                onClick={() => copyToClipboard(referralLink)}
-                className="px-4 py-3 bg-aiya-purple hover:bg-aiya-purple/80 text-white rounded-lg transition-colors duration-200"
-                title="คัดลอกลิงก์"
-              >
-                {copied ? (
-                  <svg
-                    className="w-5 h-5 text-green-400"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                ) : (
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                    />
-                  </svg>
-                )}
-              </button>
-            </div>
-
-            {/* Share to LINE Button */}
-            {liffObject && isInClient && (
-              <button
-                onClick={shareToLine}
-                disabled={isSharing}
-                className={`w-full flex items-center justify-center gap-2 bg-[#06C755] hover:bg-[#05b34b] text-white font-medium px-4 py-3 rounded-lg transition-colors duration-200 ${
-                  isSharing ? "opacity-50 cursor-not-allowed" : ""
-                }`}
-              >
-                {isSharing ? (
-                  <>
-                    <svg
-                      className="animate-spin h-5 w-5"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      ></circle>
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      ></path>
-                    </svg>
-                    กำลังแชร์...
-                  </>
-                ) : (
-                  <>
-                    <svg
-                      className="w-5 h-5"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                    >
-                      <path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314" />
-                    </svg>
-                    แชร์ไปยัง LINE
-                  </>
-                )}
-              </button>
-            )}
-
-            <p className="text-white/50 text-xs mt-3">
-              แชร์ลิงก์นี้เพื่อรับค่าคอมมิชชั่น
-            </p>
-          </div>
-        )}
-
-        {/* Referral History */}
-        {dashboardData && profile?.userId && (
-          <ReferralHistory lineUserId={profile.userId} />
-        )}
-
-        {/* Footer */}
-        <p className="text-center text-white/40 text-xs mt-8">
-          © 2025 MeGenius Company Limited. All rights reserved
-        </p>
+          <div className="h-4 w-full"></div>
         </div>
+
+        <style>{`
+          .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+          }
+          .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+          }
+        `}</style>
       </div>
     </>
   );
