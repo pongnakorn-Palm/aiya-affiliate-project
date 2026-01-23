@@ -106,10 +106,10 @@ export default function PartnerPortal() {
             </svg>
           </div>
           <h2 className="text-2xl font-bold text-white mb-3">
-            Partner Portal
+            สถิติของฉัน
           </h2>
           <p className="text-white/70 mb-6">
-            กรุณาเข้าสู่ระบบด้วย LINE เพื่อเข้าถึง Dashboard ของคุณ
+            กรุณาเข้าสู่ระบบด้วย LINE เพื่อดูยอดและสถิติของคุณ
           </p>
           <button
             onClick={login}
@@ -193,7 +193,7 @@ export default function PartnerPortal() {
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
-            Partner Portal
+            สถิติของฉัน 📊
           </h1>
           <p className="text-white/60">ยินดีต้อนรับกลับมา 👋</p>
         </div>

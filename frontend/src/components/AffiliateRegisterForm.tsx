@@ -63,6 +63,30 @@ export default function AffiliateRegisterForm() {
   const longLoadingTimerRef = useRef<NodeJS.Timeout | null>(null);
   const statusTextTimerRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Check if user is already registered and redirect to dashboard
+  useEffect(() => {
+    const checkExistingAffiliate = async () => {
+      if (isLoggedIn && profile?.userId) {
+        try {
+          const apiUrl = import.meta.env.VITE_API_URL || "";
+          const response = await fetch(
+            `${apiUrl}/api/affiliate/dashboard/${profile.userId}`
+          );
+
+          if (response.ok) {
+            // User already registered, redirect to dashboard
+            navigate("/portal", { replace: true });
+          }
+        } catch (error) {
+          // If error, user probably not registered yet, continue showing form
+          console.log("User not registered yet");
+        }
+      }
+    };
+
+    checkExistingAffiliate();
+  }, [isLoggedIn, profile?.userId, navigate]);
+
   // Auto-fill form data from LINE profile (only if fields are empty)
   useEffect(() => {
     if (isLoggedIn && profile) {
