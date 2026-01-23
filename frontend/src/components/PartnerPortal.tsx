@@ -298,7 +298,7 @@ export default function PartnerPortal() {
         title={`${displayData?.affiliate.name || "สถิติของฉัน"} - AIYA Affiliate`}
         description={`ดูสถิติและค่าคอมมิชชั่นของคุณ | จำนวนผู้สมัคร: ${displayData?.stats.totalRegistrations || 0} คน | รายได้: ${displayData ? formatCommission(displayData.stats.totalCommission) : 0} บาท`}
       />
-      <div className="relative flex min-h-screen w-full flex-col bg-[#020c17] text-white overflow-x-hidden pb-24 font-display">
+      <div className="relative flex min-h-screen w-full flex-col bg-[#020c17] text-white overflow-x-hidden pb-24 font-sans">
 
         {/* Header */}
         <div className="flex items-center justify-between px-6 pt-14 pb-6">
