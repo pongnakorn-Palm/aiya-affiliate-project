@@ -18,7 +18,7 @@ interface DashboardData {
 }
 
 export default function PartnerPortal() {
-  const { isLoggedIn, profile, login, isReady, isInClient } = useLiff();
+  const { isLoggedIn, profile, login, isReady } = useLiff();
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(
     null
   );
