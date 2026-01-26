@@ -1,7 +1,8 @@
 import { Elysia, t } from "elysia";
 import { cors } from "@elysiajs/cors";
-import { sql, insertAffiliate, checkConnection, checkAffiliate, getAffiliateByLineUserId } from "./db.js";
+import { sql, insertAffiliate, checkConnection, checkAffiliate, getAffiliateByLineUserId, updateAffiliateBankInfo } from "./db.js";
 import { sendConfirmationEmail } from "./sendEmail.js";
+import { uploadToR2, isR2Available } from "./r2Storage.js";
 import {
     registerAffiliate,
     checkMainSystemConnection,
@@ -160,7 +161,7 @@ export const app = new Elysia()
 
                 return allowedMatch;
             },
-            methods: ["GET", "POST", "OPTIONS"],
+            methods: ["GET", "POST", "PUT", "OPTIONS"],
             allowedHeaders: ["Content-Type", "Authorization"],
             credentials: true
         })
@@ -587,6 +588,10 @@ export const app = new Elysia()
                     phone: localAffiliate.phone,
                     affiliateCode: localAffiliate.affiliate_code,
                     createdAt: localAffiliate.created_at,
+                    bankName: localAffiliate.bank_name || null,
+                    bankAccountNumber: localAffiliate.bank_account_number || null,
+                    bankAccountName: localAffiliate.bank_account_name || null,
+                    bankPassbookUrl: localAffiliate.bank_passbook_url || null,
                 },
                 stats: {
                     totalRegistrations: stats.total_registrations,
@@ -721,6 +726,172 @@ export const app = new Elysia()
                 error: process.env.NODE_ENV === 'development' ? error.message : undefined,
             };
         }
+    })
+    // Update Affiliate Profile (Bank Info + Passbook Image)
+    .put("/api/affiliate/profile/:lineUserId", async ({ params, body, set, request }) => {
+        const { lineUserId } = params;
+
+        // ========================================
+        // INPUT VALIDATION
+        // ========================================
+        if (!lineUserId) {
+            set.status = 400;
+            return {
+                success: false,
+                message: "LINE User ID is required",
+            };
+        }
+
+        if (!validateLineUserId(lineUserId)) {
+            set.status = 400;
+            return {
+                success: false,
+                message: "Invalid LINE User ID format",
+            };
+        }
+
+        const sanitizedLineUserId = sanitizeString(lineUserId);
+
+        // ========================================
+        // RATE LIMITING CHECK
+        // ========================================
+        const clientIP = request.headers.get("x-forwarded-for")?.split(",")[0] ||
+            request.headers.get("x-real-ip") ||
+            "unknown";
+
+        const rateLimitResult = checkDashboardRateLimit(clientIP);
+        if (!rateLimitResult.allowed) {
+            set.status = 429;
+            set.headers["Retry-After"] = rateLimitResult.retryAfter?.toString() || "60";
+            return {
+                success: false,
+                message: `กรุณารอ ${rateLimitResult.retryAfter} วินาที ก่อนลองอีกครั้ง`,
+                retryAfter: rateLimitResult.retryAfter,
+            };
+        }
+
+        try {
+            // Verify affiliate exists
+            const affiliate = await getAffiliateByLineUserId(sanitizedLineUserId);
+            if (!affiliate) {
+                set.status = 404;
+                return {
+                    success: false,
+                    message: "Affiliate not found",
+                };
+            }
+
+            // Parse form data
+            const formData = body as any;
+            const bankName = formData.bankName as string;
+            const accountNumber = formData.accountNumber as string;
+            const accountName = formData.accountName as string;
+            const passbookImage = formData.passbookImage as File | undefined;
+
+            // Validate required fields
+            if (!bankName || !accountNumber || !accountName) {
+                set.status = 400;
+                return {
+                    success: false,
+                    message: "กรุณากรอกข้อมูลธนาคารให้ครบถ้วน",
+                };
+            }
+
+            // Validate account number format (10-12 digits)
+            if (!/^\d{10,12}$/.test(accountNumber)) {
+                set.status = 400;
+                return {
+                    success: false,
+                    message: "เลขที่บัญชีไม่ถูกต้อง (ต้องเป็นตัวเลข 10-12 หลัก)",
+                };
+            }
+
+            let passbookUrl: string | undefined;
+
+            // Upload passbook image if provided
+            if (passbookImage && passbookImage instanceof File) {
+                if (!isR2Available()) {
+                    console.warn("R2 storage not available, skipping image upload");
+                } else {
+                    try {
+                        // Validate file size (max 2MB for optimal storage usage)
+                        const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
+                        if (passbookImage.size > MAX_FILE_SIZE) {
+                            set.status = 400;
+                            return {
+                                success: false,
+                                message: "ขนาดไฟล์รูปภาพต้องไม่เกิน 2MB",
+                            };
+                        }
+
+                        passbookUrl = await uploadToR2(
+                            passbookImage,
+                            passbookImage.name,
+                            accountName,
+                            affiliate.affiliate_code,
+                            "passbooks"
+                        );
+                        console.log(`✅ Passbook uploaded: ${passbookUrl}`);
+                    } catch (uploadError: any) {
+                        console.error("File upload error:", uploadError);
+                        set.status = 400;
+                        return {
+                            success: false,
+                            message: uploadError.message || "ไม่สามารถอัปโหลดรูปภาพได้",
+                        };
+                    }
+                }
+            }
+
+            // Update database
+            const updatedAffiliate = await updateAffiliateBankInfo(sanitizedLineUserId, {
+                bankName,
+                accountNumber,
+                accountName,
+                passbookUrl: passbookUrl || affiliate.bank_passbook_url, // Keep existing if not uploading new one
+            });
+
+            if (!updatedAffiliate) {
+                set.status = 500;
+                return {
+                    success: false,
+                    message: "ไม่สามารถอัปเดตข้อมูลได้",
+                };
+            }
+
+            // Clear dashboard cache for this user
+            const cacheKey = `dashboard:${sanitizedLineUserId}`;
+            dashboardCache.delete(cacheKey);
+
+            console.log(`✅ Profile updated for LINE User ID: ${sanitizedLineUserId}`);
+
+            return {
+                success: true,
+                message: "บันทึกข้อมูลสำเร็จ",
+                data: {
+                    bankName: updatedAffiliate.bank_name,
+                    bankAccountNumber: updatedAffiliate.bank_account_number,
+                    bankAccountName: updatedAffiliate.bank_account_name,
+                    bankPassbookUrl: updatedAffiliate.bank_passbook_url,
+                },
+            };
+        } catch (error: any) {
+            console.error("Profile update error:", error);
+            set.status = 500;
+            return {
+                success: false,
+                message: "เกิดข้อผิดพลาดในการอัปเดตข้อมูล",
+                error: process.env.NODE_ENV === 'development' ? error.message : undefined,
+            };
+        }
+    }, {
+        body: t.Object({
+            bankName: t.String({ minLength: 1 }),
+            accountNumber: t.String({ minLength: 10, maxLength: 12 }),
+            accountName: t.String({ minLength: 1 }),
+            passbookImage: t.Optional(t.File()),
+        }),
+        type: 'formdata',
     });
 
 // Only listen when running directly (not via export)

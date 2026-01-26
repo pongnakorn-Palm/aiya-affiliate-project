@@ -84,10 +84,34 @@ export async function checkAffiliate(
 // Get affiliate by LINE user ID
 export async function getAffiliateByLineUserId(lineUserId: string) {
     const result = await sql`
-        SELECT id, name, email, phone, affiliate_code, created_at
+        SELECT id, name, email, phone, affiliate_code, created_at, bank_name, bank_account_number, bank_account_name, bank_passbook_url
         FROM affiliates
         WHERE line_user_id = ${lineUserId}
         LIMIT 1
+    `;
+
+    return result.length > 0 ? result[0] : null;
+}
+
+// Update affiliate bank information
+export async function updateAffiliateBankInfo(
+    lineUserId: string,
+    bankData: {
+        bankName: string;
+        accountNumber: string;
+        accountName: string;
+        passbookUrl?: string;
+    }
+) {
+    const result = await sql`
+        UPDATE affiliates
+        SET
+            bank_name = ${bankData.bankName},
+            bank_account_number = ${bankData.accountNumber},
+            bank_account_name = ${bankData.accountName},
+            bank_passbook_url = ${bankData.passbookUrl || null}
+        WHERE line_user_id = ${lineUserId}
+        RETURNING id, name, email, phone, affiliate_code, created_at, bank_name, bank_account_number, bank_account_name, bank_passbook_url
     `;
 
     return result.length > 0 ? result[0] : null;
