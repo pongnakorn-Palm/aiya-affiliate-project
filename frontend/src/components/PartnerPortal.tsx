@@ -839,63 +839,85 @@ export default function PartnerPortal() {
                   handleFetchReferrals();
                 }
               }}
-              className="relative flex items-center justify-center size-11 rounded-full bg-white/5 hover:bg-white/10 transition-all border border-white/5 active:scale-95"
+              className={`relative flex items-center justify-center size-11 rounded-full transition-all duration-200 border active:scale-95 ${
+                showNotifications
+                  ? 'bg-white/15 border-white/20 shadow-lg shadow-purple-500/20'
+                  : 'bg-white/5 border-white/5 hover:bg-white/10'
+              }`}
             >
               <span
-                className="material-symbols-outlined text-white transition-transform"
+                className="material-symbols-outlined text-white transition-transform duration-200"
                 style={{
-                  fontSize: "24px",
-                  fontVariationSettings: showNotifications ? "'FILL' 1" : "'FILL' 0"
+                  fontSize: "22px",
+                  fontVariationSettings: showNotifications ? "'FILL' 1" : "'FILL' 0",
+                  transform: showNotifications ? 'rotate(-15deg)' : 'rotate(0deg)'
                 }}
               >
                 notifications
               </span>
               {/* Badge */}
               {unreadCount > 0 && (
-                <span className="absolute -top-1 -right-1 min-w-5 h-5 flex items-center justify-center bg-red-500 text-white text-xs font-bold rounded-full px-1.5 animate-pulse">
+                <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] flex items-center justify-center bg-red-500 text-white text-[10px] font-bold rounded-full px-1 shadow-lg shadow-red-500/50">
                   {unreadCount > 9 ? '9+' : unreadCount}
                 </span>
               )}
             </button>
 
-            {/* Notification Panel */}
+            {/* Notification Popover */}
             {showNotifications && (
-              <div className="absolute top-full right-0 mt-2 w-80 max-h-96 bg-slate-800/95 backdrop-blur-xl rounded-2xl border border-white/10 shadow-2xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+              <div
+                className="absolute top-14 right-0 w-80 bg-[#0a1628]/95 backdrop-blur-2xl rounded-2xl border border-white/10 shadow-2xl shadow-black/50 overflow-hidden z-[100]"
+                style={{
+                  animation: 'popoverIn 0.2s ease-out'
+                }}
+              >
                 {/* Header */}
-                <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-white/5">
-                  <h3 className="text-white font-semibold">การแจ้งเตือน</h3>
-                  {unreadCount > 0 && (
+                <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
+                  <div className="flex items-center gap-2">
+                    <span className="material-symbols-outlined text-blue-400 text-lg">notifications</span>
+                    <h3 className="text-white font-semibold text-sm">การแจ้งเตือน</h3>
+                  </div>
+                  {notifications.length > 0 && (
                     <button
                       onClick={() => {
                         markAllNotificationsRead();
+                        setNotifications([]);
                         triggerHaptic("light");
                       }}
-                      className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
+                      className="text-xs text-slate-400 hover:text-red-400 transition-colors flex items-center gap-1"
                     >
-                      อ่านทั้งหมด
+                      <span className="material-symbols-outlined text-sm">delete_sweep</span>
+                      ล้างทั้งหมด
                     </button>
                   )}
                 </div>
 
                 {/* Notification List */}
-                <div className="overflow-y-auto max-h-72">
+                <div className="overflow-y-auto max-h-72 scrollbar-hide">
                   {notifications.length > 0 ? (
-                    notifications.map((notification) => (
+                    notifications.map((notification, index) => (
                       <div
                         key={notification.id}
-                        className={`flex items-start gap-3 px-4 py-3 border-b border-white/5 transition-colors hover:bg-white/5 ${
-                          !notification.read ? 'bg-blue-500/10' : ''
-                        }`}
+                        className={`flex items-start gap-3 px-4 py-3 transition-all duration-200 hover:bg-white/5 cursor-pointer ${
+                          !notification.read ? 'bg-blue-500/5' : ''
+                        } ${index !== notifications.length - 1 ? 'border-b border-white/5' : ''}`}
+                        onClick={() => {
+                          // Mark individual notification as read
+                          setNotifications(prev => prev.map(n =>
+                            n.id === notification.id ? { ...n, read: true } : n
+                          ));
+                          triggerHaptic("light");
+                        }}
                       >
                         {/* Icon */}
-                        <div className={`flex-shrink-0 size-10 rounded-full flex items-center justify-center ${
+                        <div className={`flex-shrink-0 size-9 rounded-xl flex items-center justify-center ${
                           notification.type === 'commission_paid'
                             ? 'bg-emerald-500/20 text-emerald-400'
                             : notification.type === 'commission_approved'
                             ? 'bg-purple-500/20 text-purple-400'
                             : 'bg-blue-500/20 text-blue-400'
                         }`}>
-                          <span className="material-symbols-outlined text-lg">
+                          <span className="material-symbols-outlined text-base">
                             {notification.type === 'commission_paid'
                               ? 'payments'
                               : notification.type === 'commission_approved'
@@ -905,27 +927,29 @@ export default function PartnerPortal() {
                         </div>
                         {/* Content */}
                         <div className="flex-1 min-w-0">
-                          <p className={`text-sm font-medium ${!notification.read ? 'text-white' : 'text-slate-300'}`}>
+                          <p className={`text-sm font-medium leading-tight ${!notification.read ? 'text-white' : 'text-slate-300'}`}>
                             {notification.title}
                           </p>
-                          <p className="text-xs text-slate-400 truncate">{notification.message}</p>
-                          <p className="text-xs text-slate-500 mt-1">
+                          <p className="text-xs text-slate-500 truncate mt-0.5">{notification.message}</p>
+                          <p className="text-[10px] text-slate-600 mt-1">
                             {formatRelativeTime(notification.timestamp)}
                           </p>
                         </div>
-                        {/* Unread dot */}
+                        {/* Unread indicator */}
                         {!notification.read && (
-                          <div className="size-2 rounded-full bg-blue-500 flex-shrink-0 mt-2"></div>
+                          <div className="size-2 rounded-full bg-blue-500 flex-shrink-0 mt-1.5 animate-pulse"></div>
                         )}
                       </div>
                     ))
                   ) : (
-                    <div className="flex flex-col items-center justify-center py-8 text-center">
-                      <span className="material-symbols-outlined text-4xl text-slate-500 mb-2">
-                        notifications_off
-                      </span>
-                      <p className="text-slate-400 text-sm">ยังไม่มีการแจ้งเตือน</p>
-                      <p className="text-slate-500 text-xs mt-1">เมื่อมีคนใช้รหัสของคุณจะแสดงที่นี่</p>
+                    <div className="flex flex-col items-center justify-center py-12 text-center">
+                      <div className="size-16 rounded-full bg-white/5 flex items-center justify-center mb-4">
+                        <span className="material-symbols-outlined text-3xl text-slate-600">
+                          notifications_off
+                        </span>
+                      </div>
+                      <p className="text-slate-400 text-sm font-medium">ไม่มีการแจ้งเตือนใหม่</p>
+                      <p className="text-slate-600 text-xs mt-1">เมื่อมีกิจกรรมจะแสดงที่นี่</p>
                     </div>
                   )}
                 </div>
@@ -1169,7 +1193,7 @@ export default function PartnerPortal() {
 
         {/* History Tab */}
         {activeTab === "history" && (
-          <div className="px-5 mt-4">
+          <div className="px-5 mt-4 flex flex-col min-h-[calc(100vh-200px)]">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold text-white">
                 ประวัติการทำรายการ
@@ -1191,19 +1215,18 @@ export default function PartnerPortal() {
             </div>
 
             {isLoadingReferrals ? (
-              <div className="text-center py-12">
-                <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-400 mb-4"></div>
-                <p className="text-white/70 text-sm">กำลังโหลดประวัติ...</p>
+              <div className="flex-1 flex items-center justify-center">
+                <div className="text-center">
+                  <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-400 mb-4"></div>
+                  <p className="text-white/70 text-sm">กำลังโหลด...</p>
+                </div>
               </div>
             ) : referralsError ? (
-              <div className="text-center py-12">
-                <span className="material-symbols-outlined text-6xl text-red-400 mb-4 block">
-                  error
-                </span>
-                <p className="text-red-400 font-semibold mb-2">
-                  เกิดข้อผิดพลาด
-                </p>
-                <p className="text-slate-400 text-sm">{referralsError}</p>
+              <div className="flex-1 flex items-center justify-center">
+                <div className="text-center">
+                  <span className="material-symbols-outlined text-6xl text-red-400 mb-4 block">error</span>
+                  <p className="text-red-400 font-semibold">เกิดข้อผิดพลาด</p>
+                </div>
               </div>
             ) : referrals.length > 0 ? (
               <div className="space-y-4">
@@ -1275,22 +1298,13 @@ export default function PartnerPortal() {
                 })}
               </div>
             ) : (
-              <div className="text-center py-16">
-                <span className="material-symbols-outlined text-8xl text-slate-600 mb-4 block">
-                  receipt_long_off
-                </span>
-                <h3 className="text-white text-xl font-bold mb-2">
-                  ยังไม่มีประวัติการแนะนำ
-                </h3>
-                <p className="text-slate-400 text-sm mb-1">
-                  เริ่มแชร์รหัสของคุณเพื่อรับค่าคอมมิชชั่น!
-                </p>
-                <p className="text-slate-500 text-xs">
-                  รหัสของคุณ:{" "}
-                  <span className="text-white font-bold">
-                    {displayData?.affiliate.affiliateCode}
+              <div className="flex-1 flex items-center justify-center">
+                <div className="text-center">
+                  <span className="material-symbols-outlined text-7xl text-slate-600 mb-4 block">
+                    receipt_long
                   </span>
-                </p>
+                  <p className="text-slate-400">ยังไม่มีประวัติ</p>
+                </div>
               </div>
             )}
           </div>
@@ -1655,6 +1669,16 @@ export default function PartnerPortal() {
             100% {
               transform: scale(1);
               opacity: 1;
+            }
+          }
+          @keyframes popoverIn {
+            0% {
+              opacity: 0;
+              transform: scale(0.95) translateY(-8px);
+            }
+            100% {
+              opacity: 1;
+              transform: scale(1) translateY(0);
             }
           }
           @keyframes shimmer {
