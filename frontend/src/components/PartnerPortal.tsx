@@ -269,9 +269,9 @@ export default function PartnerPortal() {
   // Show loading spinner while LIFF is initializing
   if (!isReady) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#020c17]">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-aiya-navy via-[#0a1628] to-aiya-navy">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-primary mb-4"></div>
+          <div className="inline-block animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-400 mb-4"></div>
           <p className="text-white/70 text-sm">กำลังโหลด...</p>
         </div>
       </div>
@@ -281,11 +281,11 @@ export default function PartnerPortal() {
   // Show login prompt if not logged in
   if (!isLoggedIn) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#020c17] px-4">
-        <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-8 max-w-md w-full text-center">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-aiya-navy via-[#0a1628] to-aiya-navy px-4">
+        <div className="bg-white/5 backdrop-blur-2xl border border-aiya-purple/30 rounded-3xl p-8 max-w-md w-full text-center shadow-2xl shadow-aiya-purple/10">
           <div className="mb-6">
             <svg
-              className="w-20 h-20 mx-auto text-primary"
+              className="w-20 h-20 mx-auto text-blue-400"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -325,8 +325,8 @@ export default function PartnerPortal() {
   // Show error state
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#020c17] px-4">
-        <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-8 max-w-md w-full text-center">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-aiya-navy via-[#0a1628] to-aiya-navy px-4">
+        <div className="bg-white/5 backdrop-blur-2xl border border-red-500/30 rounded-3xl p-8 max-w-md w-full text-center shadow-2xl shadow-red-500/10">
           <div className="mb-6">
             <svg
               className="w-20 h-20 mx-auto text-red-400"
@@ -374,7 +374,7 @@ export default function PartnerPortal() {
       />
       <div
         ref={containerRef}
-        className="relative flex min-h-screen w-full flex-col bg-[#020c17] text-white overflow-x-hidden pb-24 font-sans overflow-y-auto"
+        className="relative flex min-h-screen w-full flex-col bg-gradient-to-br from-aiya-navy via-[#0a1628] to-aiya-navy text-white overflow-x-hidden pb-24 font-sans overflow-y-auto"
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
@@ -388,7 +388,7 @@ export default function PartnerPortal() {
           <div className="absolute top-2 left-0 right-0 z-50 flex justify-center pointer-events-none">
             <div className="rounded-full bg-white/10 p-2 backdrop-blur-xl border border-white/20">
               <span
-                className={`material-symbols-outlined text-primary ${isRefreshing ? 'animate-spin' : ''}`}
+                className={`material-symbols-outlined text-white ${isRefreshing ? 'animate-spin' : ''}`}
                 style={{
                   fontSize: '20px',
                   transform: `rotate(${pullDistance * 3}deg)`,
@@ -412,11 +412,11 @@ export default function PartnerPortal() {
                   src={profile.pictureUrl}
                 />
               ) : (
-                <div className="size-full bg-gradient-to-br from-primary to-orange-600 flex items-center justify-center text-white text-2xl font-bold">
+                <div className="size-full bg-gradient-to-br from-aiya-purple to-[#7B68EE] flex items-center justify-center text-white text-2xl font-bold">
                   {profile?.displayName?.charAt(0)}
                 </div>
               )}
-              <div className="absolute bottom-0 right-0 size-3.5 rounded-full bg-green-500 border-2 border-[#020c17]"></div>
+              <div className="absolute bottom-0 right-0 size-3.5 rounded-full bg-green-500 border-2 border-aiya-navy"></div>
             </div>
             <div>
               <p className="text-white/60 text-sm font-medium leading-tight mb-0.5">ยินดีต้อนรับ,</p>
@@ -444,7 +444,7 @@ export default function PartnerPortal() {
           <>
             {/* Hero Card - Total Commission */}
             <div className="px-5 mt-2 mb-2">
-              <div className="relative w-full overflow-hidden rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 shadow-[0_12px_40px_rgba(245,158,11,0.25)]">
+              <div className="relative w-full overflow-hidden rounded-2xl bg-gradient-to-br from-aiya-purple via-[#5C499D] to-[#7B68EE] shadow-[0_12px_40px_rgba(58,35,181,0.35)]">
                 <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] mix-blend-overlay"></div>
                 <div className="relative p-7 flex flex-col gap-2">
                   <div className="flex justify-between items-start">
@@ -455,7 +455,7 @@ export default function PartnerPortal() {
                     </div>
                   </div>
                   <div className="mt-3">
-                    <h1 className="text-white text-[2.75rem] font-extrabold tracking-tight leading-none">
+                    <h1 className="text-white text-[2.75rem] font-extrabold tracking-tight leading-none drop-shadow-lg">
                       ฿ {formatCommission(displayData.stats.totalCommission)}
                     </h1>
                     <p className="text-white/80 text-sm font-medium mt-2">
@@ -465,7 +465,7 @@ export default function PartnerPortal() {
                   <div className="mt-8 flex items-center justify-between">
                     <div className="h-1.5 w-full bg-black/10 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-white/90 rounded-full transition-all duration-500"
+                        className="h-full bg-gradient-to-r from-blue-400 to-purple-400 rounded-full transition-all duration-500"
                         style={{ width: `${Math.min((displayData.stats.totalCommission / 2000000) * 100, 100)}%` }}
                       ></div>
                     </div>
@@ -475,26 +475,37 @@ export default function PartnerPortal() {
               </div>
             </div>
 
-            {/* Stats Cards - Pending & Paid */}
+            {/* Stats Cards - Total Referrals, Pending & Paid */}
             <div className="flex flex-wrap gap-5 p-5">
-              <div className="flex min-w-[140px] flex-1 flex-col gap-4 rounded-2xl p-6 bg-[#1e293b]/60 backdrop-blur-md border border-white/5 shadow-sm">
+              <div className="flex min-w-[140px] flex-1 flex-col gap-4 rounded-2xl p-6 bg-white/5 backdrop-blur-md border border-blue-500/20 shadow-sm hover:border-blue-500/40 transition-colors">
                 <div className="size-11 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400">
+                  <span className="material-symbols-outlined">group</span>
+                </div>
+                <div>
+                  <p className="text-slate-400 text-sm font-medium leading-normal mb-1">ผู้ใช้โค้ด</p>
+                  <p className="text-white tracking-tight text-2xl font-bold leading-tight whitespace-nowrap">
+                    {displayData.stats.totalRegistrations} คน
+                  </p>
+                </div>
+              </div>
+              <div className="flex min-w-[140px] flex-1 flex-col gap-4 rounded-2xl p-6 bg-white/5 backdrop-blur-md border border-purple-500/20 shadow-sm hover:border-purple-500/40 transition-colors">
+                <div className="size-11 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400">
                   <span className="material-symbols-outlined">pending</span>
                 </div>
                 <div>
                   <p className="text-slate-400 text-sm font-medium leading-normal mb-1">รอตรวจสอบ</p>
-                  <p className="text-white tracking-tight text-2xl font-bold leading-tight whitespace-nowrap">
+                  <p className="text-purple-400 tracking-tight text-2xl font-bold leading-tight whitespace-nowrap">
                     ฿{formatCommission(displayData.stats.pendingCommission)}
                   </p>
                 </div>
               </div>
-              <div className="flex min-w-[140px] flex-1 flex-col gap-4 rounded-2xl p-6 bg-[#1e293b]/60 backdrop-blur-md border border-white/5 shadow-sm">
+              <div className="flex min-w-[140px] flex-1 flex-col gap-4 rounded-2xl p-6 bg-white/5 backdrop-blur-md border border-emerald-500/20 shadow-sm hover:border-emerald-500/40 transition-colors">
                 <div className="size-11 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-400">
                   <span className="material-symbols-outlined">check_circle</span>
                 </div>
                 <div>
                   <p className="text-slate-400 text-sm font-medium leading-normal mb-1">จ่ายแล้ว</p>
-                  <p className="text-white tracking-tight text-2xl font-bold leading-tight whitespace-nowrap">
+                  <p className="text-emerald-400 tracking-tight text-2xl font-bold leading-tight whitespace-nowrap">
                     ฿{formatCommission(paidCommission)}
                   </p>
                 </div>
@@ -504,8 +515,8 @@ export default function PartnerPortal() {
             {/* Referral Code Section */}
             <div className="px-5 pb-6">
               <label className="text-sm text-slate-400 font-medium ml-1 mb-3 block">รหัสแนะนำของคุณ</label>
-              <div className="flex items-center justify-between bg-[#1e293b] rounded-2xl border border-white/10 p-2 pl-6 shadow-sm">
-                <span className="text-primary font-bold text-xl tracking-widest font-mono">
+              <div className="flex items-center justify-between bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-transparent rounded-2xl border border-blue-500/30 p-2 pl-6 shadow-sm">
+                <span className="text-white font-bold text-xl tracking-widest font-mono drop-shadow-lg">
                   {displayData.affiliate.affiliateCode}
                 </span>
                 <button
@@ -513,7 +524,7 @@ export default function PartnerPortal() {
                     triggerHaptic("light");
                     copyToClipboard(displayData.affiliate.affiliateCode);
                   }}
-                  className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white transition-colors active:scale-95"
+                  className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-500/20 text-white hover:bg-blue-500/30 transition-colors active:scale-95"
                 >
                   <span className="material-symbols-outlined text-xl">
                     {copied ? 'check' : 'content_copy'}
@@ -548,10 +559,10 @@ export default function PartnerPortal() {
                   triggerHaptic("light");
                   copyReferralLink();
                 }}
-                className="w-full cursor-pointer items-center justify-center overflow-hidden rounded-full h-14 border border-white/20 bg-white/5 hover:bg-white/10 text-white transition-all active:scale-95"
+                className="w-full cursor-pointer items-center justify-center overflow-hidden rounded-full h-14 border border-aiya-purple/30 bg-gradient-to-r from-aiya-purple/20 to-transparent hover:from-aiya-purple/30 hover:to-aiya-purple/10 text-white transition-all active:scale-95 shadow-lg shadow-aiya-purple/10"
               >
                 <div className="flex items-center justify-center gap-3 px-5">
-                  <span className="material-symbols-outlined text-2xl">
+                  <span className="material-symbols-outlined text-2xl text-white">
                     {copiedLink ? 'check' : 'link'}
                   </span>
                   <span className="text-lg font-semibold">
@@ -582,7 +593,7 @@ export default function PartnerPortal() {
 
             {isLoadingReferrals ? (
               <div className="text-center py-12">
-                <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mb-4"></div>
+                <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-400 mb-4"></div>
                 <p className="text-white/70 text-sm">กำลังโหลดประวัติ...</p>
               </div>
             ) : referralsError ? (
@@ -604,7 +615,7 @@ export default function PartnerPortal() {
                   return (
                     <div
                       key={referral.id}
-                      className="bg-[#1e293b]/60 backdrop-blur-md border border-white/5 rounded-2xl p-5"
+                      className="bg-white/5 backdrop-blur-md border border-aiya-purple/20 rounded-2xl p-5 hover:border-aiya-purple/40 transition-colors"
                     >
                       <div className="flex justify-between items-start mb-2">
                         <div>
@@ -642,7 +653,7 @@ export default function PartnerPortal() {
                 <span className="material-symbols-outlined text-8xl text-slate-600 mb-4 block">receipt_long_off</span>
                 <h3 className="text-white text-xl font-bold mb-2">ยังไม่มีประวัติการแนะนำ</h3>
                 <p className="text-slate-400 text-sm mb-1">เริ่มแชร์รหัสของคุณเพื่อรับค่าคอมมิชชั่น!</p>
-                <p className="text-slate-500 text-xs">รหัสของคุณ: <span className="text-primary font-bold">{displayData?.affiliate.affiliateCode}</span></p>
+                <p className="text-slate-500 text-xs">รหัสของคุณ: <span className="text-white font-bold">{displayData?.affiliate.affiliateCode}</span></p>
               </div>
             )}
           </div>
@@ -654,7 +665,7 @@ export default function PartnerPortal() {
             <h2 className="text-2xl font-bold text-white mb-6">ข้อมูลบัญชี</h2>
 
             {/* User Info Section */}
-            <div className="bg-[#1e293b]/60 backdrop-blur-md border border-white/5 rounded-2xl p-6 mb-6">
+            <div className="bg-white/5 backdrop-blur-md border border-aiya-purple/20 rounded-2xl p-6 mb-6">
               <h3 className="text-lg font-semibold text-white mb-4">ข้อมูลผู้ใช้</h3>
               <div className="space-y-4">
                 <div>
@@ -663,7 +674,7 @@ export default function PartnerPortal() {
                     type="text"
                     value={displayData.affiliate.name}
                     readOnly
-                    className="w-full bg-[#0f1729] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary/50 transition-colors"
+                    className="w-full bg-aiya-navy/50 border border-aiya-purple/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-400/50 transition-colors"
                   />
                 </div>
                 <div>
@@ -672,7 +683,7 @@ export default function PartnerPortal() {
                     type="email"
                     value={displayData.affiliate.email}
                     readOnly
-                    className="w-full bg-[#0f1729] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary/50 transition-colors"
+                    className="w-full bg-aiya-navy/50 border border-aiya-purple/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-400/50 transition-colors"
                   />
                 </div>
                 <div>
@@ -681,19 +692,19 @@ export default function PartnerPortal() {
                     type="tel"
                     value={displayData.affiliate.phone}
                     readOnly
-                    className="w-full bg-[#0f1729] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary/50 transition-colors"
+                    className="w-full bg-aiya-navy/50 border border-aiya-purple/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-400/50 transition-colors"
                   />
                 </div>
               </div>
             </div>
 
             {/* Bank Account Section */}
-            <div className="bg-[#1e293b]/60 backdrop-blur-md border border-white/5 rounded-2xl p-6 mb-6">
+            <div className="bg-white/5 backdrop-blur-md border border-aiya-purple/20 rounded-2xl p-6 mb-6">
               <h3 className="text-lg font-semibold text-white mb-4">ข้อมูลบัญชีธนาคาร</h3>
               <div className="space-y-4">
                 <div>
                   <label className="text-sm text-slate-400 mb-1 block">ธนาคาร</label>
-                  <select className="w-full bg-[#0f1729] border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary/50 transition-colors">
+                  <select className="w-full bg-aiya-navy/50 border border-aiya-purple/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-blue-400/50 transition-colors">
                     <option value="">เลือกธนาคาร</option>
                     <option value="scb">ไทยพาณิชย์ (SCB)</option>
                     <option value="kbank">กสิกรไทย (KBANK)</option>
@@ -708,7 +719,7 @@ export default function PartnerPortal() {
                   <input
                     type="text"
                     placeholder="กรอกเลขที่บัญชี 10-12 หลัก"
-                    className="w-full bg-[#0f1729] border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-slate-600 focus:outline-none focus:border-primary/50 transition-colors"
+                    className="w-full bg-aiya-navy/50 border border-aiya-purple/20 rounded-xl px-4 py-3 text-white placeholder:text-slate-600 focus:outline-none focus:border-blue-400/50 transition-colors"
                   />
                 </div>
                 <div>
@@ -716,17 +727,17 @@ export default function PartnerPortal() {
                   <input
                     type="text"
                     placeholder="ชื่อ-นามสกุล ตรงตามบัญชีธนาคาร"
-                    className="w-full bg-[#0f1729] border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-slate-600 focus:outline-none focus:border-primary/50 transition-colors"
+                    className="w-full bg-aiya-navy/50 border border-aiya-purple/20 rounded-xl px-4 py-3 text-white placeholder:text-slate-600 focus:outline-none focus:border-blue-400/50 transition-colors"
                   />
                 </div>
               </div>
-              <button className="w-full mt-6 bg-primary hover:bg-primary/80 text-white font-bold py-3 px-6 rounded-full transition-colors">
+              <button className="w-full mt-6 bg-gradient-to-r from-aiya-purple to-[#5C499D] hover:from-aiya-purple/80 hover:to-[#5C499D]/80 text-white font-bold py-3 px-6 rounded-full transition-colors shadow-lg shadow-aiya-purple/20 active:scale-95">
                 บันทึกข้อมูลบัญชีธนาคาร
               </button>
             </div>
 
             {/* Additional Info */}
-            <div className="bg-[#1e293b]/60 backdrop-blur-md border border-white/5 rounded-2xl p-6">
+            <div className="bg-white/5 backdrop-blur-md border border-blue-500/20 rounded-2xl p-6">
               <div className="flex items-start gap-3">
                 <span className="material-symbols-outlined text-blue-400 text-xl mt-0.5">info</span>
                 <div>
@@ -740,7 +751,7 @@ export default function PartnerPortal() {
         )}
 
         {/* Bottom Navigation */}
-        <div className="fixed bottom-0 left-0 z-50 w-full bg-[#020c17]/95 backdrop-blur-xl border-t border-white/5" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+        <div className="fixed bottom-0 left-0 z-50 w-full bg-aiya-navy/95 backdrop-blur-xl border-t border-aiya-purple/20 shadow-[0_-4px_20px_rgba(58,35,181,0.15)]" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
           <div className="flex h-16 items-center justify-around px-2">
             <button
               onClick={() => {
@@ -748,7 +759,7 @@ export default function PartnerPortal() {
                 setActiveTab('dashboard');
               }}
               className={`flex flex-col items-center justify-center gap-1 p-2 transition-colors active:scale-95 ${
-                activeTab === 'dashboard' ? 'text-primary' : 'text-slate-400 hover:text-white'
+                activeTab === 'dashboard' ? 'text-blue-400' : 'text-slate-400 hover:text-white'
               }`}
             >
               <span
@@ -765,7 +776,7 @@ export default function PartnerPortal() {
                 setActiveTab('history');
               }}
               className={`flex flex-col items-center justify-center gap-1 p-2 transition-colors active:scale-95 ${
-                activeTab === 'history' ? 'text-primary' : 'text-slate-400 hover:text-white'
+                activeTab === 'history' ? 'text-blue-400' : 'text-slate-400 hover:text-white'
               }`}
             >
               <span
@@ -782,7 +793,7 @@ export default function PartnerPortal() {
                 setActiveTab('profile');
               }}
               className={`flex flex-col items-center justify-center gap-1 p-2 transition-colors active:scale-95 ${
-                activeTab === 'profile' ? 'text-primary' : 'text-slate-400 hover:text-white'
+                activeTab === 'profile' ? 'text-blue-400' : 'text-slate-400 hover:text-white'
               }`}
             >
               <span
