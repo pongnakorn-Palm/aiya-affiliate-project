@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { useLiff } from "../contexts/LiffContext";
 import DashboardSkeleton from "./DashboardSkeleton";
 import SEOHead from "./SEOHead";
@@ -976,9 +977,9 @@ export default function PartnerPortal() {
 
         {/* Tab Content */}
         {activeTab === "dashboard" && displayData && (
-          <>
+          <div className="tab-content-enter">
             {/* Hero Card - Total Commission */}
-            <div className="px-5 mt-2 mb-2">
+            <div className="px-5 mt-2 mb-2 stagger-item">
               <div className="relative w-full overflow-hidden rounded-2xl bg-gradient-to-br from-aiya-purple via-[#5C499D] to-[#7B68EE] shadow-[0_12px_40px_rgba(58,35,181,0.35)]">
                 <div className="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] mix-blend-overlay"></div>
                 <div className="relative p-7 flex flex-col gap-2">
@@ -1021,7 +1022,7 @@ export default function PartnerPortal() {
             </div>
 
             {/* Stats Cards - Total Referrals, Pending & Paid */}
-            <div className="flex flex-wrap gap-5 p-5">
+            <div className="flex flex-wrap gap-5 p-5 stagger-item">
               <div className="flex min-w-[140px] flex-1 flex-col gap-4 rounded-2xl p-6 bg-white/5 backdrop-blur-md border border-blue-500/20 shadow-sm hover:border-blue-500/40 transition-colors">
                 <div className="size-11 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400">
                   <span className="material-symbols-outlined">group</span>
@@ -1066,7 +1067,7 @@ export default function PartnerPortal() {
             </div>
 
             {/* Referral Code Section - Coupon Style */}
-            <div className="px-5 pb-8">
+            <div className="px-5 pb-8 stagger-item">
               <div className="relative group">
                 {/* Coupon Card */}
                 <div className="relative rounded-3xl overflow-hidden shadow-2xl shadow-purple-900/30 transition-all duration-300 hover:shadow-purple-500/40 hover:-translate-y-1 hover:scale-[1.01]">
@@ -1158,7 +1159,7 @@ export default function PartnerPortal() {
             </div>
 
             {/* LINE Share Button */}
-            <div className="px-5 pb-8">
+            <div className="px-5 pb-8 stagger-item">
               <button
                 onClick={() => {
                   triggerHaptic("medium");
@@ -1188,12 +1189,12 @@ export default function PartnerPortal() {
                 </div>
               </button>
             </div>
-          </>
+          </div>
         )}
 
         {/* History Tab */}
         {activeTab === "history" && (
-          <div className="px-5 mt-4 flex flex-col min-h-[calc(100vh-200px)]">
+          <div className="px-5 mt-4 flex flex-col min-h-[calc(100vh-200px)] tab-content-enter">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold text-white">
                 ประวัติการทำรายการ
@@ -1312,7 +1313,7 @@ export default function PartnerPortal() {
 
         {/* Profile Tab */}
         {activeTab === "profile" && displayData && (
-          <div className="px-5 mt-4">
+          <div className="px-5 mt-4 tab-content-enter">
             <h2 className="text-2xl font-bold text-white mb-6">ข้อมูลบัญชี</h2>
 
             {/* User Info Section */}
@@ -1700,93 +1701,96 @@ export default function PartnerPortal() {
         `}</style>
       </div>
 
-      {/* Bottom Navigation - Outside main container to avoid transform breaking fixed positioning */}
-      <div
-        className="fixed bottom-0 left-0 z-50 w-full bg-aiya-navy/95 backdrop-blur-xl border-t border-aiya-purple/20 shadow-[0_-4px_20px_rgba(58,35,181,0.15)]"
-        style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
-      >
-        <div className="flex h-16 items-center justify-around px-2">
-          <button
-            onClick={() => {
-              triggerHaptic("light");
-              setActiveTab("dashboard");
-            }}
-            className={`flex flex-col items-center justify-center gap-1 p-2 transition-colors active:scale-95 ${
-              activeTab === "dashboard"
-                ? "text-blue-400"
-                : "text-slate-400 hover:text-white"
-            }`}
-          >
-            <span
-              className="material-symbols-outlined"
-              style={{
-                fontVariationSettings:
-                  activeTab === "dashboard" ? "'FILL' 1" : "'FILL' 0",
+      {/* Bottom Navigation - Using Portal to bypass PageTransition transform stacking context */}
+      {createPortal(
+        <div
+          className="fixed bottom-0 left-0 z-50 w-full bg-aiya-navy/95 backdrop-blur-xl border-t border-aiya-purple/20 shadow-[0_-4px_20px_rgba(58,35,181,0.15)]"
+          style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+        >
+          <div className="flex h-16 items-center justify-around px-2">
+            <button
+              onClick={() => {
+                triggerHaptic("light");
+                setActiveTab("dashboard");
               }}
+              className={`flex flex-col items-center justify-center gap-1 p-2 transition-colors active:scale-95 ${
+                activeTab === "dashboard"
+                  ? "text-blue-400"
+                  : "text-slate-400 hover:text-white"
+              }`}
             >
-              dashboard
-            </span>
-            <span
-              className={`text-[10px] ${activeTab === "dashboard" ? "font-bold" : "font-medium"}`}
-            >
-              หน้าหลัก
-            </span>
-          </button>
-          <button
-            onClick={() => {
-              triggerHaptic("light");
-              setActiveTab("history");
-            }}
-            className={`flex flex-col items-center justify-center gap-1 p-2 transition-colors active:scale-95 ${
-              activeTab === "history"
-                ? "text-blue-400"
-                : "text-slate-400 hover:text-white"
-            }`}
-          >
-            <span
-              className="material-symbols-outlined"
-              style={{
-                fontVariationSettings:
-                  activeTab === "history" ? "'FILL' 1" : "'FILL' 0",
+              <span
+                className="material-symbols-outlined"
+                style={{
+                  fontVariationSettings:
+                    activeTab === "dashboard" ? "'FILL' 1" : "'FILL' 0",
+                }}
+              >
+                dashboard
+              </span>
+              <span
+                className={`text-[10px] ${activeTab === "dashboard" ? "font-bold" : "font-medium"}`}
+              >
+                หน้าหลัก
+              </span>
+            </button>
+            <button
+              onClick={() => {
+                triggerHaptic("light");
+                setActiveTab("history");
               }}
+              className={`flex flex-col items-center justify-center gap-1 p-2 transition-colors active:scale-95 ${
+                activeTab === "history"
+                  ? "text-blue-400"
+                  : "text-slate-400 hover:text-white"
+              }`}
             >
-              bar_chart
-            </span>
-            <span
-              className={`text-[10px] ${activeTab === "history" ? "font-bold" : "font-medium"}`}
-            >
-              ประวัติ
-            </span>
-          </button>
-          <button
-            onClick={() => {
-              triggerHaptic("light");
-              setActiveTab("profile");
-            }}
-            className={`flex flex-col items-center justify-center gap-1 p-2 transition-colors active:scale-95 ${
-              activeTab === "profile"
-                ? "text-blue-400"
-                : "text-slate-400 hover:text-white"
-            }`}
-          >
-            <span
-              className="material-symbols-outlined"
-              style={{
-                fontVariationSettings:
-                  activeTab === "profile" ? "'FILL' 1" : "'FILL' 0",
+              <span
+                className="material-symbols-outlined"
+                style={{
+                  fontVariationSettings:
+                    activeTab === "history" ? "'FILL' 1" : "'FILL' 0",
+                }}
+              >
+                bar_chart
+              </span>
+              <span
+                className={`text-[10px] ${activeTab === "history" ? "font-bold" : "font-medium"}`}
+              >
+                ประวัติ
+              </span>
+            </button>
+            <button
+              onClick={() => {
+                triggerHaptic("light");
+                setActiveTab("profile");
               }}
+              className={`flex flex-col items-center justify-center gap-1 p-2 transition-colors active:scale-95 ${
+                activeTab === "profile"
+                  ? "text-blue-400"
+                  : "text-slate-400 hover:text-white"
+              }`}
             >
-              person
-            </span>
-            <span
-              className={`text-[10px] ${activeTab === "profile" ? "font-bold" : "font-medium"}`}
-            >
-              บัญชี
-            </span>
-          </button>
-        </div>
-        <div className="h-4 w-full"></div>
-      </div>
+              <span
+                className="material-symbols-outlined"
+                style={{
+                  fontVariationSettings:
+                    activeTab === "profile" ? "'FILL' 1" : "'FILL' 0",
+                }}
+              >
+                person
+              </span>
+              <span
+                className={`text-[10px] ${activeTab === "profile" ? "font-bold" : "font-medium"}`}
+              >
+                บัญชี
+              </span>
+            </button>
+          </div>
+          <div className="h-4 w-full"></div>
+        </div>,
+        document.body
+      )}
     </>
   );
 }
