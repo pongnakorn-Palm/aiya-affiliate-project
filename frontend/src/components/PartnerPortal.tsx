@@ -32,6 +32,9 @@ export default function PartnerPortal() {
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [isSharing, setIsSharing] = useState(false);
   const [activeTab, setActiveTab] = useState<'dashboard' | 'history' | 'profile'>('dashboard');
+  const [referrals, setReferrals] = useState<any[]>([]);
+  const [isLoadingReferrals, setIsLoadingReferrals] = useState(false);
+  const [referralsError, setReferralsError] = useState<string | null>(null);
 
   // Fetch dashboard data when logged in
   useEffect(() => {
@@ -73,6 +76,45 @@ export default function PartnerPortal() {
       fetchDashboardData();
     }
   }, [isLoggedIn, profile?.userId, isReady]);
+
+  // Fetch referral history when switching to history tab
+  useEffect(() => {
+    const fetchReferrals = async () => {
+      if (activeTab !== 'history' || !isLoggedIn || !profile?.userId) {
+        return;
+      }
+
+      setIsLoadingReferrals(true);
+      setReferralsError(null);
+
+      try {
+        const apiUrl = import.meta.env.VITE_API_URL || "";
+        const response = await fetch(
+          `${apiUrl}/api/affiliate/referrals/${profile.userId}`
+        );
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || "Failed to fetch referrals");
+        }
+
+        if (data.success) {
+          setReferrals(data.data.referrals);
+        } else {
+          throw new Error(data.message);
+        }
+      } catch (err: any) {
+        console.error("Referrals fetch error:", err);
+        setReferralsError(
+          err.message || "ไม่สามารถโหลดประวัติได้ กรุณาลองใหม่อีกครั้ง"
+        );
+      } finally {
+        setIsLoadingReferrals(false);
+      }
+    };
+
+    fetchReferrals();
+  }, [activeTab, isLoggedIn, profile?.userId]);
 
   // Refresh dashboard data
   const refreshStats = async () => {
@@ -270,20 +312,9 @@ export default function PartnerPortal() {
     return <DashboardSkeleton />;
   }
 
-  // Mock data for development/testing (comment out when using real data)
-  const useMockData = true;
-  const mockStats = useMockData && dashboardData ? {
-    ...dashboardData,
-    stats: {
-      ...dashboardData.stats,
-      totalCommission: 1250000, // ฿12,500.00
-      pendingCommission: 450000, // ฿4,500.00
-      approvedCommission: 800000, // ฿8,000.00
-    }
-  } : dashboardData;
-
-  const displayData = mockStats || dashboardData;
-  const mockPaidCommission = displayData
+  // Use real data from API
+  const displayData = dashboardData;
+  const paidCommission = displayData
     ? displayData.stats.totalCommission - displayData.stats.pendingCommission
     : 0;
 
@@ -374,8 +405,8 @@ export default function PartnerPortal() {
                 </div>
                 <div>
                   <p className="text-slate-400 text-sm font-medium leading-normal mb-1">รอตรวจสอบ</p>
-                  <p className="text-white tracking-tight text-2xl font-bold leading-tight">
-                    ฿ {formatCommission(displayData.stats.pendingCommission)}
+                  <p className="text-white tracking-tight text-2xl font-bold leading-tight whitespace-nowrap">
+                    ฿{formatCommission(displayData.stats.pendingCommission)}
                   </p>
                 </div>
               </div>
@@ -385,8 +416,8 @@ export default function PartnerPortal() {
                 </div>
                 <div>
                   <p className="text-slate-400 text-sm font-medium leading-normal mb-1">จ่ายแล้ว</p>
-                  <p className="text-white tracking-tight text-2xl font-bold leading-tight">
-                    ฿ {formatCommission(mockPaidCommission)}
+                  <p className="text-white tracking-tight text-2xl font-bold leading-tight whitespace-nowrap">
+                    ฿{formatCommission(paidCommission)}
                   </p>
                 </div>
               </div>
@@ -448,40 +479,85 @@ export default function PartnerPortal() {
         {/* History Tab */}
         {activeTab === 'history' && (
           <div className="px-5 mt-4">
-            <h2 className="text-2xl font-bold text-white mb-6">ประวัติการทำรายการ</h2>
-            <div className="space-y-4">
-              {/* Sample transaction history - replace with real data later */}
-              {[
-                { date: '14 ม.ค. 69', name: 'คุณ Somchai', amount: 3000, status: 'รอตรวจสอบ', statusColor: 'text-blue-400' },
-                { date: '12 ม.ค. 69', name: 'คุณ Pranee', amount: 2500, status: 'จ่ายแล้ว', statusColor: 'text-emerald-400' },
-                { date: '10 ม.ค. 69', name: 'คุณ Manit', amount: 3500, status: 'จ่ายแล้ว', statusColor: 'text-emerald-400' },
-                { date: '08 ม.ค. 69', name: 'คุณ Suda', amount: 2000, status: 'จ่ายแล้ว', statusColor: 'text-emerald-400' },
-              ].map((transaction, index) => (
-                <div
-                  key={index}
-                  className="bg-[#1e293b]/60 backdrop-blur-md border border-white/5 rounded-2xl p-5"
-                >
-                  <div className="flex justify-between items-start mb-2">
-                    <div>
-                      <p className="text-white font-semibold text-base">{transaction.name}</p>
-                      <p className="text-slate-400 text-sm">{transaction.date}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-white font-bold text-lg">+฿ {transaction.amount.toLocaleString()}</p>
-                      <p className={`text-sm font-medium ${transaction.statusColor}`}>{transaction.status}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-
-              {/* Empty state */}
-              {displayData?.stats.totalRegistrations === 0 && (
-                <div className="text-center py-12">
-                  <span className="material-symbols-outlined text-6xl text-slate-600 mb-4 block">receipt_long</span>
-                  <p className="text-slate-400">ยังไม่มีประวัติการทำรายการ</p>
-                </div>
-              )}
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-white">ประวัติการทำรายการ</h2>
+              <button
+                onClick={() => {
+                  setReferrals([]);
+                  setActiveTab('dashboard');
+                  setTimeout(() => setActiveTab('history'), 100);
+                }}
+                className="flex items-center justify-center size-10 rounded-full bg-white/5 hover:bg-white/10 transition-colors"
+              >
+                <span className="material-symbols-outlined text-white text-xl">refresh</span>
+              </button>
             </div>
+
+            {isLoadingReferrals ? (
+              <div className="text-center py-12">
+                <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mb-4"></div>
+                <p className="text-white/70 text-sm">กำลังโหลดประวัติ...</p>
+              </div>
+            ) : referralsError ? (
+              <div className="text-center py-12">
+                <span className="material-symbols-outlined text-6xl text-red-400 mb-4 block">error</span>
+                <p className="text-red-400 font-semibold mb-2">เกิดข้อผิดพลาด</p>
+                <p className="text-slate-400 text-sm">{referralsError}</p>
+              </div>
+            ) : referrals.length > 0 ? (
+              <div className="space-y-4">
+                {referrals.map((referral) => {
+                  const statusInfo =
+                    referral.commissionStatus === 'paid'
+                      ? { label: 'จ่ายแล้ว', color: 'text-emerald-400', icon: 'check_circle' }
+                      : referral.commissionStatus === 'approved'
+                      ? { label: 'อนุมัติแล้ว', color: 'text-blue-400', icon: 'verified' }
+                      : { label: 'รอตรวจสอบ', color: 'text-yellow-400', icon: 'pending' };
+
+                  return (
+                    <div
+                      key={referral.id}
+                      className="bg-[#1e293b]/60 backdrop-blur-md border border-white/5 rounded-2xl p-5"
+                    >
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <p className="text-white font-semibold text-base">
+                            {referral.firstName} {referral.lastName}
+                          </p>
+                          <p className="text-slate-400 text-sm">
+                            {new Date(referral.createdAt).toLocaleDateString('th-TH', {
+                              day: 'numeric',
+                              month: 'short',
+                              year: '2-digit'
+                            })}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-white font-bold text-lg">
+                            +฿ {formatCommission(referral.commissionAmount)}
+                          </p>
+                          <div className={`flex items-center gap-1 justify-end text-sm font-medium ${statusInfo.color}`}>
+                            <span className="material-symbols-outlined text-sm">{statusInfo.icon}</span>
+                            <span>{statusInfo.label}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="mt-2 pt-2 border-t border-white/5 flex items-center justify-between">
+                        <span className="text-slate-400 text-sm">📦 {referral.packageType}</span>
+                        <span className="text-slate-500 text-xs">{referral.email}</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="text-center py-16">
+                <span className="material-symbols-outlined text-8xl text-slate-600 mb-4 block">receipt_long_off</span>
+                <h3 className="text-white text-xl font-bold mb-2">ยังไม่มีประวัติการแนะนำ</h3>
+                <p className="text-slate-400 text-sm mb-1">เริ่มแชร์รหัสของคุณเพื่อรับค่าคอมมิชชั่น!</p>
+                <p className="text-slate-500 text-xs">รหัสของคุณ: <span className="text-primary font-bold">{displayData?.affiliate.affiliateCode}</span></p>
+              </div>
+            )}
           </div>
         )}
 
