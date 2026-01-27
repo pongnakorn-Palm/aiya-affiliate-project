@@ -11,7 +11,7 @@ interface BottomNavigationProps {
 const tabs: { id: TabType; icon: string; label: string }[] = [
   { id: "dashboard", icon: "dashboard", label: "หน้าหลัก" },
   { id: "history", icon: "bar_chart", label: "ประวัติ" },
-  { id: "profile", icon: "person", label: "บัญชี" },
+  { id: "profile", icon: "person", label: "โปรไฟล์" },
 ];
 
 export default function BottomNavigation({
@@ -19,12 +19,14 @@ export default function BottomNavigation({
   onTabChange,
 }: BottomNavigationProps) {
   return createPortal(
-    <div
-      className="fixed bottom-0 left-0 z-50 w-full"
-      style={{ backgroundColor: "#070d1a" }}
-    >
-      <div className="bg-aiya-navy/95 backdrop-blur-xl border-t border-aiya-purple/20 shadow-[0_-4px_20px_rgba(58,35,181,0.15)]">
-        <div className="flex h-16 items-center justify-around px-2 relative">
+    <div className="fixed bottom-0 left-0 right-0 z-50 px-4 pb-6" style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 1.5rem)" }}>
+      <motion.div
+        initial={{ y: 100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ type: "spring", stiffness: 300, damping: 30, delay: 0.2 }}
+        className="h-[72px] rounded-2xl bg-[#1A1D21]/95 backdrop-blur-xl border border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.5)]"
+      >
+        <div className="flex h-full items-center justify-around px-4">
           {tabs.map((tab) => (
             <motion.button
               key={tab.id}
@@ -33,40 +35,50 @@ export default function BottomNavigation({
                 triggerHaptic("light");
                 onTabChange(tab.id);
               }}
-              className={`relative flex flex-col items-center justify-center gap-1 p-2 transition-colors ${
-                activeTab === tab.id
-                  ? "text-blue-400"
-                  : "text-slate-400 hover:text-white"
-              }`}
+              className="relative flex flex-col items-center justify-center gap-1.5 px-6 py-2"
             >
-              {/* Active indicator */}
-              {activeTab === tab.id && (
-                <motion.div
-                  layoutId="activeTabIndicator"
-                  className="absolute -top-0.5 w-12 h-1 bg-blue-400 rounded-full"
-                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                />
-              )}
+              {/* Icon container with glow effect for active */}
+              <div className="relative">
+                <span
+                  className={`material-symbols-outlined text-2xl transition-colors duration-200 ${
+                    activeTab === tab.id
+                      ? "text-yellow-400"
+                      : "text-gray-400"
+                  }`}
+                  style={{
+                    fontVariationSettings:
+                      activeTab === tab.id ? "'FILL' 1" : "'FILL' 0",
+                  }}
+                >
+                  {tab.icon}
+                </span>
+                {/* Glow effect for active icon */}
+                {activeTab === tab.id && (
+                  <div className="absolute inset-0 blur-lg bg-yellow-400/30 -z-10"></div>
+                )}
+              </div>
+
+              {/* Label */}
               <span
-                className="material-symbols-outlined"
-                style={{
-                  fontVariationSettings:
-                    activeTab === tab.id ? "'FILL' 1" : "'FILL' 0",
-                }}
-              >
-                {tab.icon}
-              </span>
-              <span
-                className={`text-[10px] ${activeTab === tab.id ? "font-bold" : "font-medium"}`}
+                className={`text-[10px] font-medium transition-colors duration-200 ${
+                  activeTab === tab.id ? "text-yellow-400" : "text-gray-500"
+                }`}
               >
                 {tab.label}
               </span>
+
+              {/* Active dot indicator */}
+              {activeTab === tab.id && (
+                <motion.div
+                  layoutId="activeDot"
+                  className="absolute -bottom-0.5 w-1 h-1 rounded-full bg-yellow-400"
+                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                />
+              )}
             </motion.button>
           ))}
         </div>
-      </div>
-      {/* Safe area fill */}
-      <div style={{ height: "env(safe-area-inset-bottom)" }}></div>
+      </motion.div>
     </div>,
     document.body
   );
