@@ -103,10 +103,8 @@ export default function ProfileTab({
       )}
 
       {/* Header */}
-      <motion.div variants={fadeInUp} className="px-5 pt-10 pb-6 relative">
-        {/* Subtle ambient gradient for header */}
-        <div className="absolute inset-0 bg-gradient-to-b from-yellow-500/5 via-transparent to-transparent pointer-events-none" />
-        <div className="flex items-center justify-between relative z-10">
+      <motion.div variants={fadeInUp} className="px-5 pt-10 pb-6">
+        <div className="flex items-center justify-between">
           <h2 className="text-2xl font-bold text-white">{t("profile.title")}</h2>
           <button
             onClick={() => {
