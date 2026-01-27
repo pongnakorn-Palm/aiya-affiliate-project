@@ -677,43 +677,66 @@ export const app = new Elysia()
             }
 
             // Step 2: Query referral history from main system DB
-            let referrals = [];
+            let referrals: any[] = [];
 
             try {
+                // Query registrations and join with affiliates to get commission values
                 referrals = await mainSystemSql`
                     SELECT
-                        id,
-                        first_name,
-                        last_name,
-                        email,
-                        package_type,
-                        commission_amount,
-                        commission_status,
-                        created_at
-                    FROM bootcamp_registrations
-                    WHERE referral_code = ${localAffiliate.affiliate_code}
-                    ORDER BY created_at DESC
+                        r.id,
+                        r.customer_name,
+                        r.email,
+                        r.package_code,
+                        r.package_name,
+                        r.amount,
+                        r.original_amount,
+                        r.referral_discount,
+                        r.status,
+                        r.payment_status,
+                        r.created_at,
+                        CASE
+                            WHEN r.package_code = 'duo' THEN a.duo_commission_value
+                            ELSE a.single_commission_value
+                        END as commission_amount
+                    FROM bootcamp_registrations r
+                    LEFT JOIN bootcamp_affiliates a ON r.affiliate_code = a.code
+                    WHERE r.affiliate_code = ${localAffiliate.affiliate_code}
+                    ORDER BY r.created_at DESC
                     LIMIT 100
                 `;
             } catch (dbError: any) {
                 // If table doesn't exist or query fails, return empty array
-                console.warn("Database query warning (likely table doesn't exist yet):", dbError.message);
+                console.warn("Database query warning:", dbError.message);
                 referrals = [];
             }
+
+            // Map commission status from payment_status
+            const mapCommissionStatus = (status: string, paymentStatus: string) => {
+                if (paymentStatus === 'paid') return 'paid';
+                if (status === 'completed' || status === 'checked_in') return 'approved';
+                return 'pending';
+            };
 
             return {
                 success: true,
                 data: {
-                    referrals: referrals.map((r: any) => ({
-                        id: r.id,
-                        firstName: r.first_name,
-                        lastName: r.last_name,
-                        email: r.email,
-                        packageType: r.package_type,
-                        commissionAmount: r.commission_amount,
-                        commissionStatus: r.commission_status,
-                        createdAt: r.created_at,
-                    })),
+                    referrals: referrals.map((r: any) => {
+                        // Split customer_name into first and last name
+                        const nameParts = (r.customer_name || '').trim().split(' ');
+                        const firstName = nameParts[0] || '';
+                        const lastName = nameParts.slice(1).join(' ') || '';
+
+                        return {
+                            id: r.id,
+                            firstName,
+                            lastName,
+                            email: r.email,
+                            packageType: r.package_name || r.package_code,
+                            commissionAmount: r.commission_amount || 0,
+                            commissionStatus: mapCommissionStatus(r.status, r.payment_status),
+                            createdAt: r.created_at,
+                        };
+                    }),
                     total: referrals.length,
                 },
             };

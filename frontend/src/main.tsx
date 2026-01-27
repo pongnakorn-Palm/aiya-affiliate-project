@@ -5,6 +5,7 @@ import { HelmetProvider } from 'react-helmet-async'
 import App from './App'
 import './index.css'
 import { LiffProvider } from './contexts/LiffContext'
+import { LanguageProvider } from './contexts/LanguageContext'
 
 // Validate required environment variables on app startup
 const API_URL = import.meta.env.VITE_API_URL;
@@ -19,11 +20,13 @@ console.log('✅ API URL configured:', API_URL);
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
         <HelmetProvider>
-            <LiffProvider>
-                <BrowserRouter>
-                    <App />
-                </BrowserRouter>
-            </LiffProvider>
+            <LanguageProvider>
+                <LiffProvider>
+                    <BrowserRouter>
+                        <App />
+                    </BrowserRouter>
+                </LiffProvider>
+            </LanguageProvider>
         </HelmetProvider>
     </React.StrictMode>,
 )

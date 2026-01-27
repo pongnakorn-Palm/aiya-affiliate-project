@@ -50,7 +50,7 @@ export default function BottomSheet({
             dragConstraints={{ top: 0 }}
             dragElastic={0.2}
             onDragEnd={handleDragEnd}
-            className="fixed bottom-0 left-0 right-0 z-[101] bg-[#0a1628] rounded-t-3xl max-h-[90vh] overflow-hidden"
+            className="fixed bottom-0 left-0 right-0 z-[101] bg-[#1A1D21] rounded-t-3xl max-h-[90vh] overflow-hidden border-t border-white/5"
             style={{ touchAction: "none" }}
           >
             {/* Drag Handle */}
@@ -67,7 +67,7 @@ export default function BottomSheet({
 
             {/* Content */}
             <div
-              className="overflow-y-auto max-h-[calc(90vh-80px)]"
+              className="overflow-y-auto max-h-[calc(90vh-80px)] no-scrollbar"
               style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
             >
               {children}

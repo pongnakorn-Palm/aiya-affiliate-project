@@ -43,11 +43,24 @@
 @tailwind utilities;
 
 @layer base {
-    body {
+    html, body {
         @apply font-sans text-white antialiased selection:bg-aiya-purple selection:text-white;
         font-weight: 400;
         background: linear-gradient(180deg, #1a1a3e 0%, #0f0f23 100%);
         min-height: 100vh;
+        overflow-x: hidden;
+    }
+
+    /* Hide scrollbars globally */
+    html::-webkit-scrollbar,
+    body::-webkit-scrollbar {
+        display: none;
+    }
+
+    html,
+    body {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
     }
 }
 
@@ -273,4 +286,19 @@
 
 .tab-content-enter {
     animation: tabEnter 0.3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* ========================================
+   HIDE SCROLLBARS (MINIMALIST LOOK)
+   ======================================== */
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
 }

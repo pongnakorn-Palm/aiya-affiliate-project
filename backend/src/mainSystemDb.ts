@@ -117,7 +117,7 @@ export async function registerAffiliate(
             RETURNING id, code
         `;
 
-        return result[0];
+        return result[0] as { id: string; code: string };
     } catch (error: any) {
         console.error("Register affiliate error:", error);
 

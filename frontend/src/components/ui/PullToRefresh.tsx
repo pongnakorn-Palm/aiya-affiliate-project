@@ -49,7 +49,7 @@ export default function PullToRefresh({
   }, [y, isRefreshing, onRefresh]);
 
   return (
-    <div ref={containerRef} className="relative overflow-hidden h-full">
+    <div ref={containerRef} className="relative overflow-hidden h-full bg-[#0F1216]">
       {/* Pull indicator */}
       <motion.div
         className="absolute top-0 left-0 right-0 flex justify-center py-4 z-10 pointer-events-none"
@@ -59,7 +59,7 @@ export default function PullToRefresh({
           style={{ rotate }}
           className={isRefreshing ? "animate-spin" : ""}
         >
-          <span className="material-symbols-outlined text-blue-400 text-2xl">
+          <span className="material-symbols-outlined text-yellow-400 text-2xl">
             {isRefreshing ? "sync" : "arrow_downward"}
           </span>
         </motion.div>

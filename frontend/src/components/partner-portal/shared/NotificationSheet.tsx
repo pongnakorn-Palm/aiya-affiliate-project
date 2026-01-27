@@ -3,6 +3,7 @@ import BottomSheet from "../../ui/BottomSheet";
 import { formatRelativeTime } from "../../../utils/formatting";
 import { triggerHaptic } from "../../../utils/haptic";
 import type { Notification } from "../hooks/useNotifications";
+import { useLanguage } from "../../../contexts/LanguageContext";
 
 interface NotificationSheetProps {
   isOpen: boolean;
@@ -11,6 +12,7 @@ interface NotificationSheetProps {
   onMarkRead: (id: string) => void;
   onClearAll: () => void;
   onViewHistory: () => void;
+  onNavigate?: (tab: "dashboard" | "history" | "profile") => void;
 }
 
 export default function NotificationSheet({
@@ -20,32 +22,48 @@ export default function NotificationSheet({
   onMarkRead,
   onClearAll,
   onViewHistory,
+  onNavigate,
 }: NotificationSheetProps) {
+  const { t } = useLanguage();
+
   const getIconConfig = (type: Notification["type"]) => {
     switch (type) {
       case "commission_paid":
         return {
-          bg: "bg-emerald-500/20",
-          color: "text-emerald-400",
+          bg: "bg-green-500/20",
+          color: "text-green-400",
           icon: "payments",
+          navigateTo: "history" as const,
         };
       case "commission_approved":
         return {
-          bg: "bg-purple-500/20",
-          color: "text-purple-400",
+          bg: "bg-yellow-500/20",
+          color: "text-yellow-400",
           icon: "verified",
+          navigateTo: "history" as const,
         };
       default:
         return {
-          bg: "bg-blue-500/20",
-          color: "text-blue-400",
+          bg: "bg-cyan-500/20",
+          color: "text-cyan-400",
           icon: "person_add",
+          navigateTo: "dashboard" as const,
         };
     }
   };
 
+  const handleNotificationClick = (notification: Notification) => {
+    onMarkRead(notification.id);
+    triggerHaptic("light");
+    const iconConfig = getIconConfig(notification.type);
+    if (onNavigate) {
+      onNavigate(iconConfig.navigateTo);
+      onClose();
+    }
+  };
+
   return (
-    <BottomSheet isOpen={isOpen} onClose={onClose} title="การแจ้งเตือน">
+    <BottomSheet isOpen={isOpen} onClose={onClose} title={t("notification.title")}>
       {/* Header Actions */}
       {notifications.length > 0 && (
         <div className="px-4 py-2 border-b border-white/10 flex justify-end">
@@ -54,12 +72,12 @@ export default function NotificationSheet({
               onClearAll();
               triggerHaptic("light");
             }}
-            className="text-xs text-slate-400 hover:text-red-400 transition-colors flex items-center gap-1"
+            className="text-xs text-gray-400 hover:text-red-400 transition-colors flex items-center gap-1"
           >
             <span className="material-symbols-outlined text-sm">
               delete_sweep
             </span>
-            ล้างทั้งหมด
+            {t("notification.clearAll")}
           </button>
         </div>
       )}
@@ -76,13 +94,10 @@ export default function NotificationSheet({
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.05 }}
-                className={`flex items-start gap-3 px-4 py-3 transition-all duration-200 hover:bg-white/5 cursor-pointer ${
-                  !notification.read ? "bg-blue-500/5" : ""
+                className={`flex items-start gap-3 px-4 py-3 transition-all duration-200 hover:bg-white/5 active:bg-white/10 cursor-pointer ${
+                  !notification.read ? "bg-yellow-500/5" : ""
                 } ${index !== notifications.length - 1 ? "border-b border-white/5" : ""}`}
-                onClick={() => {
-                  onMarkRead(notification.id);
-                  triggerHaptic("light");
-                }}
+                onClick={() => handleNotificationClick(notification)}
               >
                 {/* Icon */}
                 <div
@@ -96,37 +111,37 @@ export default function NotificationSheet({
                 {/* Content */}
                 <div className="flex-1 min-w-0">
                   <p
-                    className={`text-sm font-medium leading-tight ${!notification.read ? "text-white" : "text-slate-300"}`}
+                    className={`text-sm font-semibold leading-tight ${!notification.read ? "text-white" : "text-gray-300"}`}
                   >
                     {notification.title}
                   </p>
-                  <p className="text-xs text-slate-500 truncate mt-0.5">
+                  <p className="text-xs text-gray-500 truncate mt-1">
                     {notification.message}
                   </p>
-                  <p className="text-[10px] text-slate-600 mt-1">
+                  <p className="text-[10px] text-gray-600 mt-1.5">
                     {formatRelativeTime(notification.timestamp)}
                   </p>
                 </div>
 
                 {/* Unread indicator */}
                 {!notification.read && (
-                  <div className="size-2 rounded-full bg-blue-500 flex-shrink-0 mt-1.5 animate-pulse"></div>
+                  <div className="size-2 rounded-full bg-yellow-400 flex-shrink-0 mt-1.5 shadow-lg shadow-yellow-400/30"></div>
                 )}
               </motion.div>
             );
           })
         ) : (
-          <div className="flex flex-col items-center justify-center py-12 text-center">
-            <div className="size-16 rounded-full bg-white/5 flex items-center justify-center mb-4">
-              <span className="material-symbols-outlined text-3xl text-slate-600">
+          <div className="flex flex-col items-center justify-center py-16 text-center">
+            <div className="size-20 rounded-full bg-[#0F1216] flex items-center justify-center mb-4 border border-white/5">
+              <span className="material-symbols-outlined text-4xl text-gray-600">
                 notifications_off
               </span>
             </div>
-            <p className="text-slate-400 text-sm font-medium">
-              ไม่มีการแจ้งเตือนใหม่
+            <p className="text-white text-base font-semibold mb-1">
+              {t("notification.empty")}
             </p>
-            <p className="text-slate-600 text-xs mt-1">
-              เมื่อมีกิจกรรมจะแสดงที่นี่
+            <p className="text-gray-500 text-xs">
+              {t("notification.emptyDesc")}
             </p>
           </div>
         )}
@@ -134,16 +149,16 @@ export default function NotificationSheet({
 
       {/* Footer */}
       {notifications.length > 0 && (
-        <div className="px-4 py-3 border-t border-white/10 bg-white/5">
+        <div className="px-4 py-3 border-t border-white/10 bg-[#0F1216]">
           <button
             onClick={() => {
               onViewHistory();
               onClose();
               triggerHaptic("light");
             }}
-            className="w-full text-center text-sm text-blue-400 hover:text-blue-300 transition-colors py-1"
+            className="w-full text-center text-sm text-yellow-400 hover:text-yellow-300 transition-colors py-1 font-semibold"
           >
-            ดูประวัติทั้งหมด →
+            {t("notification.viewHistory")}
           </button>
         </div>
       )}

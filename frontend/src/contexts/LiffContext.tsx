@@ -44,11 +44,11 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({
           setIsLoggedIn(true);
           setIsInClient(false);
 
-          // Mock profile for testing
+          // Mock profile for testing (use real LINE ID for dev)
           setProfile({
             displayName: "Test User",
-            pictureUrl: "https://via.placeholder.com/150",
-            userId: "U1234567890abcdef1234567890abcdef",
+            pictureUrl: "https://api.dicebear.com/7.x/avataaars/svg?seed=TestUser&backgroundColor=b6e3f4",
+            userId: "U0953dec98859a88b40a1e232b78b4c7d", // Your actual LINE ID
             email: "test@example.com",
           });
 

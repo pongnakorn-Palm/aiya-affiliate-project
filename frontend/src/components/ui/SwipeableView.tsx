@@ -67,7 +67,7 @@ export default function SwipeableView({
   );
 
   return (
-    <div className="relative overflow-hidden">
+    <div className="relative overflow-hidden bg-[#0F1216]">
       <AnimatePresence mode="wait" custom={direction} initial={false}>
         <motion.div
           key={activeIndex}

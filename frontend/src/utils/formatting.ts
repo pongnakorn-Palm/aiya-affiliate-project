@@ -44,3 +44,23 @@ export const formatAccountNumber = (value: string): string => {
   }
   return formatted;
 };
+
+// Mask email for privacy (e.g., "lalitchaya@aiya.ai" -> "lal***@aiya.ai")
+export const maskEmail = (email: string): string => {
+  if (!email || !email.includes("@")) return "***@***.***";
+
+  const [localPart, domain] = email.split("@");
+  const visibleChars = Math.min(3, localPart.length);
+  const masked = localPart.substring(0, visibleChars) + "***";
+
+  return `${masked}@${domain}`;
+};
+
+// Mask name for privacy (e.g., "สมชาย ใจดี" -> "สม***")
+export const maskName = (name: string): string => {
+  if (!name) return "***";
+
+  // Show first 2 characters then mask the rest
+  const visibleChars = Math.min(2, name.length);
+  return name.substring(0, visibleChars) + "***";
+};

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLiff } from "../contexts/LiffContext";
+import { useLanguage } from "../contexts/LanguageContext";
 import DashboardSkeleton from "./DashboardSkeleton";
 import SEOHead from "./SEOHead";
 
@@ -27,8 +28,10 @@ import { triggerHaptic } from "../utils/haptic";
 export default function PartnerPortal() {
   const { isLoggedIn, profile, login, isReady, liffObject, isInClient } =
     useLiff();
+  const { t } = useLanguage();
   const [showNotifications, setShowNotifications] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
+  const [isBankFormOpen, setIsBankFormOpen] = useState(false);
 
   // Custom hooks
   const {
@@ -110,9 +113,9 @@ export default function PartnerPortal() {
   // Show loading spinner while LIFF is initializing
   if (!isReady) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-aiya-navy via-[#0a1628] to-aiya-navy">
+      <div className="min-h-[100dvh] flex items-center justify-center bg-[#0F1216]">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-400 mb-4"></div>
+          <div className="inline-block animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-yellow-400 mb-4"></div>
           <p className="text-white/70 text-sm">กำลังโหลด...</p>
         </div>
       </div>
@@ -122,30 +125,23 @@ export default function PartnerPortal() {
   // Show login prompt if not logged in
   if (!isLoggedIn) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-aiya-navy via-[#0a1628] to-aiya-navy px-4">
-        <div className="bg-white/5 backdrop-blur-2xl border border-aiya-purple/30 rounded-3xl p-8 max-w-md w-full text-center shadow-2xl shadow-aiya-purple/10">
+      <div className="min-h-[100dvh] flex items-center justify-center bg-[#0F1216] px-4">
+        {/* Premium Gold Ambient */}
+        <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-yellow-500/10 via-transparent to-transparent pointer-events-none"></div>
+
+        <div className="relative z-10 bg-[#1A1D21] backdrop-blur-2xl border border-white/5 rounded-3xl p-8 max-w-md w-full text-center shadow-2xl">
           <div className="mb-6">
-            <svg
-              className="w-20 h-20 mx-auto text-blue-400"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth="1.5"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-              />
-            </svg>
+            <div className="w-20 h-20 mx-auto bg-yellow-500/20 rounded-full flex items-center justify-center">
+              <span className="material-symbols-outlined text-yellow-400 text-4xl">person</span>
+            </div>
           </div>
           <h2 className="text-2xl font-bold text-white mb-3">สถิติของฉัน</h2>
-          <p className="text-white/70 mb-6">
+          <p className="text-gray-400 mb-6">
             กรุณาเข้าสู่ระบบด้วย LINE เพื่อดูยอดและสถิติของคุณ
           </p>
           <button
             onClick={login}
-            className="w-full flex items-center justify-center gap-2 bg-line-green hover:bg-[#05b34b] text-white font-medium px-6 py-3 rounded-full transition-colors duration-200"
+            className="w-full flex items-center justify-center gap-2 bg-line-green hover:bg-[#05b34b] text-white font-bold px-6 py-4 rounded-2xl transition-colors duration-200 shadow-lg shadow-line-green/30"
           >
             <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
               <path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314" />
@@ -160,28 +156,18 @@ export default function PartnerPortal() {
   // Show error state
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-aiya-navy via-[#0a1628] to-aiya-navy px-4">
-        <div className="bg-white/5 backdrop-blur-2xl border border-red-500/30 rounded-3xl p-8 max-w-md w-full text-center shadow-2xl shadow-red-500/10">
+      <div className="min-h-[100dvh] flex items-center justify-center bg-[#0F1216] px-4">
+        <div className="bg-[#1A1D21] backdrop-blur-2xl border border-red-500/30 rounded-3xl p-8 max-w-md w-full text-center shadow-2xl">
           <div className="mb-6">
-            <svg
-              className="w-20 h-20 mx-auto text-red-400"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth="1.5"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-              />
-            </svg>
+            <div className="w-20 h-20 mx-auto bg-red-500/20 rounded-full flex items-center justify-center">
+              <span className="material-symbols-outlined text-red-400 text-4xl">error</span>
+            </div>
           </div>
           <h2 className="text-2xl font-bold text-white mb-3">เกิดข้อผิดพลาด</h2>
-          <p className="text-white/70 mb-6">{error}</p>
+          <p className="text-gray-400 mb-6">{error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="w-full bg-primary hover:bg-primary/80 text-white font-bold py-3 px-6 rounded-full transition-colors"
+            className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-4 px-6 rounded-2xl transition-colors shadow-lg shadow-yellow-400/30"
           >
             ลองใหม่อีกครั้ง
           </button>
@@ -204,123 +190,105 @@ export default function PartnerPortal() {
         description={`ดูสถิติและค่าคอมมิชชั่นของคุณ | จำนวนผู้สมัคร: ${displayData?.stats.totalRegistrations || 0} คน | รายได้: ${displayData ? formatCommission(displayData.stats.totalCommission) : 0} บาท`}
       />
 
-      <div className="relative flex min-h-screen w-full flex-col bg-gradient-to-br from-aiya-navy via-[#0a1628] to-aiya-navy text-white overflow-x-hidden pb-24 font-sans overflow-y-auto">
+      <div className="relative min-h-[100dvh] w-full flex flex-col bg-[#0F1216] text-white overflow-x-hidden font-sans">
+        {/* Premium Gold Ambient Lighting */}
+        <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-yellow-500/10 via-transparent to-transparent pointer-events-none"></div>
+        <div className="fixed top-0 right-0 w-[600px] h-[600px] bg-[radial-gradient(circle,_var(--tw-gradient-stops))] from-amber-500/8 via-transparent to-transparent blur-3xl pointer-events-none"></div>
+
         {/* Header */}
-        <div className="flex items-center justify-between px-6 pt-14 pb-6">
-          <div className="flex items-center gap-4">
-            <div className="relative size-14 overflow-hidden rounded-full border-2 border-white/20">
-              {profile?.pictureUrl ? (
-                <img
-                  alt="Profile"
-                  className="size-full object-cover"
-                  src={profile.pictureUrl}
-                />
-              ) : (
-                <div className="size-full bg-gradient-to-br from-aiya-purple to-[#7B68EE] flex items-center justify-center text-white text-2xl font-bold">
-                  {profile?.displayName?.charAt(0)}
+        {activeTab === "dashboard" && (
+          <div className="relative z-10 flex items-center justify-between px-5 pt-12 pb-4">
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <div className="size-12 overflow-hidden rounded-full border-2 border-white/10 shadow-xl">
+                  {profile?.pictureUrl ? (
+                    <img
+                      alt="Profile"
+                      className="size-full object-cover"
+                      src={profile.pictureUrl}
+                    />
+                  ) : (
+                    <div className="size-full bg-gradient-to-br from-yellow-500/50 to-amber-600/50 flex items-center justify-center text-white text-lg font-bold">
+                      {profile?.displayName?.charAt(0)}
+                    </div>
+                  )}
                 </div>
-              )}
-              <div className="absolute bottom-0 right-0 size-3.5 rounded-full bg-green-500 border-2 border-aiya-navy"></div>
+                <div className="absolute bottom-0 right-0 size-3 rounded-full bg-green-400 border-2 border-[#0F1216]"></div>
+              </div>
+              <div className="flex flex-col">
+                <span className="text-[11px] text-gray-500 font-medium tracking-wider uppercase">{t("header.welcome")}</span>
+                <span className="text-base font-bold text-white">{profile?.displayName || t("header.partner")}</span>
+              </div>
             </div>
-            <div>
-              <p className="text-white/60 text-sm font-medium leading-tight mb-0.5">
-                ยินดีต้อนรับ,
-              </p>
-              <p className="text-white text-xl font-bold leading-tight">
-                {profile?.displayName || "Partner"}
-              </p>
-            </div>
-          </div>
 
-          {/* Notification Button */}
-          <button
-            onClick={() => {
-              triggerHaptic("light");
-              setShowNotifications(true);
-              if (referrals.length === 0) {
-                fetchReferrals();
-              }
-            }}
-            className={`relative flex items-center justify-center size-11 rounded-full transition-all duration-200 border active:scale-95 ${
-              showNotifications
-                ? "bg-white/15 border-white/20 shadow-lg shadow-purple-500/20"
-                : "bg-white/5 border-white/5 hover:bg-white/10"
-            }`}
-          >
-            <span
-              className="material-symbols-outlined text-white transition-transform duration-200"
-              style={{
-                fontSize: "22px",
-                fontVariationSettings: showNotifications
-                  ? "'FILL' 1"
-                  : "'FILL' 0",
+            {/* Notification Button */}
+            <button
+              onClick={() => {
+                triggerHaptic("light");
+                setShowNotifications(true);
+                if (referrals.length === 0) {
+                  fetchReferrals();
+                }
               }}
+              className="relative flex items-center justify-center size-11 rounded-xl bg-[#1A1D21] border border-white/5 text-white hover:bg-[#22262B] transition-colors active:scale-95 shadow-lg"
             >
-              notifications
-            </span>
-            {/* Badge */}
-            {unreadCount > 0 && (
-              <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] flex items-center justify-center bg-red-500 text-white text-[10px] font-bold rounded-full px-1 shadow-lg shadow-red-500/50">
-                {unreadCount > 9 ? "9+" : unreadCount}
+              <span
+                className="material-symbols-outlined text-[22px]"
+                style={{
+                  fontVariationSettings: showNotifications ? "'FILL' 1" : "'FILL' 0",
+                }}
+              >
+                notifications
               </span>
+              {unreadCount > 0 && (
+                <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] flex items-center justify-center bg-red-500 text-white text-[10px] font-bold rounded-full px-1">
+                  {unreadCount > 9 ? "9+" : unreadCount}
+                </span>
+              )}
+            </button>
+          </div>
+        )}
+
+        {/* Scrollable Content Area */}
+        <div className="relative z-10 flex-1 flex flex-col pb-40 no-scrollbar">
+          <SwipeableView
+            activeIndex={activeIndex}
+            onIndexChange={navigateByIndex}
+          >
+            {displayData && (
+              <DashboardTab
+                data={displayData}
+                lastUpdated={lastUpdated}
+                onShare={shareToLine}
+                isSharing={isSharing}
+                referrals={referrals}
+              />
             )}
-          </button>
+            <HistoryTab
+              referrals={referrals}
+              isLoading={isLoadingReferrals}
+              error={referralsError}
+              onRefresh={refreshReferrals}
+              isRefreshing={isRefreshingReferrals}
+            />
+            {displayData && (
+              <ProfileTab
+                affiliate={displayData.affiliate}
+                userId={profile?.userId}
+                onRefresh={refresh}
+                profile={profile ? {
+                  displayName: profile.displayName || "",
+                  pictureUrl: profile.pictureUrl
+                } : undefined}
+                onBankFormChange={setIsBankFormOpen}
+              />
+            )}
+          </SwipeableView>
         </div>
-
-        {/* Swipeable Tab Content */}
-        <SwipeableView
-          activeIndex={activeIndex}
-          onIndexChange={navigateByIndex}
-        >
-          {displayData && (
-            <DashboardTab
-              data={displayData}
-              lastUpdated={lastUpdated}
-              onShare={shareToLine}
-              isSharing={isSharing}
-            />
-          )}
-          <HistoryTab
-            referrals={referrals}
-            isLoading={isLoadingReferrals}
-            error={referralsError}
-            onRefresh={refreshReferrals}
-            isRefreshing={isRefreshingReferrals}
-          />
-          {displayData && (
-            <ProfileTab
-              affiliate={displayData.affiliate}
-              userId={profile?.userId}
-              onRefresh={refresh}
-            />
-          )}
-        </SwipeableView>
-
-        {/* CSS Animations */}
-        <style>{`
-          @keyframes twinkle {
-            0%, 100% {
-              opacity: 0.3;
-              transform: scale(1);
-            }
-            50% {
-              opacity: 1;
-              transform: scale(1.2);
-            }
-          }
-          @keyframes float {
-            0%, 100% {
-              transform: translateY(0) rotate(0deg);
-            }
-            50% {
-              transform: translateY(-5px) rotate(10deg);
-            }
-          }
-        `}</style>
       </div>
 
-      {/* Bottom Navigation */}
-      <BottomNavigation activeTab={activeTab} onTabChange={navigateTo} />
+      {/* Bottom Navigation - Floating Glass Dock */}
+      {!isBankFormOpen && <BottomNavigation activeTab={activeTab} onTabChange={navigateTo} />}
 
       {/* Notification Bottom Sheet */}
       <NotificationSheet
@@ -330,6 +298,7 @@ export default function PartnerPortal() {
         onMarkRead={markRead}
         onClearAll={clearAll}
         onViewHistory={() => navigateTo("history")}
+        onNavigate={navigateTo}
       />
     </>
   );
