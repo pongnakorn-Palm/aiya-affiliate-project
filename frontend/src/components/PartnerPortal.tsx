@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLiff } from "../contexts/LiffContext";
+import { useLanguage } from "../contexts/LanguageContext";
 import DashboardSkeleton from "./DashboardSkeleton";
 import SEOHead from "./SEOHead";
 
@@ -27,6 +28,7 @@ import { triggerHaptic } from "../utils/haptic";
 export default function PartnerPortal() {
   const { isLoggedIn, profile, login, isReady, liffObject, isInClient } =
     useLiff();
+  const { t } = useLanguage();
   const [showNotifications, setShowNotifications] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
   const [isBankFormOpen, setIsBankFormOpen] = useState(false);
@@ -214,8 +216,8 @@ export default function PartnerPortal() {
                 <div className="absolute bottom-0 right-0 size-3 rounded-full bg-green-400 border-2 border-[#0F1216]"></div>
               </div>
               <div className="flex flex-col">
-                <span className="text-[11px] text-gray-500 font-medium tracking-wider uppercase">ยินดีต้อนรับ</span>
-                <span className="text-base font-bold text-white">{profile?.displayName || "พาร์ทเนอร์"}</span>
+                <span className="text-[11px] text-gray-500 font-medium tracking-wider uppercase">{t("header.welcome")}</span>
+                <span className="text-base font-bold text-white">{profile?.displayName || t("header.partner")}</span>
               </div>
             </div>
 

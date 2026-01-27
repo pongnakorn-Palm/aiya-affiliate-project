@@ -3,6 +3,7 @@ import BottomSheet from "../../ui/BottomSheet";
 import { formatRelativeTime } from "../../../utils/formatting";
 import { triggerHaptic } from "../../../utils/haptic";
 import type { Notification } from "../hooks/useNotifications";
+import { useLanguage } from "../../../contexts/LanguageContext";
 
 interface NotificationSheetProps {
   isOpen: boolean;
@@ -23,6 +24,8 @@ export default function NotificationSheet({
   onViewHistory,
   onNavigate,
 }: NotificationSheetProps) {
+  const { t } = useLanguage();
+
   const getIconConfig = (type: Notification["type"]) => {
     switch (type) {
       case "commission_paid":
@@ -60,7 +63,7 @@ export default function NotificationSheet({
   };
 
   return (
-    <BottomSheet isOpen={isOpen} onClose={onClose} title="การแจ้งเตือน">
+    <BottomSheet isOpen={isOpen} onClose={onClose} title={t("notification.title")}>
       {/* Header Actions */}
       {notifications.length > 0 && (
         <div className="px-4 py-2 border-b border-white/10 flex justify-end">
@@ -74,7 +77,7 @@ export default function NotificationSheet({
             <span className="material-symbols-outlined text-sm">
               delete_sweep
             </span>
-            ล้างทั้งหมด
+            {t("notification.clearAll")}
           </button>
         </div>
       )}
@@ -135,10 +138,10 @@ export default function NotificationSheet({
               </span>
             </div>
             <p className="text-white text-base font-semibold mb-1">
-              ไม่มีการแจ้งเตือนใหม่
+              {t("notification.empty")}
             </p>
             <p className="text-gray-500 text-xs">
-              เมื่อมีกิจกรรมจะแสดงที่นี่
+              {t("notification.emptyDesc")}
             </p>
           </div>
         )}
@@ -155,7 +158,7 @@ export default function NotificationSheet({
             }}
             className="w-full text-center text-sm text-yellow-400 hover:text-yellow-300 transition-colors py-1 font-semibold"
           >
-            ดูประวัติทั้งหมด →
+            {t("notification.viewHistory")}
           </button>
         </div>
       )}

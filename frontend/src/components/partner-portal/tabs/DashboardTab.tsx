@@ -3,6 +3,7 @@ import { useState, useMemo } from "react";
 import { triggerHaptic } from "../../../utils/haptic";
 import { formatCommission } from "../../../utils/formatting";
 import type { DashboardData } from "../hooks/useReferralData";
+import { useLanguage } from "../../../contexts/LanguageContext";
 
 interface DashboardTabProps {
   data: DashboardData;
@@ -31,6 +32,7 @@ export default function DashboardTab({
   isSharing,
   referrals = [],
 }: DashboardTabProps) {
+  const { t, language } = useLanguage();
   const [copied, setCopied] = useState(false);
 
   const paidCommission = data.stats.totalCommission - data.stats.pendingCommission;
@@ -49,7 +51,9 @@ export default function DashboardTab({
       return {
         date,
         count: 0,
-        label: date.toLocaleDateString("th-TH", { weekday: "short" }).charAt(0),
+        label: language === "en"
+          ? date.toLocaleDateString("en-US", { weekday: "short" }).charAt(0)
+          : date.toLocaleDateString("th-TH", { weekday: "short" }).charAt(0),
       };
     });
 
@@ -68,7 +72,7 @@ export default function DashboardTab({
     });
 
     return dataPoints;
-  }, [referrals]);
+  }, [referrals, language]);
 
   // Generate SVG path from data
   const { path, maxCount } = useMemo(() => {
@@ -126,7 +130,7 @@ export default function DashboardTab({
                   account_balance_wallet
                 </span>
               </div>
-              <span className="text-gray-400 text-xs font-medium">รายได้รวม</span>
+              <span className="text-gray-400 text-xs font-medium">{t("dashboard.totalRevenue")}</span>
             </div>
             <div className="flex items-center gap-1.5 bg-green-500/20 px-3 py-1.5 rounded-full">
               <span className="material-symbols-outlined text-green-400 text-sm">trending_up</span>
@@ -153,7 +157,7 @@ export default function DashboardTab({
                 <span className="material-symbols-outlined text-orange-400 text-lg">schedule</span>
               </div>
             </div>
-            <p className="text-gray-400 text-xs font-medium mb-2">รอตรวจสอบ</p>
+            <p className="text-gray-400 text-xs font-medium mb-2">{t("dashboard.pending")}</p>
             <p className="text-xl font-bold text-white">฿ {formatCommission(data.stats.pendingCommission)}</p>
           </div>
         </div>
@@ -170,7 +174,7 @@ export default function DashboardTab({
                 <span className="material-symbols-outlined text-green-400 text-lg">check_circle</span>
               </div>
             </div>
-            <p className="text-gray-400 text-xs font-medium mb-2">อนุมัติแล้ว</p>
+            <p className="text-gray-400 text-xs font-medium mb-2">{t("dashboard.approved")}</p>
             <p className="text-xl font-bold text-white">฿ {formatCommission(paidCommission)}</p>
           </div>
         </div>
@@ -185,10 +189,10 @@ export default function DashboardTab({
           <div className="w-11 h-11 rounded-xl bg-cyan-500/20 flex items-center justify-center">
             <span className="material-symbols-outlined text-cyan-400 text-xl">group_add</span>
           </div>
-          <p className="text-white text-sm font-medium">จำนวนลูกค้า</p>
+          <p className="text-white text-sm font-medium">{t("dashboard.registrations")}</p>
         </div>
         <p className="text-2xl font-bold text-white">
-          {data.stats.totalRegistrations} <span className="text-sm font-normal text-gray-500">คน</span>
+          {data.stats.totalRegistrations} <span className="text-sm font-normal text-gray-500">{t("dashboard.persons")}</span>
         </p>
       </motion.div>
 
@@ -196,12 +200,12 @@ export default function DashboardTab({
       <motion.div variants={fadeInUp} className="bg-[#1A1D21] rounded-2xl p-5 border border-white/5 shadow-xl">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h3 className="text-white text-base font-bold">แนวโน้มการเติบโต</h3>
-            <p className="text-gray-500 text-xs">จำนวนลูกค้า 7 วันย้อนหลัง</p>
+            <h3 className="text-white text-base font-bold">{t("dashboard.growthTrend")}</h3>
+            <p className="text-gray-500 text-xs">{t("dashboard.weekly")}</p>
           </div>
           <div className="flex items-center gap-2">
             <span className="px-2.5 py-1 rounded-full border border-yellow-400/30 text-yellow-400 text-[10px] font-semibold">
-              {maxCount > 0 ? `สูงสุด ${maxCount} คน` : "ยังไม่มีข้อมูล"}
+              {maxCount > 0 ? t("dashboard.maxPersons").replace("{count}", String(maxCount)) : t("dashboard.noData")}
             </span>
           </div>
         </div>
@@ -275,9 +279,9 @@ export default function DashboardTab({
                 redeem
               </span>
             </div>
-            <span className="text-white text-sm font-bold">รหัสแนะนำพิเศษ</span>
+            <span className="text-white text-sm font-bold">{t("dashboard.referralCode")}</span>
           </div>
-          <p className="text-gray-500 text-xs mb-4">แชร์รหัสนี้ให้เพื่อนเพื่อรับค่าคอมมิชชั่น</p>
+          <p className="text-gray-500 text-xs mb-4">{t("dashboard.shareDescription")}</p>
 
           <div className="bg-[#0F1216] rounded-xl p-4 mb-4 text-center border border-white/5">
             <span className="text-[10px] text-gray-500 block mb-2 uppercase tracking-wider">Affiliate Code</span>
@@ -300,7 +304,7 @@ export default function DashboardTab({
                 <span className="material-symbols-outlined text-base">
                   {copied ? "check_circle" : "content_copy"}
                 </span>
-                {copied ? "คัดลอกแล้ว!" : "คัดลอก"}
+                {copied ? t("dashboard.copied") : t("dashboard.copy")}
               </span>
             </motion.button>
 
@@ -317,7 +321,7 @@ export default function DashboardTab({
             >
               <span className="inline-flex items-center gap-2">
                 <span className="material-symbols-outlined text-base">share</span>
-                {isSharing ? "กำลังแชร์..." : "แชร์ลิงก์"}
+                {isSharing ? t("dashboard.sharing") : t("dashboard.shareLink")}
               </span>
             </motion.button>
           </div>
@@ -343,7 +347,7 @@ export default function DashboardTab({
               <path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314" />
             </svg>
             <span className="text-base font-bold">
-              {isSharing ? "กำลังแชร์..." : "แชร์ให้เพื่อนใน LINE"}
+              {isSharing ? t("dashboard.sharing") : t("dashboard.shareToLine")}
             </span>
           </div>
         </motion.button>

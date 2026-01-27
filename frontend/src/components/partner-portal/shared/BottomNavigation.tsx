@@ -2,22 +2,24 @@ import { motion } from "framer-motion";
 import { createPortal } from "react-dom";
 import { triggerHaptic } from "../../../utils/haptic";
 import type { TabType } from "../hooks/useSwipeNavigation";
+import { useLanguage } from "../../../contexts/LanguageContext";
 
 interface BottomNavigationProps {
   activeTab: TabType;
   onTabChange: (tab: TabType) => void;
 }
 
-const tabs: { id: TabType; icon: string; label: string }[] = [
-  { id: "dashboard", icon: "dashboard", label: "หน้าหลัก" },
-  { id: "history", icon: "bar_chart", label: "ประวัติ" },
-  { id: "profile", icon: "person", label: "โปรไฟล์" },
-];
-
 export default function BottomNavigation({
   activeTab,
   onTabChange,
 }: BottomNavigationProps) {
+  const { t } = useLanguage();
+
+  const tabs: { id: TabType; icon: string; label: string }[] = [
+    { id: "dashboard", icon: "dashboard", label: t("nav.dashboard") },
+    { id: "history", icon: "bar_chart", label: t("nav.history") },
+    { id: "profile", icon: "person", label: t("nav.profile") },
+  ];
   return createPortal(
     <div className="fixed bottom-0 left-0 right-0 z-50 px-4 pb-6" style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 1.5rem)" }}>
       <motion.div

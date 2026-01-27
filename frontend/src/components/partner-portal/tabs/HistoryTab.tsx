@@ -1,8 +1,9 @@
 import { motion } from "framer-motion";
-import { useMemo } from "react";
+import { useState, useMemo } from "react";
 import { formatCommission, maskName } from "../../../utils/formatting";
 import type { Referral } from "../hooks/useReferralData";
 import PullToRefresh from "../../ui/PullToRefresh";
+import { useLanguage } from "../../../contexts/LanguageContext";
 
 interface HistoryTabProps {
   referrals: Referral[];
@@ -11,6 +12,8 @@ interface HistoryTabProps {
   onRefresh: () => Promise<void>;
   isRefreshing?: boolean;
 }
+
+type FilterType = "all" | "pending" | "approved" | "rejected";
 
 const staggerContainer = {
   animate: {
@@ -45,7 +48,7 @@ function SkeletonCard() {
 }
 
 // Empty State Component
-function EmptyState() {
+function EmptyState({ t }: { t: (key: string) => string }) {
   return (
     <div className="flex-1 flex items-center justify-center py-16">
       <motion.div
@@ -72,17 +75,17 @@ function EmptyState() {
         </motion.div>
 
         <h3 className="text-white text-lg font-semibold mb-2">
-          ยังไม่มีรายการ
+          {t("history.empty")}
         </h3>
         <p className="text-gray-400 text-sm leading-relaxed">
-          เมื่อมีคนใช้รหัสแนะนำของคุณ
+          {t("history.emptyDesc")}
           <br />
-          รายการจะแสดงที่นี่
+          {t("history.emptyDesc2")}
         </p>
 
         <div className="mt-6 flex items-center justify-center gap-2 text-gray-500 text-xs">
           <span className="material-symbols-outlined text-sm">swipe_down</span>
-          <span>ดึงลงเพื่อรีเฟรช</span>
+          <span>{t("history.pullToRefresh")}</span>
         </div>
       </motion.div>
     </div>
@@ -96,6 +99,24 @@ export default function HistoryTab({
   onRefresh,
   isRefreshing = false,
 }: HistoryTabProps) {
+  const { t, language } = useLanguage();
+  const [activeFilter, setActiveFilter] = useState<FilterType>("all");
+
+  const filters: { id: FilterType; label: string; count?: number }[] = [
+    { id: "all", label: t("history.all") },
+    { id: "pending", label: t("history.pending"), count: referrals.filter(r => r.commissionStatus === "pending").length },
+    { id: "approved", label: t("history.approved") },
+    { id: "rejected", label: t("history.rejected") },
+  ];
+
+  const filteredReferrals = useMemo(() => {
+    if (activeFilter === "all") return referrals;
+    if (activeFilter === "approved") {
+      return referrals.filter(r => r.commissionStatus === "approved" || r.commissionStatus === "paid");
+    }
+    return referrals.filter(r => r.commissionStatus === activeFilter);
+  }, [referrals, activeFilter]);
+
   // Group referrals by date
   const groupedReferrals = useMemo(() => {
     const groups: { [key: string]: Referral[] } = {};
@@ -104,17 +125,18 @@ export default function HistoryTab({
     const yesterday = new Date(today);
     yesterday.setDate(yesterday.getDate() - 1);
 
-    referrals.forEach((referral) => {
+    filteredReferrals.forEach((referral) => {
       const date = new Date(referral.createdAt);
       date.setHours(0, 0, 0, 0);
 
       let key: string;
       if (date.getTime() === today.getTime()) {
-        key = "วันนี้";
+        key = t("history.today");
       } else if (date.getTime() === yesterday.getTime()) {
-        key = "เมื่อวาน";
+        key = t("history.yesterday");
       } else {
-        key = date.toLocaleDateString("th-TH", { day: "numeric", month: "short", year: "numeric" });
+        const locale = language === "en" ? "en-US" : "th-TH";
+        key = date.toLocaleDateString(locale, { day: "numeric", month: "short", year: "numeric" });
       }
 
       if (!groups[key]) groups[key] = [];
@@ -122,14 +144,14 @@ export default function HistoryTab({
     });
 
     return groups;
-  }, [referrals]);
+  }, [filteredReferrals, t, language]);
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "paid":
       case "approved":
         return {
-          label: "อนุมัติ",
+          label: t("status.approved"),
           bgColor: "bg-green-500/20",
           textColor: "text-green-400",
           borderColor: "border-green-500/30",
@@ -137,7 +159,7 @@ export default function HistoryTab({
         };
       case "rejected":
         return {
-          label: "ปฏิเสธ",
+          label: t("status.rejected"),
           bgColor: "bg-red-500/20",
           textColor: "text-red-400",
           borderColor: "border-red-500/30",
@@ -145,7 +167,7 @@ export default function HistoryTab({
         };
       default:
         return {
-          label: "รอดำเนินการ",
+          label: t("status.pending"),
           bgColor: "bg-orange-500/20",
           textColor: "text-orange-400",
           borderColor: "border-orange-500/30",
@@ -187,9 +209,33 @@ export default function HistoryTab({
       >
         {/* Header */}
         <div className="px-5 pt-10 pb-4">
-          <div>
-            <p className="text-[11px] text-gray-400 uppercase tracking-wider font-medium">ประวัติ</p>
-            <h2 className="text-2xl font-bold text-white">รายการ</h2>
+          <div className="mb-4">
+            <p className="text-[11px] text-gray-400 uppercase tracking-wider font-medium">{t("history.title")}</p>
+            <h2 className="text-2xl font-bold text-white">{t("history.records")}</h2>
+          </div>
+
+          {/* Filter Tabs */}
+          <div className="flex gap-2 overflow-x-auto pb-2 -mx-5 px-5 no-scrollbar">
+            {filters.map((filter) => (
+              <button
+                key={filter.id}
+                onClick={() => setActiveFilter(filter.id)}
+                className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
+                  activeFilter === filter.id
+                    ? "bg-yellow-400 text-black shadow-lg shadow-yellow-400/20"
+                    : "bg-[#1A1D21] text-gray-300 border border-white/5"
+                }`}
+              >
+                {filter.label}
+                {filter.count !== undefined && filter.count > 0 && (
+                  <span className={`text-xs px-1.5 py-0.5 rounded-full ${
+                    activeFilter === filter.id ? "bg-black/20 text-black" : "bg-white/10 text-gray-400"
+                  }`}>
+                    {filter.count}
+                  </span>
+                )}
+              </button>
+            ))}
           </div>
         </div>
 
@@ -218,11 +264,11 @@ export default function HistoryTab({
                 <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-500/20 flex items-center justify-center">
                   <span className="material-symbols-outlined text-3xl text-red-400">error</span>
                 </div>
-                <p className="text-red-400 font-semibold mb-2">เกิดข้อผิดพลาด</p>
-                <p className="text-gray-500 text-sm">ดึงลงเพื่อลองใหม่</p>
+                <p className="text-red-400 font-semibold mb-2">{t("common.error")}</p>
+                <p className="text-gray-500 text-sm">{t("history.pullToRetry")}</p>
               </motion.div>
             </div>
-          ) : referrals.length > 0 ? (
+          ) : filteredReferrals.length > 0 ? (
             <motion.div
               variants={staggerContainer}
               initial="initial"
@@ -292,7 +338,7 @@ export default function HistoryTab({
               ))}
             </motion.div>
           ) : (
-            <EmptyState />
+            <EmptyState t={t} />
           )}
         </div>
       </motion.div>
