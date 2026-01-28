@@ -28,8 +28,8 @@ const fadeInUp = {
 
 export default function DashboardTab({
   data,
-  onShare,
-  isSharing,
+  onShare: _onShare,
+  isSharing: _isSharing,
   referrals = [],
 }: DashboardTabProps) {
   const { t, language } = useLanguage();
