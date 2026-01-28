@@ -83,14 +83,23 @@ export default function PersonalInfoStep({
   };
 
   const header = (
-    <div className="flex items-center justify-between">
-      <h1 className="text-lg font-bold text-white">กรอกข้อมูลส่วนตัว</h1>
-      {isLineLoggedIn && (
-        <span className="flex items-center gap-1.5 text-xs text-green-400 bg-green-400/10 px-2 py-0.5 rounded-full">
-          <span className="w-1.5 h-1.5 bg-green-400 rounded-full" />
-          LINE
-        </span>
-      )}
+    <div className="space-y-2">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center text-white font-bold text-sm">
+            1
+          </div>
+          <span className="text-xs text-white/40">ขั้นตอนที่ 1 จาก 2</span>
+        </div>
+        {isLineLoggedIn && (
+          <span className="flex items-center gap-1.5 text-xs text-green-400 bg-green-400/10 px-2 py-0.5 rounded-full">
+            <span className="w-1.5 h-1.5 bg-green-400 rounded-full" />
+            LINE
+          </span>
+        )}
+      </div>
+      <h1 className="text-xl font-bold text-white">กรอกข้อมูลส่วนตัว</h1>
+      <p className="text-sm text-white/50">กรุณากรอกข้อมูลให้ครบถ้วนเพื่อสมัครเป็นพาร์ทเนอร์</p>
     </div>
   );
 
@@ -111,14 +120,17 @@ export default function PersonalInfoStep({
         variants={fadeInUp}
         initial="initial"
         animate="animate"
-        className="space-y-4 py-2 flex-1 flex flex-col justify-center"
+        className="space-y-5 pt-4 pb-2 flex-1 flex flex-col"
       >
         {/* Name Field */}
         <div>
-          <label className="block text-xs text-white/60 mb-1.5">
+          <label className="block text-sm font-medium text-white/70 mb-2">
             ชื่อ-นามสกุล <span className="text-red-400">*</span>
           </label>
           <div className="relative">
+            <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-white/30 text-xl">
+              person
+            </span>
             <input
               ref={nameRef}
               type="text"
@@ -128,7 +140,7 @@ export default function PersonalInfoStep({
               onKeyDown={(e) => handleKeyDown(e, emailRef)}
               enterKeyHint="next"
               placeholder="กรอกชื่อ-นามสกุล"
-              className={`w-full bg-[#1A1D21] border rounded-xl px-4 py-3 text-white text-sm placeholder:text-white/30 focus:outline-none transition-colors ${
+              className={`w-full bg-[#1A1D21] border rounded-xl pl-12 pr-4 py-3.5 text-white text-base placeholder:text-white/30 focus:outline-none transition-colors ${
                 errors.name
                   ? "border-red-400/50 focus:border-red-400"
                   : "border-white/10 focus:border-primary/50"
@@ -145,10 +157,13 @@ export default function PersonalInfoStep({
 
         {/* Email Field */}
         <div>
-          <label className="block text-xs text-white/60 mb-1.5">
+          <label className="block text-sm font-medium text-white/70 mb-2">
             อีเมล <span className="text-red-400">*</span>
           </label>
           <div className="relative">
+            <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-white/30 text-xl">
+              mail
+            </span>
             <input
               ref={emailRef}
               type="email"
@@ -158,7 +173,7 @@ export default function PersonalInfoStep({
               onKeyDown={(e) => handleKeyDown(e, phoneRef)}
               enterKeyHint="next"
               placeholder="example@email.com"
-              className={`w-full bg-[#1A1D21] border rounded-xl px-4 py-3 pr-11 text-white text-sm placeholder:text-white/30 focus:outline-none transition-colors ${
+              className={`w-full bg-[#1A1D21] border rounded-xl pl-12 pr-11 py-3.5 text-white text-base placeholder:text-white/30 focus:outline-none transition-colors ${
                 errors.email || emailAvailability === "taken"
                   ? "border-red-400/50 focus:border-red-400"
                   : emailAvailability === "available"
@@ -201,10 +216,13 @@ export default function PersonalInfoStep({
 
         {/* Phone Field */}
         <div>
-          <label className="block text-xs text-white/60 mb-1.5">
+          <label className="block text-sm font-medium text-white/70 mb-2">
             เบอร์โทรศัพท์ <span className="text-red-400">*</span>
           </label>
           <div className="relative">
+            <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-white/30 text-xl">
+              phone
+            </span>
             <input
               ref={phoneRef}
               type="tel"
@@ -216,7 +234,7 @@ export default function PersonalInfoStep({
               maxLength={12}
               inputMode="numeric"
               placeholder="0xx-xxx-xxxx"
-              className={`w-full bg-[#1A1D21] border rounded-xl px-4 py-3 text-white text-sm placeholder:text-white/30 focus:outline-none transition-colors font-mono tracking-wide ${
+              className={`w-full bg-[#1A1D21] border rounded-xl pl-12 pr-4 py-3.5 text-white text-base placeholder:text-white/30 focus:outline-none transition-colors font-mono tracking-wide ${
                 errors.phone
                   ? "border-red-400/50 focus:border-red-400"
                   : "border-white/10 focus:border-primary/50"
