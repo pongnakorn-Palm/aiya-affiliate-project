@@ -19,8 +19,7 @@ const ProfileTab = lazy(() => import("./partner-portal/tabs/ProfileTab"));
 import BottomNavigation from "./partner-portal/shared/BottomNavigation";
 import NotificationSheet from "./partner-portal/shared/NotificationSheet";
 
-// UI Components
-import SwipeableView from "./ui/SwipeableView";
+// UI Components removed - SwipeableView caused scroll conflicts
 
 // Utils
 import { formatCommission } from "../utils/formatting";
@@ -60,8 +59,7 @@ export default function PartnerPortal() {
     refreshReferrals,
   } = useReferralData(profile?.userId);
 
-  const { activeTab, activeIndex, navigateTo, navigateByIndex } =
-    useSwipeNavigation("dashboard");
+  const { activeTab, navigateTo } = useSwipeNavigation("dashboard");
 
   const { notifications, markRead, clearAll, unreadCount } =
     useNotifications(referrals);
@@ -202,7 +200,7 @@ export default function PartnerPortal() {
         description={`ดูสถิติและค่าคอมมิชชั่นของคุณ | จำนวนผู้สมัคร: ${displayData?.stats.totalRegistrations || 0} คน | รายได้: ${displayData ? formatCommission(displayData.stats.totalCommission) : 0} บาท`}
       />
 
-      <div className="relative min-h-[100dvh] w-full flex flex-col bg-aiya-dark text-white overflow-x-hidden font-sans">
+      <div className="relative min-h-[100dvh] w-full flex flex-col bg-aiya-dark text-white overflow-x-hidden font-sans no-overscroll">
         {/* AIYA CI/CD Ambient Lighting - Purple Glow */}
         <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary-dark/10 via-transparent to-transparent pointer-events-none"></div>
         <div className="fixed top-0 right-0 w-[600px] h-[600px] bg-[radial-gradient(circle,_var(--tw-gradient-stops))] from-primary/8 via-transparent to-transparent blur-3xl pointer-events-none"></div>
@@ -261,12 +259,9 @@ export default function PartnerPortal() {
           </div>
         )}
 
-        {/* Scrollable Content Area */}
-        <div className="relative z-10 flex-1 flex flex-col pb-40 no-scrollbar">
-          <SwipeableView
-            activeIndex={activeIndex}
-            onIndexChange={navigateByIndex}
-          >
+        {/* Scrollable Content Area - Simple conditional rendering */}
+        <div className="relative z-10 flex-1 overflow-y-auto pb-28 native-scroll no-scrollbar">
+          {activeTab === "dashboard" && (
             <Suspense fallback={<TabLoadingFallback />}>
               {displayData && (
                 <DashboardTab
@@ -280,6 +275,8 @@ export default function PartnerPortal() {
                 />
               )}
             </Suspense>
+          )}
+          {activeTab === "history" && (
             <Suspense fallback={<TabLoadingFallback />}>
               <HistoryTab
                 referrals={referrals}
@@ -289,6 +286,8 @@ export default function PartnerPortal() {
                 isRefreshing={isRefreshingReferrals}
               />
             </Suspense>
+          )}
+          {activeTab === "profile" && (
             <Suspense fallback={<TabLoadingFallback />}>
               {displayData && (
                 <ProfileTab
@@ -304,7 +303,7 @@ export default function PartnerPortal() {
                 />
               )}
             </Suspense>
-          </SwipeableView>
+          )}
         </div>
       </div>
 

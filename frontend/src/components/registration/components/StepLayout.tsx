@@ -15,7 +15,7 @@ export default function StepLayout({
   centered = false,
 }: StepLayoutProps) {
   return (
-    <div className="h-full w-full flex flex-col bg-[#0F1216] overflow-hidden">
+    <div className="h-full w-full flex flex-col bg-[#0F1216] overflow-hidden no-overscroll">
       {/* Header */}
       {header && (
         <motion.header
@@ -29,7 +29,7 @@ export default function StepLayout({
 
       {/* Main Content */}
       <main
-        className={`flex-1 px-5 flex flex-col overflow-y-auto ${
+        className={`flex-1 px-5 flex flex-col overflow-y-auto native-scroll no-scrollbar ${
           centered ? "justify-center" : ""
         }`}
       >

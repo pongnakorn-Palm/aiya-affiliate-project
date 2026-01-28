@@ -2,7 +2,6 @@ import { motion } from "framer-motion";
 import { useState, useMemo } from "react";
 import { formatCommission, maskName } from "../../../utils/formatting";
 import type { Referral } from "../hooks/useReferralData";
-import PullToRefresh from "../../ui/PullToRefresh";
 import { useLanguage } from "../../../contexts/LanguageContext";
 
 interface HistoryTabProps {
@@ -96,8 +95,8 @@ export default function HistoryTab({
   referrals,
   isLoading,
   error,
-  onRefresh,
-  isRefreshing = false,
+  onRefresh: _onRefresh,
+  isRefreshing: _isRefreshing = false,
 }: HistoryTabProps) {
   const { t, language } = useLanguage();
   const [activeFilter, setActiveFilter] = useState<FilterType>("all");
@@ -201,12 +200,11 @@ export default function HistoryTab({
   };
 
   return (
-    <PullToRefresh onRefresh={onRefresh} isRefreshing={isRefreshing}>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="flex flex-col min-h-[calc(100vh-120px)] bg-aiya-dark font-sans"
-      >
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="flex flex-col min-h-[calc(100vh-120px)] bg-aiya-dark font-sans"
+    >
         {/* Header */}
         <div className="px-5 pt-10 pb-4">
           <div className="mb-4">
@@ -343,6 +341,5 @@ export default function HistoryTab({
           )}
         </div>
       </motion.div>
-    </PullToRefresh>
   );
 }

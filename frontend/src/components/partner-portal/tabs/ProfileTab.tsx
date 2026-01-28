@@ -8,7 +8,6 @@ import BankSelectorSheet from "../shared/BankSelectorSheet";
 import { useLanguage } from "../../../contexts/LanguageContext";
 import { useLiff } from "../../../contexts/LiffContext";
 import { useToast } from "../../../hooks/useToast";
-import PullToRefresh from "../../ui/PullToRefresh";
 
 interface ProfileTabProps {
   affiliate: DashboardData["affiliate"];
@@ -39,7 +38,7 @@ export default function ProfileTab({
   affiliate,
   userId,
   onRefresh,
-  isRefreshing = false,
+  isRefreshing: _isRefreshing = false,
   profile,
   onBankFormChange,
 }: ProfileTabProps) {
@@ -90,13 +89,12 @@ export default function ProfileTab({
   };
 
   return (
-    <PullToRefresh onRefresh={onRefresh} isRefreshing={isRefreshing}>
-      <motion.div
-        variants={staggerContainer}
-        initial="initial"
-        animate="animate"
-        className="flex flex-col min-h-[calc(100vh-120px)] bg-aiya-dark font-sans relative"
-      >
+    <motion.div
+      variants={staggerContainer}
+      initial="initial"
+      animate="animate"
+      className="flex flex-col min-h-[calc(100vh-120px)] bg-aiya-dark font-sans relative"
+    >
       {/* Language Transition Overlay */}
       {isTransitioning && (
         <motion.div
@@ -458,7 +456,6 @@ export default function ProfileTab({
         selectedBank={selectedBank}
         onSelect={setSelectedBank}
       />
-      </motion.div>
-    </PullToRefresh>
+    </motion.div>
   );
 }

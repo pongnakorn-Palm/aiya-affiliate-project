@@ -104,7 +104,7 @@ export default function AffiliateRegisterForm() {
   const headerHeight = isInClient && isLoggedIn ? "5rem" : isInClient ? "4rem" : "0px";
 
   return (
-    <div className="h-[100dvh] flex flex-col bg-[#0F1216] overflow-hidden">
+    <div className="h-[100dvh] flex flex-col bg-[#0F1216] overflow-hidden no-overscroll">
       {/* LINE Login Prompt (if not logged in and in LIFF) */}
       {isInClient && !isLoggedIn && (
         <div className="flex-shrink-0 p-4 bg-[#0F1216]/95 backdrop-blur-sm border-b border-white/5">

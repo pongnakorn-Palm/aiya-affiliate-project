@@ -49,7 +49,22 @@
         /* AIYA CI/CD - Luxury Dark Background */
         background: #0D1117;
         min-height: 100vh;
+        min-height: 100dvh;
         overflow-x: hidden;
+        /* Prevent rubber band / overscroll effect */
+        overscroll-behavior: none;
+        overscroll-behavior-y: none;
+        /* iOS specific - prevent pull-to-refresh and bounce */
+        -webkit-overflow-scrolling: touch;
+        touch-action: pan-y;
+    }
+
+    /* Prevent body scroll on iOS when modal/sheet is open */
+    body.no-scroll {
+        overflow: hidden;
+        position: fixed;
+        width: 100%;
+        height: 100%;
     }
 
     ::selection {
@@ -364,6 +379,32 @@
 .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
+}
+
+/* ========================================
+   NATIVE MOBILE SCROLL BEHAVIOR
+   ======================================== */
+
+/* Prevent overscroll/rubber band on scrollable containers */
+.native-scroll {
+    overflow-y: auto;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+}
+
+/* For full-page containers - prevent all overscroll */
+.no-overscroll {
+    overscroll-behavior: none;
+    overscroll-behavior-y: none;
+}
+
+/* Touch-optimized scrolling for iOS */
+.touch-scroll {
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
 }
 
 /* ========================================

@@ -4,7 +4,6 @@ import { triggerHaptic } from "../../../utils/haptic";
 import { formatCommission } from "../../../utils/formatting";
 import type { DashboardData } from "../hooks/useReferralData";
 import { useLanguage } from "../../../contexts/LanguageContext";
-import PullToRefresh from "../../ui/PullToRefresh";
 
 interface DashboardTabProps {
   data: DashboardData;
@@ -34,8 +33,8 @@ export default function DashboardTab({
   onShare: _onShare,
   isSharing: _isSharing,
   referrals = [],
-  onRefresh,
-  isRefreshing = false,
+  onRefresh: _onRefresh,
+  isRefreshing: _isRefreshing = false,
 }: DashboardTabProps) {
   const { t, language } = useLanguage();
   const [copied, setCopied] = useState(false);
@@ -153,13 +152,12 @@ export default function DashboardTab({
   };
 
   return (
-    <PullToRefresh onRefresh={onRefresh} isRefreshing={isRefreshing}>
-      <motion.div
-        variants={staggerContainer}
-        initial="initial"
-        animate="animate"
-        className="px-5 pt-4 flex flex-col gap-4 bg-aiya-dark min-h-[calc(100vh-120px)] font-sans"
-      >
+    <motion.div
+      variants={staggerContainer}
+      initial="initial"
+      animate="animate"
+      className="px-5 pt-4 flex flex-col gap-4 bg-aiya-dark min-h-[calc(100vh-120px)] font-sans"
+    >
       {/* Hero Card - Total Revenue */}
       <motion.div
         variants={fadeInUp}
@@ -393,7 +391,6 @@ export default function DashboardTab({
           </div>
         </motion.button>
       </motion.div> */}
-      </motion.div>
-    </PullToRefresh>
+    </motion.div>
   );
 }
