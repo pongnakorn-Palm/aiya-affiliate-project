@@ -205,7 +205,7 @@ export default function HistoryTab({
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="flex flex-col min-h-[calc(100vh-120px)] bg-aiya-navy font-sans"
+        className="flex flex-col min-h-[calc(100vh-120px)] bg-aiya-dark font-sans"
       >
         {/* Header */}
         <div className="px-5 pt-10 pb-4">
@@ -223,8 +223,8 @@ export default function HistoryTab({
                 whileTap={{ scale: 0.95 }}
                 className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap transition-all duration-200 ${
                   activeFilter === filter.id
-                    ? "bg-gradient-to-r from-aiya-purple to-aiya-lavender text-white shadow-lg shadow-aiya-lavender/30 border border-aiya-lavender/50"
-                    : "bg-white/5 text-gray-300 border border-white/20 hover:border-aiya-lavender/60 hover:bg-aiya-lavender/15 hover:text-white active:bg-aiya-lavender/20"
+                    ? "bg-gradient-to-r from-primary-dark to-primary text-white shadow-lg shadow-primary/30 border border-primary/50"
+                    : "bg-white/5 text-gray-300 border border-white/10 hover:bg-white/10 hover:text-white"
                 }`}
               >
                 {filter.label}
@@ -321,7 +321,7 @@ export default function HistoryTab({
                                   ? "text-green-400"
                                   : referral.commissionStatus === "rejected"
                                   ? "text-red-400"
-                                  : "text-aiya-gold"
+                                  : "text-primary"
                               }`}>
                                 + ฿{formatCommission(referral.commissionAmount)}
                               </p>

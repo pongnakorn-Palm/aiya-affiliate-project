@@ -38,7 +38,7 @@ export default function NotificationSheet({
       case "commission_approved":
         return {
           bg: "bg-yellow-500/20",
-          color: "text-aiya-gold",
+          color: "text-primary",
           icon: "verified",
           navigateTo: "history" as const,
         };
@@ -125,14 +125,14 @@ export default function NotificationSheet({
 
                 {/* Unread indicator */}
                 {!notification.read && (
-                  <div className="size-2 rounded-full bg-aiya-gold flex-shrink-0 mt-1.5 shadow-lg shadow-aiya-gold/30"></div>
+                  <div className="size-2 rounded-full bg-primary flex-shrink-0 mt-1.5 shadow-lg shadow-primary/30"></div>
                 )}
               </motion.div>
             );
           })
         ) : (
           <div className="flex flex-col items-center justify-center py-16 text-center">
-            <div className="size-20 rounded-full bg-aiya-navy flex items-center justify-center mb-4 border border-white/5">
+            <div className="size-20 rounded-full bg-aiya-dark flex items-center justify-center mb-4 border border-white/5">
               <span className="material-symbols-outlined text-4xl text-gray-600">
                 notifications_off
               </span>
@@ -149,14 +149,14 @@ export default function NotificationSheet({
 
       {/* Footer */}
       {notifications.length > 0 && (
-        <div className="px-4 py-3 border-t border-white/10 bg-aiya-navy">
+        <div className="px-4 py-3 border-t border-white/10 bg-aiya-dark">
           <button
             onClick={() => {
               onViewHistory();
               onClose();
               triggerHaptic("light");
             }}
-            className="w-full text-center text-sm text-aiya-gold hover:text-yellow-300 transition-colors py-1 font-semibold"
+            className="w-full text-center text-sm text-primary hover:text-primary-light transition-colors py-1 font-semibold"
           >
             {t("notification.viewHistory")}
           </button>

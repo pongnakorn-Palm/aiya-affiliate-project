@@ -49,6 +49,7 @@ export default function PartnerPortal() {
     dashboardData,
     referrals,
     isLoading,
+    isRefreshing,
     isLoadingReferrals,
     isRefreshingReferrals,
     error,
@@ -124,9 +125,9 @@ export default function PartnerPortal() {
   // Show loading spinner while LIFF is initializing
   if (!isReady) {
     return (
-      <div className="min-h-[100dvh] flex items-center justify-center bg-aiya-navy">
+      <div className="min-h-[100dvh] flex items-center justify-center bg-aiya-dark">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-yellow-400 mb-4"></div>
+          <div className="inline-block animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-primary mb-4"></div>
           <p className="text-white/70 text-sm">กำลังโหลด...</p>
         </div>
       </div>
@@ -136,14 +137,14 @@ export default function PartnerPortal() {
   // Show login prompt if not logged in
   if (!isLoggedIn) {
     return (
-      <div className="min-h-[100dvh] flex items-center justify-center bg-[#0F1216] px-4">
-        {/* Premium Gold Ambient */}
-        <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-yellow-500/10 via-transparent to-transparent pointer-events-none"></div>
+      <div className="min-h-[100dvh] flex items-center justify-center bg-aiya-dark px-4">
+        {/* Purple Ambient Glow */}
+        <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/10 via-transparent to-transparent pointer-events-none"></div>
 
-        <div className="relative z-10 bg-background-card backdrop-blur-2xl border border-aiya-lavender/10 rounded-3xl p-8 max-w-md w-full text-center shadow-2xl">
+        <div className="relative z-10 bg-background-card backdrop-blur-2xl border border-primary/20 rounded-3xl p-8 max-w-md w-full text-center shadow-2xl">
           <div className="mb-6">
-            <div className="w-20 h-20 mx-auto bg-yellow-500/20 rounded-full flex items-center justify-center">
-              <span className="material-symbols-outlined text-yellow-400 text-4xl">person</span>
+            <div className="w-20 h-20 mx-auto bg-primary/20 rounded-full flex items-center justify-center">
+              <span className="material-symbols-outlined text-primary text-4xl">person</span>
             </div>
           </div>
           <h2 className="text-2xl font-bold text-white mb-3">สถิติของฉัน</h2>
@@ -167,7 +168,7 @@ export default function PartnerPortal() {
   // Show error state
   if (error) {
     return (
-      <div className="min-h-[100dvh] flex items-center justify-center bg-[#0F1216] px-4">
+      <div className="min-h-[100dvh] flex items-center justify-center bg-aiya-dark px-4">
         <div className="bg-background-card backdrop-blur-2xl border border-error/30 rounded-3xl p-8 max-w-md w-full text-center shadow-2xl">
           <div className="mb-6">
             <div className="w-20 h-20 mx-auto bg-red-500/20 rounded-full flex items-center justify-center">
@@ -178,7 +179,7 @@ export default function PartnerPortal() {
           <p className="text-gray-400 mb-6">{error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="w-full bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-4 px-6 rounded-2xl transition-colors shadow-lg shadow-yellow-400/30"
+            className="w-full bg-gradient-purple text-white font-bold py-4 px-6 rounded-2xl transition-colors shadow-glow"
           >
             ลองใหม่อีกครั้ง
           </button>
@@ -201,10 +202,10 @@ export default function PartnerPortal() {
         description={`ดูสถิติและค่าคอมมิชชั่นของคุณ | จำนวนผู้สมัคร: ${displayData?.stats.totalRegistrations || 0} คน | รายได้: ${displayData ? formatCommission(displayData.stats.totalCommission) : 0} บาท`}
       />
 
-      <div className="relative min-h-[100dvh] w-full flex flex-col bg-aiya-navy text-white overflow-x-hidden font-sans">
-        {/* AIYA Brand Ambient Lighting */}
-        <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-aiya-purple/10 via-transparent to-transparent pointer-events-none"></div>
-        <div className="fixed top-0 right-0 w-[600px] h-[600px] bg-[radial-gradient(circle,_var(--tw-gradient-stops))] from-aiya-lavender/8 via-transparent to-transparent blur-3xl pointer-events-none"></div>
+      <div className="relative min-h-[100dvh] w-full flex flex-col bg-aiya-dark text-white overflow-x-hidden font-sans">
+        {/* AIYA CI/CD Ambient Lighting - Purple Glow */}
+        <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary-dark/10 via-transparent to-transparent pointer-events-none"></div>
+        <div className="fixed top-0 right-0 w-[600px] h-[600px] bg-[radial-gradient(circle,_var(--tw-gradient-stops))] from-primary/8 via-transparent to-transparent blur-3xl pointer-events-none"></div>
 
         {/* Header */}
         {activeTab === "dashboard" && (
@@ -219,12 +220,12 @@ export default function PartnerPortal() {
                       src={profile.pictureUrl}
                     />
                   ) : (
-                    <div className="size-full bg-gradient-to-br from-yellow-500/50 to-amber-600/50 flex items-center justify-center text-white text-lg font-bold">
+                    <div className="size-full bg-gradient-to-br from-primary-dark/50 to-primary/50 flex items-center justify-center text-white text-lg font-bold">
                       {profile?.displayName?.charAt(0)}
                     </div>
                   )}
                 </div>
-                <div className="absolute bottom-0 right-0 size-3 rounded-full bg-success border-2 border-aiya-navy"></div>
+                <div className="absolute bottom-0 right-0 size-3 rounded-full bg-success border-2 border-aiya-dark"></div>
               </div>
               <div className="flex flex-col">
                 <span className="text-[11px] text-gray-500 font-medium tracking-wider uppercase">{t("header.welcome")}</span>
@@ -241,7 +242,7 @@ export default function PartnerPortal() {
                   fetchReferrals();
                 }
               }}
-              className="relative flex items-center justify-center size-11 rounded-xl bg-background-card border border-aiya-lavender/10 text-white hover:bg-aiya-purple/20 transition-colors active:scale-95 shadow-lg"
+              className="relative flex items-center justify-center size-11 rounded-xl bg-background-card border border-primary/20 text-white hover:bg-primary-dark/20 transition-colors active:scale-95 shadow-lg"
             >
               <span
                 className="material-symbols-outlined text-[22px]"
@@ -274,6 +275,8 @@ export default function PartnerPortal() {
                   onShare={shareToLine}
                   isSharing={isSharing}
                   referrals={referrals}
+                  onRefresh={refresh}
+                  isRefreshing={isRefreshing}
                 />
               )}
             </Suspense>
@@ -292,6 +295,7 @@ export default function PartnerPortal() {
                   affiliate={displayData.affiliate}
                   userId={profile?.userId}
                   onRefresh={refresh}
+                  isRefreshing={isRefreshing}
                   profile={profile ? {
                     displayName: profile.displayName || "",
                     pictureUrl: profile.pictureUrl

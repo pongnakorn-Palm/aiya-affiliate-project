@@ -33,8 +33,8 @@ export default function BankSelectorSheet({
             }}
             className={`w-full p-4 flex items-center gap-4 rounded-xl transition-colors ${
               selectedBank === bank.id
-                ? "bg-aiya-lavender/20 border border-aiya-lavender/40"
-                : "bg-white/5 border border-transparent hover:bg-aiya-purple/10 hover:border-aiya-purple/20"
+                ? "bg-primary/20 border border-primary/40"
+                : "bg-white/5 border border-transparent hover:bg-primary-dark/10 hover:border-primary-dark/20"
             }`}
           >
             <div className="w-10 h-10 rounded-lg bg-white p-1 flex items-center justify-center flex-shrink-0">
@@ -52,7 +52,7 @@ export default function BankSelectorSheet({
               <motion.span
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
-                className="material-symbols-outlined text-aiya-lavender"
+                className="material-symbols-outlined text-primary"
               >
                 check_circle
               </motion.span>

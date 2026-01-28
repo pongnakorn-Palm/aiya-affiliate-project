@@ -4,6 +4,7 @@ import { triggerHaptic } from "../../../utils/haptic";
 import { formatCommission } from "../../../utils/formatting";
 import type { DashboardData } from "../hooks/useReferralData";
 import { useLanguage } from "../../../contexts/LanguageContext";
+import PullToRefresh from "../../ui/PullToRefresh";
 
 interface DashboardTabProps {
   data: DashboardData;
@@ -11,6 +12,8 @@ interface DashboardTabProps {
   onShare: () => void;
   isSharing: boolean;
   referrals?: Array<{ createdAt: string }>;
+  onRefresh: () => Promise<void>;
+  isRefreshing?: boolean;
 }
 
 const staggerContainer = {
@@ -31,6 +34,8 @@ export default function DashboardTab({
   onShare: _onShare,
   isSharing: _isSharing,
   referrals = [],
+  onRefresh,
+  isRefreshing = false,
 }: DashboardTabProps) {
   const { t, language } = useLanguage();
   const [copied, setCopied] = useState(false);
@@ -148,12 +153,13 @@ export default function DashboardTab({
   };
 
   return (
-    <motion.div
-      variants={staggerContainer}
-      initial="initial"
-      animate="animate"
-      className="px-5 pt-4 flex flex-col gap-4 bg-aiya-navy min-h-[calc(100vh-120px)] font-sans"
-    >
+    <PullToRefresh onRefresh={onRefresh} isRefreshing={isRefreshing}>
+      <motion.div
+        variants={staggerContainer}
+        initial="initial"
+        animate="animate"
+        className="px-5 pt-4 flex flex-col gap-4 bg-aiya-dark min-h-[calc(100vh-120px)] font-sans"
+      >
       {/* Hero Card - Total Revenue */}
       <motion.div
         variants={fadeInUp}
@@ -162,8 +168,8 @@ export default function DashboardTab({
         <div className="relative z-10">
           <div className="flex items-start justify-between mb-4">
             <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-xl bg-aiya-gold/20 flex items-center justify-center flex-shrink-0">
-                <span className="material-symbols-outlined text-aiya-gold text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>
+              <div className="w-11 h-11 rounded-xl bg-primary/20 flex items-center justify-center flex-shrink-0">
+                <span className="material-symbols-outlined text-primary text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>
                   account_balance_wallet
                 </span>
               </div>
@@ -189,7 +195,7 @@ export default function DashboardTab({
             )}
           </div>
           <h1 className="text-[2rem] font-bold text-white tracking-tight leading-none">
-            <span className="text-aiya-gold">฿</span> {formatCommission(data.stats.totalCommission)}
+            <span className="text-primary">฿</span> {formatCommission(data.stats.totalCommission)}
           </h1>
         </div>
       </motion.div>
@@ -237,8 +243,8 @@ export default function DashboardTab({
         className="bg-background-card rounded-2xl p-4 flex items-center justify-between border border-white/5 shadow-xl"
       >
         <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-xl bg-cyan-500/20 flex items-center justify-center">
-            <span className="material-symbols-outlined text-cyan-400 text-xl">group_add</span>
+          <div className="w-11 h-11 rounded-xl bg-accent/20 flex items-center justify-center">
+            <span className="material-symbols-outlined text-accent text-xl">group_add</span>
           </div>
           <p className="text-white text-sm font-medium">{t("dashboard.registrations")}</p>
         </div>
@@ -255,7 +261,7 @@ export default function DashboardTab({
             <p className="text-gray-500 text-xs">{t("dashboard.weekly")}</p>
           </div>
           <div className="flex items-center gap-2">
-            <span className="px-2.5 py-1 rounded-full border border-aiya-gold/30 text-aiya-gold text-[10px] font-semibold">
+            <span className="px-2.5 py-1 rounded-full border border-primary/30 text-primary text-[10px] font-semibold">
               {maxCount > 0 ? t("dashboard.maxPersons").replace("{count}", String(maxCount)) : t("dashboard.noData")}
             </span>
           </div>
@@ -264,8 +270,8 @@ export default function DashboardTab({
           <svg className="w-full h-full overflow-visible" preserveAspectRatio="none" viewBox="0 0 300 100">
             <defs>
               <linearGradient id="areaGradient" x1="0" x2="0" y1="0" y2="1">
-                <stop offset="0%" stopColor="#8085ED" stopOpacity="0.3"></stop>
-                <stop offset="100%" stopColor="#87DCED" stopOpacity="0"></stop>
+                <stop offset="0%" stopColor="#A78BFA" stopOpacity="0.3"></stop>
+                <stop offset="100%" stopColor="#22D3EE" stopOpacity="0"></stop>
               </linearGradient>
             </defs>
             {maxCount > 0 ? (
@@ -279,7 +285,7 @@ export default function DashboardTab({
                 <path
                   d={path}
                   fill="none"
-                  stroke="#8085ED"
+                  stroke="#A78BFA"
                   strokeWidth="2.5"
                   strokeLinecap="round"
                 />
@@ -287,7 +293,7 @@ export default function DashboardTab({
                 <path
                   d={path}
                   fill="none"
-                  stroke="#8085ED"
+                  stroke="#A78BFA"
                   strokeWidth="6"
                   strokeLinecap="round"
                   opacity="0.2"
@@ -301,7 +307,7 @@ export default function DashboardTab({
                 y1="80"
                 x2="300"
                 y2="80"
-                stroke="#8085ED"
+                stroke="#A78BFA"
                 strokeWidth="2"
                 strokeDasharray="5,5"
                 opacity="0.3"
@@ -321,12 +327,12 @@ export default function DashboardTab({
         variants={fadeInUp}
         className="bg-background-card rounded-2xl p-5 border border-white/5 shadow-xl relative overflow-hidden"
       >
-        {/* Subtle Gold Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-aiya-gold/5 via-transparent to-transparent pointer-events-none"></div>
+        {/* Subtle Purple Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent pointer-events-none"></div>
         <div className="relative z-10">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-lg bg-aiya-gold/20 flex items-center justify-center">
-              <span className="material-symbols-outlined text-aiya-gold text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>
+            <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
+              <span className="material-symbols-outlined text-primary text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>
                 redeem
               </span>
             </div>
@@ -334,7 +340,7 @@ export default function DashboardTab({
           </div>
           <p className="text-gray-500 text-xs mb-4">{t("dashboard.shareDescription")}</p>
 
-          <div className="bg-aiya-navy rounded-xl p-4 mb-4 text-center border border-white/5">
+          <div className="bg-aiya-dark rounded-xl p-4 mb-4 text-center border border-primary/20">
             <span className="text-[10px] text-gray-500 block mb-2 uppercase tracking-wider">Affiliate Code</span>
             <span className="text-white font-bold text-xl tracking-[0.15em]">
               {data.affiliate.affiliateCode}
@@ -349,8 +355,8 @@ export default function DashboardTab({
             }}
             className={`w-full py-3.5 rounded-xl font-bold text-sm transition-all duration-300 ${
               copied
-                ? "bg-green-500 text-white shadow-lg shadow-green-500/30"
-                : "bg-gradient-to-r from-aiya-purple to-aiya-lavender text-white shadow-lg shadow-aiya-lavender/20 hover:shadow-xl hover:shadow-aiya-lavender/30"
+                ? "bg-success text-white shadow-lg shadow-success/30"
+                : "bg-gradient-purple text-white shadow-glow hover:shadow-glow-lg"
             }`}
           >
             <span className="inline-flex items-center gap-2">
@@ -372,8 +378,8 @@ export default function DashboardTab({
             onShare();
           }}
           disabled={isSharing}
-          className={`group relative w-full cursor-pointer overflow-hidden rounded-2xl py-4 bg-gradient-to-r from-aiya-purple to-aiya-lavender transition-all duration-300 text-white shadow-xl shadow-aiya-purple/30 border border-aiya-lavender/30 ${
-            isSharing ? "opacity-50 cursor-not-allowed" : "hover:shadow-2xl hover:shadow-aiya-lavender/40"
+          className={`group relative w-full cursor-pointer overflow-hidden rounded-2xl py-4 bg-gradient-to-r from-primary-dark to-primary transition-all duration-300 text-white shadow-xl shadow-primary-dark/30 border border-primary/30 ${
+            isSharing ? "opacity-50 cursor-not-allowed" : "hover:shadow-2xl hover:shadow-primary/40"
           }`}
         >
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out"></div>
@@ -387,6 +393,7 @@ export default function DashboardTab({
           </div>
         </motion.button>
       </motion.div> */}
-    </motion.div>
+      </motion.div>
+    </PullToRefresh>
   );
 }

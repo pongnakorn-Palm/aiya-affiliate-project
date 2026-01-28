@@ -25,8 +25,8 @@ const RATE_LIMIT_MAX_REQUESTS = 3; // Max 3 requests per minute per IP
 
 // Dashboard rate limiting - more generous
 const dashboardRateLimitMap = new Map<string, RateLimitEntry>();
-const DASHBOARD_RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
-const DASHBOARD_RATE_LIMIT_MAX_REQUESTS = 10; // Max 10 requests per minute
+const DASHBOARD_RATE_LIMIT_WINDOW = 30 * 1000; // 30 seconds
+const DASHBOARD_RATE_LIMIT_MAX_REQUESTS = 20; // Max 20 requests per 30 seconds
 
 // Dashboard cache
 interface DashboardCacheEntry {
