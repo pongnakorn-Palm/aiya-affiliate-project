@@ -9,9 +9,17 @@ interface BankFormData {
   bankPassbookUrl: string | null;
 }
 
+interface ToastInterface {
+  success: (message: string, duration?: number) => void;
+  error: (message: string, duration?: number) => void;
+  warning: (message: string, duration?: number) => void;
+  info: (message: string, duration?: number) => void;
+}
+
 export function useBankForm(
   initialData: BankFormData | null,
   userId: string | undefined,
+  toast?: ToastInterface,
   onSuccess?: () => void
 ) {
   const [selectedBank, setSelectedBank] = useState("");
@@ -84,14 +92,22 @@ export function useBankForm(
 
       // Validate file type
       if (!file.type.startsWith("image/")) {
-        alert("กรุณาเลือกไฟล์รูปภาพเท่านั้น");
+        if (toast) {
+          toast.warning("กรุณาเลือกไฟล์รูปภาพเท่านั้น");
+        } else {
+          alert("กรุณาเลือกไฟล์รูปภาพเท่านั้น");
+        }
         return;
       }
 
       // Validate file size (max 2MB)
       const MAX_FILE_SIZE = 2 * 1024 * 1024;
       if (file.size > MAX_FILE_SIZE) {
-        alert("ขนาดไฟล์ต้องไม่เกิน 2MB");
+        if (toast) {
+          toast.warning("ขนาดไฟล์ต้องไม่เกิน 2MB");
+        } else {
+          alert("ขนาดไฟล์ต้องไม่เกิน 2MB");
+        }
         return;
       }
 
@@ -109,14 +125,22 @@ export function useBankForm(
 
   const handleSave = useCallback(async () => {
     if (!userId || !selectedBank || !accountNumber || !accountName) {
-      alert("กรุณากรอกข้อมูลให้ครบถ้วน");
+      if (toast) {
+        toast.warning("กรุณากรอกข้อมูลให้ครบถ้วน");
+      } else {
+        alert("กรุณากรอกข้อมูลให้ครบถ้วน");
+      }
       triggerHaptic("medium");
       return;
     }
 
     const digitsOnly = accountNumber.replace(/\D/g, "");
     if (!/^\d{10,12}$/.test(digitsOnly)) {
-      alert("เลขที่บัญชีต้องเป็นตัวเลข 10-12 หลัก");
+      if (toast) {
+        toast.warning("เลขที่บัญชีต้องเป็นตัวเลข 10-12 หลัก");
+      } else {
+        alert("เลขที่บัญชีต้องเป็นตัวเลข 10-12 หลัก");
+      }
       triggerHaptic("medium");
       return;
     }
@@ -179,7 +203,11 @@ export function useBankForm(
         err instanceof Error
           ? err.message
           : "ไม่สามารถบันทึกข้อมูลได้ กรุณาลองใหม่อีกครั้ง";
-      alert(errorMessage);
+      if (toast) {
+        toast.error(errorMessage);
+      } else {
+        alert(errorMessage);
+      }
       setSaveButtonState("idle");
       triggerHaptic("medium");
     }
@@ -189,6 +217,7 @@ export function useBankForm(
     accountNumber,
     accountName,
     passbookImage,
+    toast,
     onSuccess,
   ]);
 

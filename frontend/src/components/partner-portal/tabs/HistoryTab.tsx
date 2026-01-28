@@ -31,7 +31,7 @@ const fadeInUp = {
 // Skeleton Card Component
 function SkeletonCard() {
   return (
-    <div className="bg-[#1A1D21] rounded-2xl p-4 animate-pulse border border-white/5 shadow-xl">
+    <div className="bg-background-card rounded-2xl p-4 animate-pulse border border-white/5 shadow-xl">
       <div className="flex items-center gap-3">
         <div className="size-12 rounded-xl bg-white/10"></div>
         <div className="flex-1">
@@ -62,7 +62,7 @@ function EmptyState({ t }: { t: (key: string) => string }) {
           initial={{ scale: 0.8 }}
           animate={{ scale: 1 }}
         >
-          <div className="absolute inset-0 rounded-full bg-[#1A1D21]"></div>
+          <div className="absolute inset-0 rounded-full bg-background-card"></div>
           <div className="absolute inset-0 flex items-center justify-center">
             <motion.span
               className="material-symbols-outlined text-5xl text-gray-500"
@@ -205,7 +205,7 @@ export default function HistoryTab({
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="flex flex-col min-h-[calc(100vh-120px)] bg-[#0F1216] font-sans"
+        className="flex flex-col min-h-[calc(100vh-120px)] bg-aiya-navy font-sans"
       >
         {/* Header */}
         <div className="px-5 pt-10 pb-4">
@@ -217,24 +217,25 @@ export default function HistoryTab({
           {/* Filter Tabs */}
           <div className="flex gap-2 overflow-x-auto pb-2 -mx-5 px-5 no-scrollbar">
             {filters.map((filter) => (
-              <button
+              <motion.button
                 key={filter.id}
                 onClick={() => setActiveFilter(filter.id)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
+                whileTap={{ scale: 0.95 }}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-semibold whitespace-nowrap transition-all duration-200 ${
                   activeFilter === filter.id
-                    ? "bg-yellow-400 text-black shadow-lg shadow-yellow-400/20"
-                    : "bg-[#1A1D21] text-gray-300 border border-white/5"
+                    ? "bg-gradient-to-r from-aiya-purple to-aiya-lavender text-white shadow-lg shadow-aiya-lavender/30 border border-aiya-lavender/50"
+                    : "bg-white/5 text-gray-300 border border-white/20 hover:border-aiya-lavender/60 hover:bg-aiya-lavender/15 hover:text-white active:bg-aiya-lavender/20"
                 }`}
               >
                 {filter.label}
                 {filter.count !== undefined && filter.count > 0 && (
-                  <span className={`text-xs px-1.5 py-0.5 rounded-full ${
-                    activeFilter === filter.id ? "bg-black/20 text-black" : "bg-white/10 text-gray-400"
+                  <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${
+                    activeFilter === filter.id ? "bg-white/25 text-white" : "bg-white/15 text-gray-400"
                   }`}>
                     {filter.count}
                   </span>
                 )}
-              </button>
+              </motion.button>
             ))}
           </div>
         </div>
@@ -293,7 +294,7 @@ export default function HistoryTab({
                         <motion.div
                           key={referral.id}
                           variants={fadeInUp}
-                          className={`bg-[#1A1D21] rounded-2xl p-4 border border-white/5 border-l-4 shadow-xl ${getBorderColor(referral.commissionStatus)}`}
+                          className={`bg-background-card rounded-2xl p-4 border border-white/5 border-l-4 shadow-xl ${getBorderColor(referral.commissionStatus)}`}
                         >
                           <div className="flex items-center gap-3">
                             {/* Avatar */}
@@ -320,7 +321,7 @@ export default function HistoryTab({
                                   ? "text-green-400"
                                   : referral.commissionStatus === "rejected"
                                   ? "text-red-400"
-                                  : "text-yellow-400"
+                                  : "text-aiya-gold"
                               }`}>
                                 + ฿{formatCommission(referral.commissionAmount)}
                               </p>

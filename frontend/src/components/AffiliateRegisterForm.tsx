@@ -11,6 +11,7 @@ export default function AffiliateRegisterForm() {
   const { isLoggedIn, profile, login, isReady, isInClient } = useLiff();
   const [phase, setPhase] = useState<Phase>("onboarding");
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
+  const [isCheckingRegistration, setIsCheckingRegistration] = useState(true);
 
   // Check if user is already registered and redirect to dashboard
   // Skip redirect if ?test=true is in URL (for development testing)
@@ -19,7 +20,10 @@ export default function AffiliateRegisterForm() {
       // Allow bypassing redirect for testing
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.get("test") === "true") {
-        console.log("[DEV] Test mode enabled - skipping redirect check");
+        if (import.meta.env.DEV) {
+          console.log("[DEV] Test mode enabled - skipping redirect check");
+        }
+        setIsCheckingRegistration(false);
         return;
       }
 
@@ -31,12 +35,18 @@ export default function AffiliateRegisterForm() {
           );
 
           if (response.ok) {
+            // User is already registered, redirect to portal
             navigate("/portal", { replace: true });
+            // Keep loading state true to prevent flicker
+            return;
           }
         } catch (error) {
-          console.log("User not registered yet");
+          // User not registered yet - continue to registration form
         }
       }
+
+      // Only set to false if not redirecting
+      setIsCheckingRegistration(false);
     };
 
     checkExistingAffiliate();
@@ -61,13 +71,19 @@ export default function AffiliateRegisterForm() {
     setPhase("onboarding");
   };
 
-  // Show loading spinner while LIFF is initializing
-  if (!isReady) {
+  // Show loading spinner while LIFF is initializing or checking registration
+  if (!isReady || isCheckingRegistration) {
     return (
-      <div className="min-h-[100dvh] flex items-center justify-center bg-[#0F1216]">
-        <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-2 border-yellow-400/30 border-t-yellow-400 mb-4"></div>
-          <p className="text-white/50 text-sm">กำลังโหลด...</p>
+      <div className="min-h-[100dvh] flex items-center justify-center bg-aiya-navy relative overflow-hidden">
+        {/* AIYA Brand Ambient Lighting */}
+        <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-aiya-purple/10 via-transparent to-transparent pointer-events-none"></div>
+        <div className="fixed top-0 right-0 w-[600px] h-[600px] bg-[radial-gradient(circle,_var(--tw-gradient-stops))] from-aiya-lavender/8 via-transparent to-transparent blur-3xl pointer-events-none"></div>
+
+        <div className="text-center relative z-10">
+          <div className="inline-block animate-spin rounded-full h-16 w-16 border-3 border-aiya-lavender/20 border-t-aiya-lavender mb-4"></div>
+          <p className="text-white/70 text-sm font-medium">
+            {!isReady ? "กำลังโหลด..." : "กำลังตรวจสอบข้อมูล..."}
+          </p>
         </div>
       </div>
     );
