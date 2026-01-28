@@ -433,7 +433,7 @@ export default function RegistrationFlow({
   }, [formData, lineUserId, validateField, checkCodeAvailability, navigate]);
 
   return (
-    <div className="relative min-h-[100dvh] bg-[#0F1216] overflow-hidden">
+    <div className="relative h-full bg-[#0F1216] overflow-hidden">
       {/* Steps */}
       <AnimatePresence mode="wait" custom={direction} initial={false}>
         <motion.div

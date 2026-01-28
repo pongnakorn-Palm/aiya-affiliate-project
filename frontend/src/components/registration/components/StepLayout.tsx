@@ -15,7 +15,7 @@ export default function StepLayout({
   centered = false,
 }: StepLayoutProps) {
   return (
-    <div className="h-[100dvh] w-full flex flex-col bg-[#0F1216] overflow-hidden">
+    <div className="h-full w-full flex flex-col bg-[#0F1216] overflow-hidden">
       {/* Header */}
       {header && (
         <motion.header

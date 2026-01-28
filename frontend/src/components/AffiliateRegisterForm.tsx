@@ -100,11 +100,14 @@ export default function AffiliateRegisterForm() {
   }
 
   // Registration Phase
+  // Calculate header height for proper layout
+  const headerHeight = isInClient && isLoggedIn ? "5rem" : isInClient ? "4rem" : "0px";
+
   return (
-    <div className="h-[100dvh] bg-[#0F1216] overflow-hidden">
+    <div className="h-[100dvh] flex flex-col bg-[#0F1216] overflow-hidden">
       {/* LINE Login Prompt (if not logged in and in LIFF) */}
       {isInClient && !isLoggedIn && (
-        <div className="absolute top-0 left-0 right-0 z-50 p-4 bg-[#0F1216]/95 backdrop-blur-sm border-b border-white/5">
+        <div className="flex-shrink-0 p-4 bg-[#0F1216]/95 backdrop-blur-sm border-b border-white/5">
           <button
             onClick={login}
             className="w-full flex items-center justify-center gap-2 bg-[#06C755] hover:bg-[#05b34b] text-white font-semibold px-4 py-3 rounded-xl transition-colors"
@@ -119,7 +122,7 @@ export default function AffiliateRegisterForm() {
 
       {/* LINE Profile Badge (if logged in) */}
       {isInClient && isLoggedIn && profile && (
-        <div className="absolute top-0 left-0 right-0 z-50 px-4 pt-10 pb-3 bg-[#0F1216]/95 backdrop-blur-sm border-b border-white/5">
+        <div className="flex-shrink-0 px-4 pt-10 pb-3 bg-[#0F1216]/95 backdrop-blur-sm border-b border-white/5">
           <div className="flex items-center gap-3">
             <div className="relative">
               {profile.pictureUrl ? (
@@ -145,8 +148,8 @@ export default function AffiliateRegisterForm() {
         </div>
       )}
 
-      {/* Registration Form */}
-      <div className={isInClient && isLoggedIn ? "pt-20" : isInClient ? "pt-16" : ""}>
+      {/* Registration Form - flex-1 to fill remaining space */}
+      <div className="flex-1 overflow-hidden" style={{ height: `calc(100dvh - ${headerHeight})` }}>
         <RegistrationFlow
           initialData={{
             name: profile?.displayName || "",
