@@ -59,7 +59,7 @@ export default function PullToRefresh({
           style={{ rotate }}
           className={isRefreshing ? "animate-spin" : ""}
         >
-          <span className="material-symbols-outlined text-yellow-400 text-2xl">
+          <span className="material-symbols-outlined text-primary text-2xl">
             {isRefreshing ? "sync" : "arrow_downward"}
           </span>
         </motion.div>

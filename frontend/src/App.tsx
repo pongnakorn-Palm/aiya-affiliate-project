@@ -10,7 +10,7 @@ const PartnerPortal = lazy(() => import('./components/PartnerPortal'));
 const RouteLoadingFallback = () => (
     <div className="min-h-[100dvh] flex items-center justify-center bg-[#0F1216]">
         <div className="text-center">
-            <div className="inline-block animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-yellow-400 mb-4"></div>
+            <div className="inline-block animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-primary mb-4"></div>
             <p className="text-white/70 text-sm">กำลังโหลด...</p>
         </div>
     </div>

@@ -85,7 +85,7 @@ export default function DashboardSkeleton() {
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="h-12 bg-white/10 rounded-xl"></div>
-            <div className="h-12 bg-yellow-400/20 rounded-xl"></div>
+            <div className="h-12 bg-primary/20 rounded-xl"></div>
           </div>
         </div>
 

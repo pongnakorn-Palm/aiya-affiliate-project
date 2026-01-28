@@ -29,7 +29,7 @@ import { triggerHaptic } from "../utils/haptic";
 const TabLoadingFallback = () => (
   <div className="flex items-center justify-center min-h-[50vh] px-5">
     <div className="text-center">
-      <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-yellow-400/50 mb-3"></div>
+      <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary/50 mb-3"></div>
       <p className="text-white/50 text-sm">กำลังโหลด...</p>
     </div>
   </div>

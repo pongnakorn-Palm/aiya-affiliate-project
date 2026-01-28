@@ -15,13 +15,13 @@ export default function StepLayout({
   centered = false,
 }: StepLayoutProps) {
   return (
-    <div className="min-h-[100dvh] w-full flex flex-col bg-[#0F1216]">
+    <div className="h-[100dvh] w-full flex flex-col bg-[#0F1216] overflow-hidden">
       {/* Header */}
       {header && (
         <motion.header
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex-shrink-0 px-5 pt-12 pb-4"
+          className="flex-shrink-0 px-5 pt-10 pb-3"
         >
           {header}
         </motion.header>
@@ -29,20 +29,20 @@ export default function StepLayout({
 
       {/* Main Content */}
       <main
-        className={`flex-1 px-5 flex flex-col ${
+        className={`flex-1 px-5 flex flex-col overflow-y-auto ${
           centered ? "justify-center" : ""
         }`}
       >
         {children}
       </main>
 
-      {/* Footer */}
+      {/* Footer - Fixed at bottom */}
       {footer && (
         <motion.footer
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex-shrink-0 px-5 pb-8"
-          style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 2rem)" }}
+          className="flex-shrink-0 px-5 pt-3 pb-6 bg-gradient-to-t from-[#0F1216] via-[#0F1216] to-transparent"
+          style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 1.5rem)" }}
         >
           {footer}
         </motion.footer>

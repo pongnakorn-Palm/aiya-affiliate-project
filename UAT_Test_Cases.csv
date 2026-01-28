@@ -1,0 +1,117 @@
+Test ID,Module,Test Case,Steps,Expected Result,Status,Tester,Notes
+TC001,Onboarding,แสดงหน้า Onboarding Screen 1,"1. เปิดแอป
+2. สังเกต Onboarding Screen แรก","แสดง Icon เงิน (สีม่วง), หัวข้อ 'สร้างรายได้เสริมง่ายๆ', มี dot indicator",,,
+TC002,Onboarding,Swipe ไปหน้าถัดไป,"1. อยู่หน้า Onboarding Screen 1
+2. Swipe ไปทางซ้าย","แสดง Screen 2 - Icon ของขวัญ (สี cyan), หัวข้อ 'ลูกค้าได้ส่วนลดทันที'",,,
+TC003,Onboarding,Swipe ไปหน้าสุดท้าย,"1. อยู่หน้า Screen 2
+2. Swipe ไปทางซ้าย","แสดง Screen 3 - Icon จรวด (สีม่วงเข้ม), หัวข้อ 'เรียนรู้ AI ต่อยอดธุรกิจ', มีปุ่ม 'เริ่มสมัครเลย'",,,
+TC004,Onboarding,กดปุ่ม Skip,"1. อยู่หน้า Onboarding Screen 1 หรือ 2
+2. กดปุ่ม 'ข้าม' มุมขวาบน",ไปยังหน้า Registration ทันที,,,
+TC005,Onboarding,กดปุ่ม 'เริ่มสมัครเลย',"1. อยู่หน้า Onboarding Screen 3
+2. กดปุ่ม 'เริ่มสมัครเลย'",ไปยังหน้า Registration,,,
+TC006,Onboarding,Dot Indicator แสดงถูกต้อง,"1. Swipe ผ่านทุกหน้า
+2. สังเกต dot indicator ด้านล่าง",Dot ที่ active จะเป็นสีม่วงและยาวกว่า dot อื่น,,,
+TC007,Registration,แสดงหน้ากรอกข้อมูลส่วนตัว,"1. ผ่าน Onboarding มาแล้ว
+2. สังเกตหน้า Registration",แสดง 3 ช่อง: ชื่อ-นามสกุล / อีเมล / เบอร์โทรศัพท์,,,
+TC008,Registration,กรอกชื่อ-นามสกุล,"1. กรอกชื่อในช่อง ชื่อ-นามสกุล
+2. กด Tab หรือ Next",ข้อมูลถูกบันทึก ไม่มี error,,,
+TC009,Registration,Validate ชื่อ - ว่างเปล่า,"1. ปล่อยช่องชื่อว่าง
+2. กดปุ่ม 'ถัดไป'",แสดง error 'กรุณากรอกชื่อ-นามสกุล',,,
+TC010,Registration,กรอกอีเมล,"1. กรอกอีเมลถูกต้อง เช่น test@example.com
+2. รอ 0.5 วินาที",แสดง icon เครื่องหมายถูก สีเขียว (ถ้าอีเมลว่าง),,,
+TC011,Registration,Validate อีเมล - รูปแบบผิด,"1. กรอกอีเมลผิดรูปแบบ เช่น 'test@'
+2. กดปุ่ม 'ถัดไป'",แสดง error 'รูปแบบอีเมลไม่ถูกต้อง',,,
+TC012,Registration,Validate อีเมล - ซ้ำในระบบ,"1. กรอกอีเมลที่ลงทะเบียนแล้ว
+2. รอ 0.5 วินาที",แสดง icon กากบาท สีแดง และข้อความ 'อีเมลนี้ถูกลงทะเบียนแล้ว',,,
+TC013,Registration,กรอกเบอร์โทรศัพท์,"1. กรอกเบอร์โทร 10 หลัก เช่น 0812345678
+2. สังเกตการ format",แสดงเป็น 081-234-5678 อัตโนมัติ,,,
+TC014,Registration,Validate เบอร์โทร - น้อยกว่า 9 หลัก,"1. กรอกเบอร์ 08123456 (8 หลัก)
+2. กดปุ่ม 'ถัดไป'",แสดง error 'เบอร์โทรศัพท์ต้องมีอย่างน้อย 9 หลัก',,,
+TC015,Registration,กดปุ่ม 'ถัดไป' สำเร็จ,"1. กรอกข้อมูลครบทุกช่อง ถูกต้อง
+2. กดปุ่ม 'ถัดไป'",ไปหน้า Affiliate Code,,,
+TC016,Affiliate Code,แสดงหน้า Affiliate Code,"1. ผ่านหน้ากรอกข้อมูลส่วนตัวมา
+2. สังเกตหน้า Affiliate Code",แสดง Code ที่ Generate อัตโนมัติ (3-4 ตัวอักษร + 4 หลักท้ายเบอร์โทร),,,
+TC017,Affiliate Code,แก้ไข Affiliate Code,"1. ลบ Code เดิม
+2. พิมพ์ Code ใหม่ เช่น MYCODE123","Code เปลี่ยนเป็นตัวพิมพ์ใหญ่อัตโนมัติ, รับเฉพาะ A-Z และ 0-9",,,
+TC018,Affiliate Code,Validate Code - สั้นเกินไป,"1. กรอก Code แค่ 2 ตัว เช่น 'AB'
+2. สังเกตปุ่ม 'ยืนยันการสมัคร'",ปุ่มยังคง disabled (สีจาง),,,
+TC019,Affiliate Code,Validate Code - ซ้ำในระบบ,"1. กรอก Code ที่มีคนใช้แล้ว
+2. รอ 0.5 วินาที",แสดง icon กากบาท สีแดง และข้อความ 'รหัสนี้ถูกใช้งานแล้ว กรุณาเลือกรหัสอื่น',,,
+TC020,Affiliate Code,Code ว่าง - แสดงสถานะ,"1. กรอก Code ที่ไม่ซ้ำ
+2. รอ 0.5 วินาที",แสดง icon เครื่องหมายถูก สีเขียว และข้อความ 'รหัสนี้ว่าง สามารถใช้งานได้',,,
+TC021,Affiliate Code,Checkbox PDPA,"1. กดที่ checkbox ยอมรับเงื่อนไข
+2. สังเกต checkbox",Checkbox เปลี่ยนเป็นสีม่วง มีเครื่องหมายถูก,,,
+TC022,Affiliate Code,กดลิงก์ เงื่อนไขการใช้งาน,"1. กดที่ลิงก์ 'เงื่อนไขการใช้งาน'
+2. สังเกต",เปิด Browser ไปยังหน้า Privacy Policy ของ AIYA,,,
+TC023,Affiliate Code,Submit โดยไม่ติ๊ก PDPA,"1. กรอก Code ถูกต้อง
+2. ไม่ติ๊ก checkbox
+3. กดปุ่ม 'ยืนยันการสมัคร'",กล่อง PDPA สั่นเล็กน้อย (shake animation) และขอบเปลี่ยนเป็นสีแดง,,,
+TC024,Affiliate Code,กดปุ่มย้อนกลับ,"1. อยู่หน้า Affiliate Code
+2. กดปุ่มลูกศรย้อนกลับ มุมซ้ายบน",กลับไปหน้ากรอกข้อมูลส่วนตัว ข้อมูลยังคงอยู่,,,
+TC025,Affiliate Code,Submit สำเร็จ,"1. กรอก Code ถูกต้อง (ไม่ซ้ำ)
+2. ติ๊ก checkbox PDPA
+3. กดปุ่ม 'ยืนยันการสมัคร'","แสดง Loading, แล้วไปหน้า Thank You",,,
+TC026,Thank You,แสดงหน้า Thank You,"1. สมัครสำเร็จ
+2. สังเกตหน้า Thank You","แสดง Confetti สีม่วง/cyan, icon ถูกต้องสีม่วง, ข้อความ 'ลงทะเบียนสำเร็จ!'",,,
+TC027,Thank You,แสดง Affiliate Code,"1. อยู่หน้า Thank You
+2. สังเกตกล่อง Affiliate Code",แสดง Code ที่สมัครได้ ตัวใหญ่ชัดเจน,,,
+TC028,Thank You,กดปุ่มคัดลอก Code,"1. กดปุ่ม 'คัดลอก' ข้าง Code
+2. ไป Paste ที่อื่น","Code ถูก copy, ปุ่มเปลี่ยนเป็น 'คัดลอกแล้ว' สีเขียว",,,
+TC029,Thank You,แสดงขั้นตอนต่อไป,1. สังเกตส่วน 'ขั้นตอนต่อไป',"แสดง 3 ขั้นตอน: เช็คอีเมล, ติดต่อขอเลขบัญชี, แชร์รหัส",,,
+TC030,Thank You,กดปุ่ม 'ดูสถิติของฉัน',"1. กดปุ่ม 'ดูสถิติของฉัน'
+2. สังเกต",ไปยังหน้า Partner Portal (Dashboard),,,
+TC031,Thank You,กดปุ่ม 'ปิด' (ใน LINE),"1. เปิดแอปผ่าน LINE
+2. กดปุ่ม 'ปิด'",LIFF Window ปิดลง,,,
+TC032,Thank You,กดปุ่ม 'ปิด' (Desktop),"1. เปิดแอปผ่าน Desktop Browser
+2. กดปุ่ม 'ปิด'",Redirect ไปหน้า AIYA Affiliate,,,
+TC033,Portal,แสดงหน้า Dashboard,"1. เข้าหน้า Partner Portal
+2. สังเกต Tab Dashboard",แสดงยอดรวม Commission / จำนวน Referral / Conversion Rate,,,
+TC034,Portal,Pull to Refresh,"1. อยู่หน้า Dashboard
+2. ดึงหน้าจอลงมา",แสดง Loading แล้วข้อมูลอัพเดท,,,
+TC035,Portal,แสดง Affiliate Code บน Dashboard,1. สังเกตกล่อง Affiliate Code,แสดง Code พร้อมปุ่ม Copy และ Share,,,
+TC036,Portal,กดปุ่ม Copy Code,"1. กดปุ่ม Copy ที่กล่อง Code
+2. ไป Paste ที่อื่น",Code ถูก copy สำเร็จ แสดง Toast 'คัดลอกแล้ว',,,
+TC037,Portal,กดปุ่ม Share Code,"1. กดปุ่ม Share ที่กล่อง Code
+2. สังเกต",เปิด Native Share Sheet (ถ้ารองรับ),,,
+TC038,Portal,Swipe ไป Tab History,"1. อยู่หน้า Dashboard
+2. Swipe ไปทางซ้าย",ไปยัง Tab History,,,
+TC039,Portal,แสดงหน้า History,"1. อยู่ Tab History
+2. สังเกตรายการ",แสดงรายการ Referral ที่เคยแนะนำ (หรือข้อความว่าง),,,
+TC040,Portal,Swipe ไป Tab Profile,"1. อยู่หน้า History
+2. Swipe ไปทางซ้าย",ไปยัง Tab Profile,,,
+TC041,Portal,แสดงหน้า Profile,"1. อยู่ Tab Profile
+2. สังเกตข้อมูล","แสดงรูป Profile, ชื่อ, Affiliate Code, ข้อมูลธนาคาร",,,
+TC042,Portal,กดปุ่มแก้ไขข้อมูลธนาคาร,"1. กดปุ่ม 'แก้ไข' หรือ 'เพิ่มข้อมูล' ในส่วนธนาคาร
+2. สังเกต",แสดง Form กรอกข้อมูลธนาคาร,,,
+TC043,Portal,เลือกธนาคาร,"1. กดช่องเลือกธนาคาร
+2. เลือกธนาคาร",แสดง Logo และชื่อธนาคารที่เลือก,,,
+TC044,Portal,กรอกเลขบัญชี,"1. กรอกเลขบัญชี 10-12 หลัก
+2. สังเกตการ format",แสดงเลขบัญชีแบบ format เช่น XXX-X-XXXXX-X,,,
+TC045,Portal,Upload รูปสมุดบัญชี,"1. กดปุ่ม Upload
+2. เลือกรูป",แสดง Preview รูปที่เลือก,,,
+TC046,Portal,บันทึกข้อมูลธนาคาร,"1. กรอกข้อมูลครบ
+2. กดปุ่ม 'บันทึก'","แสดง Loading, แล้ว Toast 'บันทึกสำเร็จ'",,,
+TC047,Portal,เปลี่ยนภาษา,"1. อยู่ Tab Profile
+2. กดสลับภาษา TH/EN",ภาษาในแอปเปลี่ยนตามที่เลือก,,,
+TC048,Portal,กดปุ่ม Logout,"1. อยู่ Tab Profile
+2. กดปุ่ม 'ออกจากระบบ'",Redirect ไปหน้า Registration,,,
+TC049,Portal,Bottom Navigation,"1. กด Tab ต่างๆ ที่ Bottom Navigation
+2. สังเกต",เปลี่ยน Tab ตามที่กด Icon ที่ active เป็นสีม่วง,,,
+TC050,Portal,แสดง Notification,"1. มี Notification ใหม่
+2. สังเกต Bell Icon",แสดง Badge แดงที่ Bell Icon,,,
+TC051,Portal,เปิด Notification Sheet,"1. กดที่ Bell Icon
+2. สังเกต",แสดง Bottom Sheet รายการ Notification,,,
+TC052,LIFF,Login ผ่าน LINE,"1. เปิดแอปผ่าน LINE
+2. สังเกต","Auto Login, แสดงรูป Profile และชื่อจาก LINE",,,
+TC053,LIFF,Pre-fill ข้อมูลจาก LINE,"1. Login ผ่าน LINE
+2. ไปหน้า Registration",ชื่อและอีเมลจาก LINE ถูก Pre-fill อัตโนมัติ,,,
+TC054,Theme,สี Primary ถูกต้อง,1. สังเกตปุ่มและ Element หลักๆ,"สีม่วง (#A78BFA, #7C3AED)",,,
+TC055,Theme,สี Accent ถูกต้อง,1. สังเกต Element รอง,สี Cyan (#22D3EE),,,
+TC056,Theme,Background สี Dark,1. สังเกต Background ของทุกหน้า,สีเทาเข้ม (#0F1216 หรือ #0D1117),,,
+TC057,Responsive,แสดงผลบน Mobile,"1. เปิดแอปบน Mobile
+2. สังเกต Layout",แสดงผลถูกต้อง ไม่ล้น ไม่เพี้ยน,,,
+TC058,Responsive,แสดงผลบน Desktop,"1. เปิดแอปบน Desktop
+2. สังเกต Layout",แสดงผลถูกต้อง Content อยู่ตรงกลาง,,,
+TC059,Performance,โหลดหน้าแรก,1. เปิดแอปครั้งแรก,โหลดภายใน 3 วินาที,,,
+TC060,Error,แสดง Error เมื่อ API ล้มเหลว,"1. ปิด Internet
+2. ลองทำ Action ที่ต้องเรียก API",แสดง Error Message ที่เข้าใจได้,,,

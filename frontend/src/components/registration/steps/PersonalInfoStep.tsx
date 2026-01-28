@@ -84,9 +84,9 @@ export default function PersonalInfoStep({
 
   const header = (
     <div className="flex items-center justify-between">
-      <h1 className="text-xl font-bold text-white">กรอกข้อมูลส่วนตัว</h1>
+      <h1 className="text-lg font-bold text-white">กรอกข้อมูลส่วนตัว</h1>
       {isLineLoggedIn && (
-        <span className="flex items-center gap-1.5 text-xs text-green-400 bg-green-400/10 px-2.5 py-1 rounded-full">
+        <span className="flex items-center gap-1.5 text-xs text-green-400 bg-green-400/10 px-2 py-0.5 rounded-full">
           <span className="w-1.5 h-1.5 bg-green-400 rounded-full" />
           LINE
         </span>
@@ -99,7 +99,7 @@ export default function PersonalInfoStep({
       whileTap={{ scale: 0.98 }}
       onClick={onNext}
       disabled={!name || !email || !phone}
-      className="w-full py-4 rounded-2xl bg-gradient-to-r from-primary-dark to-primary text-white font-bold text-lg shadow-lg shadow-primary/30 disabled:bg-white/10 disabled:text-white/30 disabled:shadow-none disabled:from-white/10 disabled:to-white/10 transition-all"
+      className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-primary-dark to-primary text-white font-bold text-base shadow-lg shadow-primary/30 disabled:bg-white/10 disabled:text-white/30 disabled:shadow-none disabled:from-white/10 disabled:to-white/10 transition-all"
     >
       ถัดไป
     </motion.button>
@@ -111,11 +111,11 @@ export default function PersonalInfoStep({
         variants={fadeInUp}
         initial="initial"
         animate="animate"
-        className="space-y-6 py-6"
+        className="space-y-4 py-2 flex-1 flex flex-col justify-center"
       >
         {/* Name Field */}
         <div>
-          <label className="block text-sm text-white/60 mb-2">
+          <label className="block text-xs text-white/60 mb-1.5">
             ชื่อ-นามสกุล <span className="text-red-400">*</span>
           </label>
           <div className="relative">
@@ -128,7 +128,7 @@ export default function PersonalInfoStep({
               onKeyDown={(e) => handleKeyDown(e, emailRef)}
               enterKeyHint="next"
               placeholder="กรอกชื่อ-นามสกุล"
-              className={`w-full bg-[#1A1D21] border rounded-xl px-4 py-4 text-white placeholder:text-white/30 focus:outline-none transition-colors ${
+              className={`w-full bg-[#1A1D21] border rounded-xl px-4 py-3 text-white text-sm placeholder:text-white/30 focus:outline-none transition-colors ${
                 errors.name
                   ? "border-red-400/50 focus:border-red-400"
                   : "border-white/10 focus:border-primary/50"
@@ -136,7 +136,7 @@ export default function PersonalInfoStep({
             />
           </div>
           {errors.name && (
-            <p className="text-red-400 text-xs mt-2 flex items-center gap-1">
+            <p className="text-red-400 text-xs mt-1.5 flex items-center gap-1">
               <span className="material-symbols-outlined text-sm">error</span>
               {errors.name}
             </p>
@@ -145,7 +145,7 @@ export default function PersonalInfoStep({
 
         {/* Email Field */}
         <div>
-          <label className="block text-sm text-white/60 mb-2">
+          <label className="block text-xs text-white/60 mb-1.5">
             อีเมล <span className="text-red-400">*</span>
           </label>
           <div className="relative">
@@ -158,7 +158,7 @@ export default function PersonalInfoStep({
               onKeyDown={(e) => handleKeyDown(e, phoneRef)}
               enterKeyHint="next"
               placeholder="example@email.com"
-              className={`w-full bg-[#1A1D21] border rounded-xl px-4 py-4 pr-12 text-white placeholder:text-white/30 focus:outline-none transition-colors ${
+              className={`w-full bg-[#1A1D21] border rounded-xl px-4 py-3 pr-11 text-white text-sm placeholder:text-white/30 focus:outline-none transition-colors ${
                 errors.email || emailAvailability === "taken"
                   ? "border-red-400/50 focus:border-red-400"
                   : emailAvailability === "available"
@@ -168,17 +168,17 @@ export default function PersonalInfoStep({
             />
             {/* Email Status Indicator */}
             {emailAvailability && (
-              <div className="absolute right-4 top-1/2 -translate-y-1/2">
+              <div className="absolute right-3 top-1/2 -translate-y-1/2">
                 {emailAvailability === "checking" && (
-                  <div className="w-5 h-5 border-2 border-white/20 border-t-white/60 rounded-full animate-spin" />
+                  <div className="w-4 h-4 border-2 border-white/20 border-t-primary rounded-full animate-spin" />
                 )}
                 {emailAvailability === "available" && (
-                  <span className="material-symbols-outlined text-green-400 text-xl">
+                  <span className="material-symbols-outlined text-green-400 text-lg">
                     check_circle
                   </span>
                 )}
                 {emailAvailability === "taken" && (
-                  <span className="material-symbols-outlined text-red-400 text-xl">
+                  <span className="material-symbols-outlined text-red-400 text-lg">
                     cancel
                   </span>
                 )}
@@ -186,13 +186,13 @@ export default function PersonalInfoStep({
             )}
           </div>
           {emailAvailability === "taken" && !errors.email && (
-            <p className="text-red-400 text-xs mt-2 flex items-center gap-1">
+            <p className="text-red-400 text-xs mt-1.5 flex items-center gap-1">
               <span className="material-symbols-outlined text-sm">error</span>
               อีเมลนี้ถูกลงทะเบียนแล้ว
             </p>
           )}
           {errors.email && (
-            <p className="text-red-400 text-xs mt-2 flex items-center gap-1">
+            <p className="text-red-400 text-xs mt-1.5 flex items-center gap-1">
               <span className="material-symbols-outlined text-sm">error</span>
               {errors.email}
             </p>
@@ -201,7 +201,7 @@ export default function PersonalInfoStep({
 
         {/* Phone Field */}
         <div>
-          <label className="block text-sm text-white/60 mb-2">
+          <label className="block text-xs text-white/60 mb-1.5">
             เบอร์โทรศัพท์ <span className="text-red-400">*</span>
           </label>
           <div className="relative">
@@ -216,7 +216,7 @@ export default function PersonalInfoStep({
               maxLength={12}
               inputMode="numeric"
               placeholder="0xx-xxx-xxxx"
-              className={`w-full bg-[#1A1D21] border rounded-xl px-4 py-4 text-white placeholder:text-white/30 focus:outline-none transition-colors font-mono tracking-wide ${
+              className={`w-full bg-[#1A1D21] border rounded-xl px-4 py-3 text-white text-sm placeholder:text-white/30 focus:outline-none transition-colors font-mono tracking-wide ${
                 errors.phone
                   ? "border-red-400/50 focus:border-red-400"
                   : "border-white/10 focus:border-primary/50"
@@ -224,7 +224,7 @@ export default function PersonalInfoStep({
             />
           </div>
           {errors.phone && (
-            <p className="text-red-400 text-xs mt-2 flex items-center gap-1">
+            <p className="text-red-400 text-xs mt-1.5 flex items-center gap-1">
               <span className="material-symbols-outlined text-sm">error</span>
               {errors.phone}
             </p>
