@@ -39,7 +39,9 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({
 
         // Development Mode: Use mock profile
         if (useMockMode) {
-          console.log("🔧 Development Mode: Using mock LIFF profile");
+          if (import.meta.env.DEV) {
+            console.log("🔧 Development Mode: Using mock LIFF profile");
+          }
           setIsReady(true);
           setIsLoggedIn(true);
           setIsInClient(false);
@@ -76,7 +78,9 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({
             const userProfile = await liff.getProfile();
             const decodedIDToken = liff.getDecodedIDToken();
 
-            console.log("LIFF Profile:", userProfile);
+            if (import.meta.env.DEV) {
+              console.log("LIFF Profile:", userProfile);
+            }
 
             setProfile({
               displayName: userProfile.displayName,

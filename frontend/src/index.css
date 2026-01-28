@@ -46,7 +46,8 @@
     html, body {
         @apply font-sans text-white antialiased selection:bg-aiya-purple selection:text-white;
         font-weight: 400;
-        background: linear-gradient(180deg, #1a1a3e 0%, #0f0f23 100%);
+        /* AIYA Corporate Gradient: Navy to Purple */
+        background: linear-gradient(180deg, #041527 0%, #0a1f3a 50%, #3A23B5 100%);
         min-height: 100vh;
         overflow-x: hidden;
     }
@@ -65,20 +66,69 @@
 }
 
 @layer components {
+    /* AIYA Corporate Glass Card */
     .glass-card {
-        @apply bg-white/5 backdrop-blur-xl shadow-2xl rounded-2xl;
+        @apply bg-white/5 backdrop-blur-xl shadow-2xl rounded-2xl border border-white/10;
+        box-shadow: 0 8px 32px rgba(58, 35, 181, 0.2);
     }
 
+    /* AIYA Modern Input */
     .input-modern {
-        @apply w-full px-4 py-3 rounded-xl bg-white/10 text-white placeholder:text-white/50 focus:outline-none focus:ring-2 focus:ring-white/30 transition-all duration-200 text-base;
+        @apply w-full px-4 py-3 rounded-xl bg-white/10 text-white placeholder:text-white/50
+               focus:outline-none transition-all duration-200 text-base border border-white/10;
     }
 
+    .input-modern:focus {
+        border-color: rgba(128, 133, 237, 0.5);
+        box-shadow: 0 0 0 3px rgba(128, 133, 237, 0.1);
+    }
+
+    /* AIYA Primary Button - Purple Gradient */
     .btn-gradient {
-        @apply w-full py-3 px-6 rounded-xl bg-gradient-to-r from-aiya-navy to-aiya-purple text-white font-bold text-lg shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-95 transition-all duration-200 flex items-center justify-center gap-2;
+        @apply w-full py-3 px-6 rounded-xl text-white font-bold text-lg
+               hover:scale-[1.02] active:scale-95
+               transition-all duration-200 flex items-center justify-center gap-2;
+        background: linear-gradient(135deg, #041527 0%, #3A23B5 100%);
+        box-shadow: 0 4px 16px rgba(58, 35, 181, 0.3);
     }
 
+    .btn-gradient:hover {
+        box-shadow: 0 8px 32px rgba(58, 35, 181, 0.4);
+    }
+
+    /* AIYA Gold Accent Button */
+    .btn-gold {
+        @apply w-full py-3 px-6 rounded-xl font-bold text-lg
+               hover:scale-[1.02] active:scale-95
+               transition-all duration-200 flex items-center justify-center gap-2;
+        background: linear-gradient(135deg, #F3B521 0%, #FFE2B2 100%);
+        color: #041527;
+        box-shadow: 0 4px 16px rgba(243, 181, 33, 0.3);
+    }
+
+    .btn-gold:hover {
+        box-shadow: 0 8px 32px rgba(243, 181, 33, 0.4);
+    }
+
+    /* AIYA Light Button */
     .btn-light {
-        @apply w-full py-3 px-6 rounded-xl bg-white text-aiya-navy font-bold text-lg shadow-lg hover:shadow-xl hover:bg-white/90 hover:scale-[1.02] active:scale-95 transition-all duration-200 flex items-center justify-center gap-2;
+        @apply w-full py-3 px-6 rounded-xl bg-white font-bold text-lg
+               shadow-lg hover:shadow-xl hover:bg-white/90 hover:scale-[1.02] active:scale-95
+               transition-all duration-200 flex items-center justify-center gap-2;
+        color: #041527;
+    }
+
+    /* AIYA Lavender Button */
+    .btn-lavender {
+        @apply w-full py-3 px-6 rounded-xl text-white font-bold text-lg
+               hover:scale-[1.02] active:scale-95
+               transition-all duration-200 flex items-center justify-center gap-2;
+        background-color: #8085ED;
+        box-shadow: 0 4px 16px rgba(128, 133, 237, 0.3);
+    }
+
+    .btn-lavender:hover {
+        box-shadow: 0 8px 32px rgba(128, 133, 237, 0.4);
     }
 
     .label-modern {
@@ -151,17 +201,46 @@
     animation: shake 0.5s ease-in-out;
 }
 
+/* AIYA Purple Glow Animation */
 @keyframes glowPulse {
     0%, 100% {
-        box-shadow: 0 0 20px rgba(139, 92, 246, 0.4), 0 0 40px rgba(139, 92, 246, 0.2);
+        box-shadow: 0 0 20px rgba(58, 35, 181, 0.4), 0 0 40px rgba(58, 35, 181, 0.2);
     }
     50% {
-        box-shadow: 0 0 30px rgba(139, 92, 246, 0.6), 0 0 60px rgba(139, 92, 246, 0.4);
+        box-shadow: 0 0 30px rgba(58, 35, 181, 0.6), 0 0 60px rgba(58, 35, 181, 0.4);
     }
 }
 
 .animate-glow-pulse {
     animation: glowPulse 2s ease-in-out infinite;
+}
+
+/* AIYA Lavender Glow Animation */
+@keyframes glowPulseLavender {
+    0%, 100% {
+        box-shadow: 0 0 20px rgba(128, 133, 237, 0.4), 0 0 40px rgba(128, 133, 237, 0.2);
+    }
+    50% {
+        box-shadow: 0 0 30px rgba(128, 133, 237, 0.6), 0 0 60px rgba(128, 133, 237, 0.4);
+    }
+}
+
+.animate-glow-pulse-lavender {
+    animation: glowPulseLavender 2s ease-in-out infinite;
+}
+
+/* AIYA Gold Glow Animation */
+@keyframes glowPulseGold {
+    0%, 100% {
+        box-shadow: 0 0 20px rgba(243, 181, 33, 0.4), 0 0 40px rgba(243, 181, 33, 0.2);
+    }
+    50% {
+        box-shadow: 0 0 30px rgba(243, 181, 33, 0.6), 0 0 60px rgba(243, 181, 33, 0.4);
+    }
+}
+
+.animate-glow-pulse-gold {
+    animation: glowPulseGold 2s ease-in-out infinite;
 }
 
 /* ========================================
@@ -330,15 +409,15 @@
     animation: confettiFall 3s ease-in-out forwards;
 }
 
-/* Success pulse animation */
+/* AIYA Success Pulse Animation - Using Teal */
 @keyframes successPulse {
     0%, 100% {
         transform: scale(1);
-        box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.4);
+        box-shadow: 0 0 0 0 rgba(1, 167, 158, 0.4);
     }
     50% {
         transform: scale(1.05);
-        box-shadow: 0 0 0 20px rgba(74, 222, 128, 0);
+        box-shadow: 0 0 0 20px rgba(1, 167, 158, 0);
     }
 }
 

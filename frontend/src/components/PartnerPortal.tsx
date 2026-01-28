@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import { useLiff } from "../contexts/LiffContext";
 import { useLanguage } from "../contexts/LanguageContext";
 import DashboardSkeleton from "./DashboardSkeleton";
@@ -8,11 +8,12 @@ import SEOHead from "./SEOHead";
 import { useReferralData } from "./partner-portal/hooks/useReferralData";
 import { useSwipeNavigation } from "./partner-portal/hooks/useSwipeNavigation";
 import { useNotifications } from "./partner-portal/hooks/useNotifications";
+import { useToast } from "../hooks/useToast";
 
-// Tab Components
-import DashboardTab from "./partner-portal/tabs/DashboardTab";
-import HistoryTab from "./partner-portal/tabs/HistoryTab";
-import ProfileTab from "./partner-portal/tabs/ProfileTab";
+// Tab Components (Lazy Loaded)
+const DashboardTab = lazy(() => import("./partner-portal/tabs/DashboardTab"));
+const HistoryTab = lazy(() => import("./partner-portal/tabs/HistoryTab"));
+const ProfileTab = lazy(() => import("./partner-portal/tabs/ProfileTab"));
 
 // Shared Components
 import BottomNavigation from "./partner-portal/shared/BottomNavigation";
@@ -25,10 +26,20 @@ import SwipeableView from "./ui/SwipeableView";
 import { formatCommission } from "../utils/formatting";
 import { triggerHaptic } from "../utils/haptic";
 
+const TabLoadingFallback = () => (
+  <div className="flex items-center justify-center min-h-[50vh] px-5">
+    <div className="text-center">
+      <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-yellow-400/50 mb-3"></div>
+      <p className="text-white/50 text-sm">กำลังโหลด...</p>
+    </div>
+  </div>
+);
+
 export default function PartnerPortal() {
   const { isLoggedIn, profile, login, isReady, liffObject, isInClient } =
     useLiff();
   const { t } = useLanguage();
+  const toast = useToast();
   const [showNotifications, setShowNotifications] = useState(false);
   const [isSharing, setIsSharing] = useState(false);
   const [isBankFormOpen, setIsBankFormOpen] = useState(false);
@@ -69,13 +80,13 @@ export default function PartnerPortal() {
 
     try {
       if (!isInClient) {
-        alert("กรุณาเปิดในแอป LINE เพื่อใช้ฟีเจอร์แชร์");
+        toast.warning("กรุณาเปิดในแอป LINE เพื่อใช้ฟีเจอร์แชร์");
         setIsSharing(false);
         return;
       }
 
       if (!liffObject.isApiAvailable("shareTargetPicker")) {
-        alert("ฟีเจอร์แชร์ไม่พร้อมใช้งาน กรุณาอัปเดต LINE เป็นเวอร์ชันล่าสุด");
+        toast.warning("ฟีเจอร์แชร์ไม่พร้อมใช้งาน กรุณาอัปเดต LINE เป็นเวอร์ชันล่าสุด");
         setIsSharing(false);
         return;
       }
@@ -91,7 +102,7 @@ export default function PartnerPortal() {
       ]);
 
       if (result) {
-        console.log("Shared successfully");
+        toast.success("แชร์สำเร็จ!");
       }
     } catch (error: unknown) {
       console.error("Share error:", error);
@@ -101,9 +112,9 @@ export default function PartnerPortal() {
         error.message &&
         error.message.includes("CANCEL")
       ) {
-        console.log("Share cancelled by user");
+        // Share cancelled by user - no action needed
       } else {
-        alert("ไม่สามารถแชร์ได้ กรุณาลองอีกครั้ง");
+        toast.error("ไม่สามารถแชร์ได้ กรุณาลองอีกครั้ง");
       }
     } finally {
       setIsSharing(false);
@@ -113,7 +124,7 @@ export default function PartnerPortal() {
   // Show loading spinner while LIFF is initializing
   if (!isReady) {
     return (
-      <div className="min-h-[100dvh] flex items-center justify-center bg-[#0F1216]">
+      <div className="min-h-[100dvh] flex items-center justify-center bg-aiya-navy">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-yellow-400 mb-4"></div>
           <p className="text-white/70 text-sm">กำลังโหลด...</p>
@@ -129,7 +140,7 @@ export default function PartnerPortal() {
         {/* Premium Gold Ambient */}
         <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-yellow-500/10 via-transparent to-transparent pointer-events-none"></div>
 
-        <div className="relative z-10 bg-[#1A1D21] backdrop-blur-2xl border border-white/5 rounded-3xl p-8 max-w-md w-full text-center shadow-2xl">
+        <div className="relative z-10 bg-background-card backdrop-blur-2xl border border-aiya-lavender/10 rounded-3xl p-8 max-w-md w-full text-center shadow-2xl">
           <div className="mb-6">
             <div className="w-20 h-20 mx-auto bg-yellow-500/20 rounded-full flex items-center justify-center">
               <span className="material-symbols-outlined text-yellow-400 text-4xl">person</span>
@@ -157,7 +168,7 @@ export default function PartnerPortal() {
   if (error) {
     return (
       <div className="min-h-[100dvh] flex items-center justify-center bg-[#0F1216] px-4">
-        <div className="bg-[#1A1D21] backdrop-blur-2xl border border-red-500/30 rounded-3xl p-8 max-w-md w-full text-center shadow-2xl">
+        <div className="bg-background-card backdrop-blur-2xl border border-error/30 rounded-3xl p-8 max-w-md w-full text-center shadow-2xl">
           <div className="mb-6">
             <div className="w-20 h-20 mx-auto bg-red-500/20 rounded-full flex items-center justify-center">
               <span className="material-symbols-outlined text-red-400 text-4xl">error</span>
@@ -190,10 +201,10 @@ export default function PartnerPortal() {
         description={`ดูสถิติและค่าคอมมิชชั่นของคุณ | จำนวนผู้สมัคร: ${displayData?.stats.totalRegistrations || 0} คน | รายได้: ${displayData ? formatCommission(displayData.stats.totalCommission) : 0} บาท`}
       />
 
-      <div className="relative min-h-[100dvh] w-full flex flex-col bg-[#0F1216] text-white overflow-x-hidden font-sans">
-        {/* Premium Gold Ambient Lighting */}
-        <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-yellow-500/10 via-transparent to-transparent pointer-events-none"></div>
-        <div className="fixed top-0 right-0 w-[600px] h-[600px] bg-[radial-gradient(circle,_var(--tw-gradient-stops))] from-amber-500/8 via-transparent to-transparent blur-3xl pointer-events-none"></div>
+      <div className="relative min-h-[100dvh] w-full flex flex-col bg-aiya-navy text-white overflow-x-hidden font-sans">
+        {/* AIYA Brand Ambient Lighting */}
+        <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-aiya-purple/10 via-transparent to-transparent pointer-events-none"></div>
+        <div className="fixed top-0 right-0 w-[600px] h-[600px] bg-[radial-gradient(circle,_var(--tw-gradient-stops))] from-aiya-lavender/8 via-transparent to-transparent blur-3xl pointer-events-none"></div>
 
         {/* Header */}
         {activeTab === "dashboard" && (
@@ -213,7 +224,7 @@ export default function PartnerPortal() {
                     </div>
                   )}
                 </div>
-                <div className="absolute bottom-0 right-0 size-3 rounded-full bg-green-400 border-2 border-[#0F1216]"></div>
+                <div className="absolute bottom-0 right-0 size-3 rounded-full bg-success border-2 border-aiya-navy"></div>
               </div>
               <div className="flex flex-col">
                 <span className="text-[11px] text-gray-500 font-medium tracking-wider uppercase">{t("header.welcome")}</span>
@@ -230,7 +241,7 @@ export default function PartnerPortal() {
                   fetchReferrals();
                 }
               }}
-              className="relative flex items-center justify-center size-11 rounded-xl bg-[#1A1D21] border border-white/5 text-white hover:bg-[#22262B] transition-colors active:scale-95 shadow-lg"
+              className="relative flex items-center justify-center size-11 rounded-xl bg-background-card border border-aiya-lavender/10 text-white hover:bg-aiya-purple/20 transition-colors active:scale-95 shadow-lg"
             >
               <span
                 className="material-symbols-outlined text-[22px]"
@@ -255,34 +266,40 @@ export default function PartnerPortal() {
             activeIndex={activeIndex}
             onIndexChange={navigateByIndex}
           >
-            {displayData && (
-              <DashboardTab
-                data={displayData}
-                lastUpdated={lastUpdated}
-                onShare={shareToLine}
-                isSharing={isSharing}
+            <Suspense fallback={<TabLoadingFallback />}>
+              {displayData && (
+                <DashboardTab
+                  data={displayData}
+                  lastUpdated={lastUpdated}
+                  onShare={shareToLine}
+                  isSharing={isSharing}
+                  referrals={referrals}
+                />
+              )}
+            </Suspense>
+            <Suspense fallback={<TabLoadingFallback />}>
+              <HistoryTab
                 referrals={referrals}
+                isLoading={isLoadingReferrals}
+                error={referralsError}
+                onRefresh={refreshReferrals}
+                isRefreshing={isRefreshingReferrals}
               />
-            )}
-            <HistoryTab
-              referrals={referrals}
-              isLoading={isLoadingReferrals}
-              error={referralsError}
-              onRefresh={refreshReferrals}
-              isRefreshing={isRefreshingReferrals}
-            />
-            {displayData && (
-              <ProfileTab
-                affiliate={displayData.affiliate}
-                userId={profile?.userId}
-                onRefresh={refresh}
-                profile={profile ? {
-                  displayName: profile.displayName || "",
-                  pictureUrl: profile.pictureUrl
-                } : undefined}
-                onBankFormChange={setIsBankFormOpen}
-              />
-            )}
+            </Suspense>
+            <Suspense fallback={<TabLoadingFallback />}>
+              {displayData && (
+                <ProfileTab
+                  affiliate={displayData.affiliate}
+                  userId={profile?.userId}
+                  onRefresh={refresh}
+                  profile={profile ? {
+                    displayName: profile.displayName || "",
+                    pictureUrl: profile.pictureUrl
+                  } : undefined}
+                  onBankFormChange={setIsBankFormOpen}
+                />
+              )}
+            </Suspense>
           </SwipeableView>
         </div>
       </div>

@@ -26,7 +26,7 @@ export default function BottomNavigation({
         initial={{ y: 100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ type: "spring", stiffness: 300, damping: 30, delay: 0.2 }}
-        className="h-[72px] rounded-2xl bg-[#1A1D21]/95 backdrop-blur-xl border border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.5)]"
+        className="h-[72px] rounded-2xl bg-background-card/95 backdrop-blur-xl border border-white/5 shadow-[0_8px_32px_rgba(0,0,0,0.5)]"
       >
         <div className="flex h-full items-center justify-around px-4">
           {tabs.map((tab) => (
@@ -44,7 +44,7 @@ export default function BottomNavigation({
                 <span
                   className={`material-symbols-outlined text-2xl transition-colors duration-200 ${
                     activeTab === tab.id
-                      ? "text-yellow-400"
+                      ? "text-aiya-gold"
                       : "text-gray-400"
                   }`}
                   style={{
@@ -56,14 +56,14 @@ export default function BottomNavigation({
                 </span>
                 {/* Glow effect for active icon */}
                 {activeTab === tab.id && (
-                  <div className="absolute inset-0 blur-lg bg-yellow-400/30 -z-10"></div>
+                  <div className="absolute inset-0 blur-lg bg-aiya-gold/30 -z-10"></div>
                 )}
               </div>
 
               {/* Label */}
               <span
                 className={`text-[10px] font-medium transition-colors duration-200 ${
-                  activeTab === tab.id ? "text-yellow-400" : "text-gray-500"
+                  activeTab === tab.id ? "text-aiya-gold" : "text-gray-500"
                 }`}
               >
                 {tab.label}
@@ -73,7 +73,7 @@ export default function BottomNavigation({
               {activeTab === tab.id && (
                 <motion.div
                   layoutId="activeDot"
-                  className="absolute -bottom-0.5 w-1 h-1 rounded-full bg-yellow-400"
+                  className="absolute -bottom-0.5 w-1 h-1 rounded-full bg-aiya-gold"
                   transition={{ type: "spring", stiffness: 400, damping: 30 }}
                 />
               )}

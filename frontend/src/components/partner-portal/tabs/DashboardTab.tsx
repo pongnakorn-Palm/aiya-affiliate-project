@@ -36,7 +36,42 @@ export default function DashboardTab({
   const [copied, setCopied] = useState(false);
 
   const paidCommission = data.stats.totalCommission - data.stats.pendingCommission;
-  const growthPercentage = 12.5;
+
+  // Calculate real growth percentage based on referrals
+  const growthPercentage = useMemo(() => {
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+
+    // Last 7 days
+    const last7DaysStart = new Date(now);
+    last7DaysStart.setDate(last7DaysStart.getDate() - 6);
+
+    // Previous 7 days (day -13 to day -7)
+    const prev7DaysStart = new Date(now);
+    prev7DaysStart.setDate(prev7DaysStart.getDate() - 13);
+    const prev7DaysEnd = new Date(now);
+    prev7DaysEnd.setDate(prev7DaysEnd.getDate() - 7);
+
+    let last7Count = 0;
+    let prev7Count = 0;
+
+    referrals.forEach((referral) => {
+      const refDate = new Date(referral.createdAt);
+      refDate.setHours(0, 0, 0, 0);
+
+      if (refDate >= last7DaysStart && refDate <= now) {
+        last7Count++;
+      } else if (refDate >= prev7DaysStart && refDate < prev7DaysEnd) {
+        prev7Count++;
+      }
+    });
+
+    if (prev7Count === 0) {
+      return last7Count > 0 ? 100 : 0; // If no previous data, show 100% if there's growth, 0 if none
+    }
+
+    return Number((((last7Count - prev7Count) / prev7Count) * 100).toFixed(1));
+  }, [referrals]);
 
   // Calculate 7-day registration data
   const chartData = useMemo(() => {
@@ -76,7 +111,7 @@ export default function DashboardTab({
 
   // Generate SVG path from data
   const { path, maxCount } = useMemo(() => {
-    const max = Math.max(...chartData.map((d) => d.count), 1);
+    const max = Math.max(...chartData.map((d) => d.count), 0);
     const width = 300;
     const height = 100;
     const padding = 20;
@@ -84,7 +119,9 @@ export default function DashboardTab({
 
     const points = chartData.map((point, i) => {
       const x = i * stepX;
-      const y = height - padding - ((point.count / max) * (height - padding * 2));
+      const y = max > 0
+        ? height - padding - ((point.count / max) * (height - padding * 2))
+        : height - padding; // Flat line at bottom if no data
       return { x, y };
     });
 
@@ -115,30 +152,44 @@ export default function DashboardTab({
       variants={staggerContainer}
       initial="initial"
       animate="animate"
-      className="px-5 pt-4 flex flex-col gap-4 bg-[#0F1216] min-h-[calc(100vh-120px)] font-sans"
+      className="px-5 pt-4 flex flex-col gap-4 bg-aiya-navy min-h-[calc(100vh-120px)] font-sans"
     >
       {/* Hero Card - Total Revenue */}
       <motion.div
         variants={fadeInUp}
-        className="w-full bg-[#1A1D21] rounded-2xl p-5 relative overflow-hidden border border-white/5 shadow-xl"
+        className="w-full bg-background-card rounded-2xl p-5 relative overflow-hidden border border-white/5 shadow-xl"
       >
         <div className="relative z-10">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-start justify-between mb-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-yellow-500/20 flex items-center justify-center">
-                <span className="material-symbols-outlined text-yellow-400 text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>
+              <div className="w-11 h-11 rounded-xl bg-aiya-gold/20 flex items-center justify-center flex-shrink-0">
+                <span className="material-symbols-outlined text-aiya-gold text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>
                   account_balance_wallet
                 </span>
               </div>
-              <span className="text-gray-400 text-xs font-medium">{t("dashboard.totalRevenue")}</span>
+              <span className="text-gray-400 text-base font-semibold">{t("dashboard.totalRevenue")}</span>
             </div>
-            <div className="flex items-center gap-1.5 bg-green-500/20 px-3 py-1.5 rounded-full">
-              <span className="material-symbols-outlined text-green-400 text-sm">trending_up</span>
-              <span className="text-green-400 text-xs font-bold">+{growthPercentage}%</span>
-            </div>
+            {growthPercentage !== 0 && (
+              <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full ${
+                growthPercentage > 0
+                  ? "bg-green-500/20"
+                  : "bg-red-500/20"
+              }`}>
+                <span className={`material-symbols-outlined text-sm ${
+                  growthPercentage > 0 ? "text-green-400" : "text-red-400"
+                }`}>
+                  {growthPercentage > 0 ? "trending_up" : "trending_down"}
+                </span>
+                <span className={`text-xs font-bold ${
+                  growthPercentage > 0 ? "text-green-400" : "text-red-400"
+                }`}>
+                  {growthPercentage > 0 ? "+" : ""}{growthPercentage}%
+                </span>
+              </div>
+            )}
           </div>
           <h1 className="text-[2rem] font-bold text-white tracking-tight leading-none">
-            <span className="text-yellow-400">฿</span> {formatCommission(data.stats.totalCommission)}
+            <span className="text-aiya-gold">฿</span> {formatCommission(data.stats.totalCommission)}
           </h1>
         </div>
       </motion.div>
@@ -146,14 +197,14 @@ export default function DashboardTab({
       {/* Stats Grid - Pending & Approved */}
       <motion.div variants={fadeInUp} className="grid grid-cols-2 gap-4">
         {/* Pending Card */}
-        <div className="bg-[#1A1D21] rounded-2xl p-4 relative overflow-hidden border border-white/5 shadow-xl">
+        <div className="bg-background-card rounded-2xl p-4 relative overflow-hidden border border-white/5 shadow-xl">
           {/* Watermark Icon */}
           <span className="material-symbols-outlined text-orange-500/10 text-[52px] absolute top-1 right-1 leading-none">
             pending_actions
           </span>
           <div className="relative z-10">
             <div className="flex items-center gap-2 mb-3">
-              <div className="p-2 rounded-lg bg-orange-500/20">
+              <div className="size-10 rounded-full bg-orange-500/20 flex items-center justify-center">
                 <span className="material-symbols-outlined text-orange-400 text-lg">schedule</span>
               </div>
             </div>
@@ -163,14 +214,14 @@ export default function DashboardTab({
         </div>
 
         {/* Approved Card */}
-        <div className="bg-[#1A1D21] rounded-2xl p-4 relative overflow-hidden border border-white/5 shadow-xl">
+        <div className="bg-background-card rounded-2xl p-4 relative overflow-hidden border border-white/5 shadow-xl">
           {/* Watermark Icon */}
           <span className="material-symbols-outlined text-green-500/10 text-[52px] absolute top-1 right-1 leading-none">
             verified
           </span>
           <div className="relative z-10">
             <div className="flex items-center gap-2 mb-3">
-              <div className="p-2 rounded-lg bg-green-500/20">
+              <div className="size-10 rounded-full bg-green-500/20 flex items-center justify-center">
                 <span className="material-symbols-outlined text-green-400 text-lg">check_circle</span>
               </div>
             </div>
@@ -183,7 +234,7 @@ export default function DashboardTab({
       {/* Registrations Card */}
       <motion.div
         variants={fadeInUp}
-        className="bg-[#1A1D21] rounded-2xl p-4 flex items-center justify-between border border-white/5 shadow-xl"
+        className="bg-background-card rounded-2xl p-4 flex items-center justify-between border border-white/5 shadow-xl"
       >
         <div className="flex items-center gap-3">
           <div className="w-11 h-11 rounded-xl bg-cyan-500/20 flex items-center justify-center">
@@ -197,14 +248,14 @@ export default function DashboardTab({
       </motion.div>
 
       {/* Growth Trend Chart */}
-      <motion.div variants={fadeInUp} className="bg-[#1A1D21] rounded-2xl p-5 border border-white/5 shadow-xl">
+      <motion.div variants={fadeInUp} className="bg-background-card rounded-2xl p-5 border border-white/5 shadow-xl">
         <div className="flex items-center justify-between mb-4">
           <div>
             <h3 className="text-white text-base font-bold">{t("dashboard.growthTrend")}</h3>
             <p className="text-gray-500 text-xs">{t("dashboard.weekly")}</p>
           </div>
           <div className="flex items-center gap-2">
-            <span className="px-2.5 py-1 rounded-full border border-yellow-400/30 text-yellow-400 text-[10px] font-semibold">
+            <span className="px-2.5 py-1 rounded-full border border-aiya-gold/30 text-aiya-gold text-[10px] font-semibold">
               {maxCount > 0 ? t("dashboard.maxPersons").replace("{count}", String(maxCount)) : t("dashboard.noData")}
             </span>
           </div>
@@ -213,8 +264,8 @@ export default function DashboardTab({
           <svg className="w-full h-full overflow-visible" preserveAspectRatio="none" viewBox="0 0 300 100">
             <defs>
               <linearGradient id="areaGradient" x1="0" x2="0" y1="0" y2="1">
-                <stop offset="0%" stopColor="#FACC15" stopOpacity="0.3"></stop>
-                <stop offset="100%" stopColor="#FACC15" stopOpacity="0"></stop>
+                <stop offset="0%" stopColor="#8085ED" stopOpacity="0.3"></stop>
+                <stop offset="100%" stopColor="#87DCED" stopOpacity="0"></stop>
               </linearGradient>
             </defs>
             {maxCount > 0 ? (
@@ -228,7 +279,7 @@ export default function DashboardTab({
                 <path
                   d={path}
                   fill="none"
-                  stroke="#FACC15"
+                  stroke="#8085ED"
                   strokeWidth="2.5"
                   strokeLinecap="round"
                 />
@@ -236,7 +287,7 @@ export default function DashboardTab({
                 <path
                   d={path}
                   fill="none"
-                  stroke="#FACC15"
+                  stroke="#8085ED"
                   strokeWidth="6"
                   strokeLinecap="round"
                   opacity="0.2"
@@ -250,7 +301,7 @@ export default function DashboardTab({
                 y1="80"
                 x2="300"
                 y2="80"
-                stroke="#FACC15"
+                stroke="#8085ED"
                 strokeWidth="2"
                 strokeDasharray="5,5"
                 opacity="0.3"
@@ -268,14 +319,14 @@ export default function DashboardTab({
       {/* Referral Code Card */}
       <motion.div
         variants={fadeInUp}
-        className="bg-[#1A1D21] rounded-2xl p-5 border border-white/5 shadow-xl relative overflow-hidden"
+        className="bg-background-card rounded-2xl p-5 border border-white/5 shadow-xl relative overflow-hidden"
       >
         {/* Subtle Gold Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-yellow-500/5 via-transparent to-transparent pointer-events-none"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-aiya-gold/5 via-transparent to-transparent pointer-events-none"></div>
         <div className="relative z-10">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-lg bg-yellow-500/20 flex items-center justify-center">
-              <span className="material-symbols-outlined text-yellow-400 text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>
+            <div className="w-10 h-10 rounded-lg bg-aiya-gold/20 flex items-center justify-center">
+              <span className="material-symbols-outlined text-aiya-gold text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>
                 redeem
               </span>
             </div>
@@ -283,53 +334,37 @@ export default function DashboardTab({
           </div>
           <p className="text-gray-500 text-xs mb-4">{t("dashboard.shareDescription")}</p>
 
-          <div className="bg-[#0F1216] rounded-xl p-4 mb-4 text-center border border-white/5">
+          <div className="bg-aiya-navy rounded-xl p-4 mb-4 text-center border border-white/5">
             <span className="text-[10px] text-gray-500 block mb-2 uppercase tracking-wider">Affiliate Code</span>
             <span className="text-white font-bold text-xl tracking-[0.15em]">
               {data.affiliate.affiliateCode}
             </span>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <motion.button
-              whileTap={{ scale: 0.96 }}
-              onClick={() => copyToClipboard(data.affiliate.affiliateCode)}
-              className={`py-3 rounded-xl font-bold text-sm transition-all duration-300 ${
-                copied
-                  ? "bg-green-500 text-white"
-                  : "bg-[#2A2D31] text-white border border-white/5 hover:bg-[#32363B]"
-              }`}
-            >
-              <span className="inline-flex items-center gap-2">
-                <span className="material-symbols-outlined text-base">
-                  {copied ? "check_circle" : "content_copy"}
-                </span>
-                {copied ? t("dashboard.copied") : t("dashboard.copy")}
+          <motion.button
+            whileTap={{ scale: 0.96 }}
+            onClick={() => {
+              triggerHaptic("light");
+              copyToClipboard(data.affiliate.affiliateCode);
+            }}
+            className={`w-full py-3.5 rounded-xl font-bold text-sm transition-all duration-300 ${
+              copied
+                ? "bg-green-500 text-white shadow-lg shadow-green-500/30"
+                : "bg-gradient-to-r from-aiya-purple to-aiya-lavender text-white shadow-lg shadow-aiya-lavender/20 hover:shadow-xl hover:shadow-aiya-lavender/30"
+            }`}
+          >
+            <span className="inline-flex items-center gap-2">
+              <span className="material-symbols-outlined text-base">
+                {copied ? "check_circle" : "content_copy"}
               </span>
-            </motion.button>
-
-            <motion.button
-              whileTap={{ scale: 0.96 }}
-              onClick={() => {
-                triggerHaptic("medium");
-                onShare();
-              }}
-              disabled={isSharing}
-              className={`py-3 rounded-xl font-bold text-sm bg-yellow-400 text-black transition-all duration-300 shadow-lg shadow-yellow-400/20 hover:bg-yellow-300 ${
-                isSharing ? "opacity-50" : ""
-              }`}
-            >
-              <span className="inline-flex items-center gap-2">
-                <span className="material-symbols-outlined text-base">share</span>
-                {isSharing ? t("dashboard.sharing") : t("dashboard.shareLink")}
-              </span>
-            </motion.button>
-          </div>
+              {copied ? t("dashboard.copied") : t("dashboard.copy")}
+            </span>
+          </motion.button>
         </div>
       </motion.div>
 
-      {/* LINE Share Button */}
-      <motion.div variants={fadeInUp} className="pb-4">
+      {/* LINE Share Button - Hidden but kept for future use */}
+      {/* <motion.div variants={fadeInUp} className="pb-4">
         <motion.button
           whileTap={{ scale: 0.97 }}
           onClick={() => {
@@ -337,8 +372,8 @@ export default function DashboardTab({
             onShare();
           }}
           disabled={isSharing}
-          className={`group relative w-full cursor-pointer overflow-hidden rounded-2xl py-4 bg-[#06C755] transition-all duration-300 text-white shadow-xl shadow-[#06C755]/20 ${
-            isSharing ? "opacity-50 cursor-not-allowed" : ""
+          className={`group relative w-full cursor-pointer overflow-hidden rounded-2xl py-4 bg-gradient-to-r from-aiya-purple to-aiya-lavender transition-all duration-300 text-white shadow-xl shadow-aiya-purple/30 border border-aiya-lavender/30 ${
+            isSharing ? "opacity-50 cursor-not-allowed" : "hover:shadow-2xl hover:shadow-aiya-lavender/40"
           }`}
         >
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out"></div>
@@ -351,7 +386,7 @@ export default function DashboardTab({
             </span>
           </div>
         </motion.button>
-      </motion.div>
+      </motion.div> */}
     </motion.div>
   );
 }
