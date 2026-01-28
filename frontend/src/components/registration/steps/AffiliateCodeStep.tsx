@@ -87,13 +87,13 @@ export default function AffiliateCodeStep({
       disabled={!canSubmit}
       className={`w-full py-4 rounded-2xl font-bold text-lg transition-all flex items-center justify-center gap-2 ${
         canSubmit
-          ? "bg-yellow-400 text-black shadow-lg shadow-yellow-400/20"
+          ? "bg-gradient-to-r from-primary-dark to-primary text-white shadow-lg shadow-primary/30"
           : "bg-white/10 text-white/30"
       }`}
     >
       {isLoading ? (
         <>
-          <div className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+          <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
           <span>กำลังดำเนินการ...</span>
         </>
       ) : (
@@ -133,7 +133,7 @@ export default function AffiliateCodeStep({
                   ? "border-red-400/50 focus:border-red-400"
                   : codeAvailability === "available"
                     ? "border-green-400/50 focus:border-green-400"
-                    : "border-white/10 focus:border-yellow-400/50"
+                    : "border-white/10 focus:border-primary/50"
               } ${isShaking ? "animate-shake" : ""}`}
               placeholder="AIYABOY"
             />
@@ -202,12 +202,12 @@ export default function AffiliateCodeStep({
               <div
                 className={`w-5 h-5 rounded-md border-2 transition-all duration-200 flex items-center justify-center ${
                   pdpaConsent
-                    ? "border-yellow-400 bg-yellow-400"
+                    ? "border-primary bg-primary"
                     : "border-white/30 bg-transparent"
                 }`}
               >
                 {pdpaConsent && (
-                  <span className="material-symbols-outlined text-black text-sm font-bold">
+                  <span className="material-symbols-outlined text-white text-sm font-bold">
                     check
                   </span>
                 )}
@@ -220,7 +220,7 @@ export default function AffiliateCodeStep({
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="text-yellow-400 hover:underline"
+                className="text-primary hover:underline"
               >
                 เงื่อนไขการใช้งาน
               </a>{" "}
@@ -230,7 +230,7 @@ export default function AffiliateCodeStep({
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="text-yellow-400 hover:underline"
+                className="text-primary hover:underline"
               >
                 นโยบายความเป็นส่วนตัว
               </a>{" "}

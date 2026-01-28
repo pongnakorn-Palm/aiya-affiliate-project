@@ -44,7 +44,7 @@ export default function BottomNavigation({
                 <span
                   className={`material-symbols-outlined text-2xl transition-colors duration-200 ${
                     activeTab === tab.id
-                      ? "text-aiya-gold"
+                      ? "text-primary"
                       : "text-gray-400"
                   }`}
                   style={{
@@ -56,14 +56,14 @@ export default function BottomNavigation({
                 </span>
                 {/* Glow effect for active icon */}
                 {activeTab === tab.id && (
-                  <div className="absolute inset-0 blur-lg bg-aiya-gold/30 -z-10"></div>
+                  <div className="absolute inset-0 blur-lg bg-primary/30 -z-10"></div>
                 )}
               </div>
 
               {/* Label */}
               <span
                 className={`text-[10px] font-medium transition-colors duration-200 ${
-                  activeTab === tab.id ? "text-aiya-gold" : "text-gray-500"
+                  activeTab === tab.id ? "text-primary" : "text-gray-500"
                 }`}
               >
                 {tab.label}
@@ -73,7 +73,7 @@ export default function BottomNavigation({
               {activeTab === tab.id && (
                 <motion.div
                   layoutId="activeDot"
-                  className="absolute -bottom-0.5 w-1 h-1 rounded-full bg-aiya-gold"
+                  className="absolute -bottom-0.5 w-1 h-1 rounded-full bg-primary"
                   transition={{ type: "spring", stiffness: 400, damping: 30 }}
                 />
               )}

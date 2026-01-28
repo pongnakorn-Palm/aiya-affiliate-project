@@ -69,6 +69,7 @@ const translations: Record<Language, Record<string, string>> = {
     "profile.verified": "ยืนยันแล้ว",
     "profile.addBank": "เพิ่มบัญชีธนาคาร",
     "profile.addBankDesc": "เพิ่มบัญชีธนาคารเพื่อรับค่าคอมมิชชั่น",
+    "profile.logout": "ออกจากระบบ",
 
     // Bank Form
     "bank.title": "เพิ่มบัญชีธนาคาร",
@@ -169,6 +170,7 @@ const translations: Record<Language, Record<string, string>> = {
     "profile.verified": "Verified",
     "profile.addBank": "Add Bank Account",
     "profile.addBankDesc": "Add bank account to receive commission",
+    "profile.logout": "Logout",
 
     // Bank Form
     "bank.title": "Add Bank Account",

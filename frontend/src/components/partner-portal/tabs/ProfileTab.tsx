@@ -6,12 +6,15 @@ import { useBankForm } from "../hooks/useBankForm";
 import type { DashboardData } from "../hooks/useReferralData";
 import BankSelectorSheet from "../shared/BankSelectorSheet";
 import { useLanguage } from "../../../contexts/LanguageContext";
+import { useLiff } from "../../../contexts/LiffContext";
 import { useToast } from "../../../hooks/useToast";
+import PullToRefresh from "../../ui/PullToRefresh";
 
 interface ProfileTabProps {
   affiliate: DashboardData["affiliate"];
   userId: string | undefined;
   onRefresh: () => Promise<void>;
+  isRefreshing?: boolean;
   profile?: {
     displayName: string;
     pictureUrl?: string;
@@ -36,10 +39,12 @@ export default function ProfileTab({
   affiliate,
   userId,
   onRefresh,
+  isRefreshing = false,
   profile,
   onBankFormChange,
 }: ProfileTabProps) {
   const { language, toggleLanguage, t, isTransitioning } = useLanguage();
+  const { logout } = useLiff();
   const toast = useToast();
   const [showBankSheet, setShowBankSheet] = useState(false);
   const [showBankForm, setShowBankForm] = useState(false);
@@ -76,29 +81,32 @@ export default function ProfileTab({
   };
 
   const handleBankFormSave = async () => {
-    await handleSave();
-    if (saveButtonState === "success") {
-      handleBankFormToggle(false);
+    const success = await handleSave();
+    if (success) {
+      setTimeout(() => {
+        handleBankFormToggle(false);
+      }, 1000);
     }
   };
 
   return (
-    <motion.div
-      variants={staggerContainer}
-      initial="initial"
-      animate="animate"
-      className="flex flex-col min-h-[calc(100vh-120px)] bg-aiya-navy font-sans relative"
-    >
+    <PullToRefresh onRefresh={onRefresh} isRefreshing={isRefreshing}>
+      <motion.div
+        variants={staggerContainer}
+        initial="initial"
+        animate="animate"
+        className="flex flex-col min-h-[calc(100vh-120px)] bg-aiya-dark font-sans relative"
+      >
       {/* Language Transition Overlay */}
       {isTransitioning && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="absolute inset-0 bg-aiya-navy/80 backdrop-blur-sm z-50 flex items-center justify-center"
+          className="absolute inset-0 bg-aiya-dark/80 backdrop-blur-sm z-50 flex items-center justify-center"
         >
           <div className="flex flex-col items-center gap-3">
-            <div className="w-12 h-12 border-3 border-aiya-gold/30 border-t-aiya-gold rounded-full animate-spin"></div>
+            <div className="w-12 h-12 border-3 border-primary/30 border-t-primary rounded-full animate-spin"></div>
             <p className="text-white text-sm font-medium">กำลังเปลี่ยนภาษา...</p>
           </div>
         </motion.div>
@@ -113,7 +121,7 @@ export default function ProfileTab({
               toggleLanguage();
               triggerHaptic("light");
             }}
-            className="px-4 py-2.5 rounded-xl bg-background-card border border-white/5 flex items-center gap-2 hover:bg-aiya-purple-medium transition-colors"
+            className="px-4 py-2.5 rounded-xl bg-background-card border border-white/5 flex items-center gap-2 hover:bg-primary-dark/20 transition-colors"
           >
             <span className="material-symbols-outlined text-white text-lg">language</span>
             <span className="text-white text-sm font-semibold">{language === "th" ? "TH" : "EN"}</span>
@@ -154,12 +162,12 @@ export default function ProfileTab({
         </p>
         <div className="grid grid-cols-2 gap-3">
           <div className="bg-background-card rounded-2xl p-4 border border-white/5">
-            <div className="p-2 rounded-xl bg-aiya-gold/20 w-fit mb-3">
-              <span className="material-symbols-outlined text-aiya-gold text-xl">person</span>
+            <div className="p-2 rounded-xl bg-primary/20 w-fit mb-3">
+              <span className="material-symbols-outlined text-primary text-xl">person</span>
             </div>
             <p className="text-gray-400 text-xs mb-1">{t("profile.singleSeat")}</p>
             <p className="text-xl font-bold text-white">
-              3,000<span className="text-aiya-gold text-base">฿</span>
+              3,000<span className="text-primary">฿</span>
             </p>
             <p className="text-[10px] text-gray-500">{t("profile.perPerson")}</p>
           </div>
@@ -169,7 +177,7 @@ export default function ProfileTab({
             </div>
             <p className="text-gray-400 text-xs mb-1">{t("profile.duoPack")}</p>
             <p className="text-xl font-bold text-white">
-              7,000<span className="text-aiya-gold text-base">฿</span>
+              7,000<span className="text-primary">฿</span>
             </p>
             <p className="text-[10px] text-gray-500">{t("profile.perPackage")}</p>
           </div>
@@ -218,10 +226,10 @@ export default function ProfileTab({
         ) : (
           <button
             onClick={() => handleBankFormToggle(true)}
-            className="w-full bg-background-card rounded-2xl p-5 border border-white/5 border-dashed flex items-center justify-center gap-3 hover:border-aiya-gold/30 transition-colors"
+            className="w-full bg-background-card rounded-2xl p-5 border border-white/5 border-dashed flex items-center justify-center gap-3 hover:border-primary/30 transition-colors"
           >
-            <div className="p-2 rounded-xl bg-aiya-gold/20">
-              <span className="material-symbols-outlined text-aiya-gold text-xl">add</span>
+            <div className="p-2 rounded-xl bg-primary/20">
+              <span className="material-symbols-outlined text-primary text-xl">add</span>
             </div>
             <div className="text-left">
               <p className="text-white font-medium">{t("profile.addBank")}</p>
@@ -231,6 +239,19 @@ export default function ProfileTab({
         )}
       </motion.div>
 
+      {/* Logout Button */}
+      <motion.div variants={fadeInUp} className="px-5 mb-6">
+        <button
+          onClick={() => {
+            triggerHaptic("medium");
+            logout();
+          }}
+          className="w-full bg-background-card rounded-2xl p-4 border border-red-500/20 flex items-center justify-center gap-3 hover:bg-red-500/10 transition-colors"
+        >
+          <span className="material-symbols-outlined text-red-400 text-xl">logout</span>
+          <span className="text-red-400 font-medium">{t("profile.logout")}</span>
+        </button>
+      </motion.div>
 
       {/* Bank Form Modal */}
       {showBankForm && (
@@ -245,11 +266,11 @@ export default function ProfileTab({
             initial={{ y: "100%" }}
             animate={{ y: 0 }}
             exit={{ y: "100%" }}
-            className="w-full bg-aiya-navy rounded-t-3xl max-h-[90vh] flex flex-col mt-auto"
+            className="w-full bg-aiya-dark rounded-t-3xl max-h-[90vh] flex flex-col mt-auto"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header - Fixed */}
-            <div className="flex-shrink-0 bg-aiya-navy px-5 py-4 border-b border-white/5 flex items-center justify-between rounded-t-3xl">
+            <div className="flex-shrink-0 bg-aiya-dark px-5 py-4 border-b border-white/5 flex items-center justify-between rounded-t-3xl">
               <button
                 onClick={() => handleBankFormToggle(false)}
                 className="active:opacity-50 transition-opacity"
@@ -272,7 +293,7 @@ export default function ProfileTab({
                     setShowBankSheet(true);
                     triggerHaptic("light");
                   }}
-                  className="w-full bg-aiya-navy border border-white/10 rounded-xl px-4 py-3.5 text-left flex items-center gap-3 hover:border-aiya-gold/30 focus:outline-none transition-colors"
+                  className="w-full bg-aiya-dark border border-white/10 rounded-xl px-4 py-3.5 text-left flex items-center gap-3 hover:border-primary/30 focus:outline-none transition-colors"
                 >
                   {selectedBankData ? (
                     <>
@@ -310,7 +331,7 @@ export default function ProfileTab({
                       onChange={(e) => handleAccountNumberChange(e.target.value)}
                       placeholder={t("bank.accountNumberPlaceholder")}
                       maxLength={13}
-                      className="w-full bg-aiya-navy border border-white/10 rounded-xl pl-14 pr-4 py-3.5 text-white placeholder:text-gray-600 focus:outline-none focus:border-aiya-gold/50 transition-colors font-mono"
+                      className="w-full bg-aiya-dark border border-white/10 rounded-xl pl-14 pr-4 py-3.5 text-white placeholder:text-gray-600 focus:outline-none focus:border-primary/50 transition-colors font-mono"
                     />
                   </div>
                 </div>
@@ -327,7 +348,7 @@ export default function ProfileTab({
                       value={accountName}
                       onChange={(e) => setAccountName(e.target.value)}
                       placeholder={t("bank.accountNamePlaceholder")}
-                      className="w-full bg-aiya-navy border border-white/10 rounded-xl pl-14 pr-4 py-3.5 text-white placeholder:text-gray-600 focus:outline-none focus:border-aiya-gold/50 transition-colors"
+                      className="w-full bg-aiya-dark border border-white/10 rounded-xl pl-14 pr-4 py-3.5 text-white placeholder:text-gray-600 focus:outline-none focus:border-primary/50 transition-colors"
                     />
                   </div>
                   <p className="text-gray-500 text-xs mt-2">{t("bank.accountNameNote")}</p>
@@ -338,7 +359,7 @@ export default function ProfileTab({
               <div className="bg-background-card rounded-2xl p-5 border border-white/5">
                 <label className="text-sm text-gray-400 mb-3 block">{t("bank.passbook")}</label>
                 {passbookPreview ? (
-                  <div className="relative w-full aspect-[4/3] max-h-64 rounded-xl overflow-hidden bg-aiya-navy border border-white/10">
+                  <div className="relative w-full aspect-[4/3] max-h-64 rounded-xl overflow-hidden bg-aiya-dark border border-white/10">
                     <img
                       src={passbookPreview}
                       alt="Passbook preview"
@@ -352,7 +373,7 @@ export default function ProfileTab({
                     >
                       <span className="material-symbols-outlined text-white text-lg">edit</span>
                     </motion.button>
-                    <div className="absolute bottom-2 left-2 bg-aiya-gold/90 px-2 py-1 rounded-lg flex items-center gap-1">
+                    <div className="absolute bottom-2 left-2 bg-primary/90 px-2 py-1 rounded-lg flex items-center gap-1">
                       <span className="text-[10px] font-bold text-black uppercase">JPG</span>
                     </div>
                     <div className="absolute bottom-2 right-2 w-5 h-5 rounded-full bg-green-500 flex items-center justify-center">
@@ -364,7 +385,7 @@ export default function ProfileTab({
                     whileTap={{ scale: 0.99 }}
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    className="w-full aspect-[4/3] max-h-64 rounded-xl border-2 border-dashed border-white/10 bg-aiya-navy hover:border-aiya-gold/30 transition-all flex flex-col items-center justify-center gap-3"
+                    className="w-full aspect-[4/3] max-h-64 rounded-xl border-2 border-dashed border-white/10 bg-aiya-dark hover:border-primary/30 transition-all flex flex-col items-center justify-center gap-3"
                   >
                     <div className="w-14 h-14 rounded-full bg-white/5 flex items-center justify-center">
                       <span className="material-symbols-outlined text-gray-400 text-2xl">upload_file</span>
@@ -404,8 +425,8 @@ export default function ProfileTab({
                   saveButtonState === "success"
                     ? "bg-green-500 text-white"
                     : saveButtonState === "loading"
-                      ? "bg-aiya-gold/50 text-black cursor-wait"
-                      : "bg-aiya-gold text-black shadow-lg shadow-empire-gold/20 disabled:bg-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed"
+                      ? "bg-primary/50 text-white cursor-wait"
+                      : "bg-gradient-to-r from-primary-dark to-primary text-white shadow-lg shadow-primary/20 disabled:bg-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed"
                 }`}
               >
                 {saveButtonState === "loading" ? (
@@ -437,6 +458,7 @@ export default function ProfileTab({
         selectedBank={selectedBank}
         onSelect={setSelectedBank}
       />
-    </motion.div>
+      </motion.div>
+    </PullToRefresh>
   );
 }

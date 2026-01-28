@@ -102,11 +102,11 @@ export default function ThankYou() {
   };
 
   const confettiColors = [
-    "#FACC15", // yellow
-    "#4ADE80", // green
-    "#60A5FA", // blue
-    "#F472B6", // pink
-    "#A78BFA", // purple
+    "#A78BFA", // primary purple
+    "#7C3AED", // primary-dark
+    "#22D3EE", // accent cyan
+    "#C4B5FD", // light purple
+    "#818CF8", // indigo
   ];
 
   return (
@@ -125,7 +125,7 @@ export default function ThankYou() {
       )}
 
       {/* Background Glow */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[400px] h-[400px] bg-green-500/10 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[400px] h-[400px] bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
 
       {/* Content */}
       <div className="relative z-10 flex-1 flex flex-col px-6 pt-16 pb-8">
@@ -137,7 +137,7 @@ export default function ThankYou() {
           className="flex justify-center mb-6"
         >
           <div className="relative">
-            <div className="w-24 h-24 bg-green-500 rounded-full flex items-center justify-center shadow-lg shadow-green-500/30 animate-success-pulse">
+            <div className="w-24 h-24 bg-gradient-to-br from-primary to-primary-dark rounded-full flex items-center justify-center shadow-lg shadow-primary/30 animate-success-pulse">
               <span className="material-symbols-outlined text-white text-5xl">
                 check
               </span>
@@ -251,7 +251,7 @@ export default function ThankYou() {
           className="bg-[#1A1D21] rounded-2xl p-5 border border-white/5 mb-auto"
         >
           <h3 className="text-sm font-semibold text-white mb-4 flex items-center gap-2">
-            <span className="material-symbols-outlined text-yellow-400 text-lg">
+            <span className="material-symbols-outlined text-primary text-lg">
               checklist
             </span>
             ขั้นตอนต่อไป
@@ -281,8 +281,8 @@ export default function ThankYou() {
             </div>
 
             <div className="flex items-start gap-3">
-              <div className="w-6 h-6 rounded-full bg-yellow-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                <span className="material-symbols-outlined text-yellow-400 text-sm">
+              <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <span className="material-symbols-outlined text-primary text-sm">
                   share
                 </span>
               </div>
@@ -310,7 +310,7 @@ export default function ThankYou() {
               triggerHaptic("medium");
               navigate("/portal");
             }}
-            className="w-full py-4 rounded-2xl bg-yellow-400 text-black font-bold text-base shadow-lg shadow-yellow-400/20 flex items-center justify-center gap-2"
+            className="w-full py-4 rounded-2xl bg-gradient-to-r from-primary-dark to-primary text-white font-bold text-base shadow-lg shadow-primary/30 flex items-center justify-center gap-2"
           >
             <span className="material-symbols-outlined text-xl">bar_chart</span>
             ดูสถิติของฉัน

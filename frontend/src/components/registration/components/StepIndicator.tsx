@@ -22,9 +22,9 @@ export default function StepIndicator({
               width: i === current ? 24 : i < current ? 24 : 6,
               backgroundColor:
                 i < current
-                  ? "rgb(74, 222, 128)" // green-400
+                  ? "rgb(167, 139, 250)" // primary purple
                   : i === current
-                    ? "rgb(250, 204, 21)" // yellow-400
+                    ? "rgb(124, 58, 237)" // primary-dark
                     : "rgba(255, 255, 255, 0.2)",
             }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
@@ -46,7 +46,7 @@ export default function StepIndicator({
             width: i === current ? 32 : 8,
             backgroundColor:
               i === current
-                ? "rgb(250, 204, 21)" // yellow-400
+                ? "rgb(167, 139, 250)" // primary purple
                 : "rgba(255, 255, 255, 0.2)",
           }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}

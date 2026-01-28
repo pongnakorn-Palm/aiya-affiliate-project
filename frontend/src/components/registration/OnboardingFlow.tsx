@@ -12,7 +12,7 @@ interface OnboardingFlowProps {
 // SVG Icons for each benefit
 const MoneyIcon = () => (
   <svg
-    className="w-16 h-16 text-green-400"
+    className="w-16 h-16 text-primary"
     fill="none"
     viewBox="0 0 24 24"
     stroke="currentColor"
@@ -28,7 +28,7 @@ const MoneyIcon = () => (
 
 const GiftIcon = () => (
   <svg
-    className="w-16 h-16 text-amber-400"
+    className="w-16 h-16 text-accent"
     fill="none"
     viewBox="0 0 24 24"
     stroke="currentColor"
@@ -44,7 +44,7 @@ const GiftIcon = () => (
 
 const RocketIcon = () => (
   <svg
-    className="w-16 h-16 text-purple-400"
+    className="w-16 h-16 text-primary-dark"
     fill="none"
     viewBox="0 0 24 24"
     stroke="currentColor"
@@ -63,19 +63,19 @@ const ONBOARDING_SCREENS = [
     icon: <MoneyIcon />,
     headline: "สร้างรายได้เสริมง่ายๆ",
     subheadline: "รับค่าคอมมิชชั่นสูงสุด 7,000 บาท ต่อการแนะนำแต่ละครั้ง",
-    accentColor: "#4ade80", // green-400
+    accentColor: "#A78BFA", // primary purple
   },
   {
     icon: <GiftIcon />,
     headline: "ลูกค้าได้ส่วนลดทันที",
     subheadline: "คนที่คุณแนะนำได้รับส่วนลดสูงสุด 2,000 บาท ทันที",
-    accentColor: "#fbbf24", // amber-400
+    accentColor: "#22D3EE", // accent cyan
   },
   {
     icon: <RocketIcon />,
     headline: "เรียนรู้ AI ต่อยอดธุรกิจ",
     subheadline: "เข้าถึงความรู้และเครื่องมือ AI ที่ทันสมัยจาก AI EMPIRE",
-    accentColor: "#a855f7", // purple-400
+    accentColor: "#7C3AED", // primary-dark
   },
 ];
 

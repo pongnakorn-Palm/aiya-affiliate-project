@@ -80,7 +80,7 @@ export default function OnboardingScreen({
             transition={{ delay: 0.4 }}
             whileTap={{ scale: 0.98 }}
             onClick={onCTAClick}
-            className="mt-10 w-full py-4 rounded-2xl bg-yellow-400 text-black font-bold text-lg shadow-lg shadow-yellow-400/20 active:bg-yellow-500 transition-colors"
+            className="mt-10 w-full py-4 rounded-2xl bg-gradient-to-r from-primary-dark to-primary text-white font-bold text-lg shadow-lg shadow-primary/30 active:opacity-90 transition-all"
           >
             {ctaText}
           </motion.button>

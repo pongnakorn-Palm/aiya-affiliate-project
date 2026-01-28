@@ -74,13 +74,13 @@ export default function AffiliateRegisterForm() {
   // Show loading spinner while LIFF is initializing or checking registration
   if (!isReady || isCheckingRegistration) {
     return (
-      <div className="min-h-[100dvh] flex items-center justify-center bg-aiya-navy relative overflow-hidden">
+      <div className="min-h-[100dvh] flex items-center justify-center bg-aiya-dark relative overflow-hidden">
         {/* AIYA Brand Ambient Lighting */}
-        <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-aiya-purple/10 via-transparent to-transparent pointer-events-none"></div>
-        <div className="fixed top-0 right-0 w-[600px] h-[600px] bg-[radial-gradient(circle,_var(--tw-gradient-stops))] from-aiya-lavender/8 via-transparent to-transparent blur-3xl pointer-events-none"></div>
+        <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary-dark/10 via-transparent to-transparent pointer-events-none"></div>
+        <div className="fixed top-0 right-0 w-[600px] h-[600px] bg-[radial-gradient(circle,_var(--tw-gradient-stops))] from-primary/8 via-transparent to-transparent blur-3xl pointer-events-none"></div>
 
         <div className="text-center relative z-10">
-          <div className="inline-block animate-spin rounded-full h-16 w-16 border-3 border-aiya-lavender/20 border-t-aiya-lavender mb-4"></div>
+          <div className="inline-block animate-spin rounded-full h-16 w-16 border-3 border-primary/20 border-t-primary mb-4"></div>
           <p className="text-white/70 text-sm font-medium">
             {!isReady ? "กำลังโหลด..." : "กำลังตรวจสอบข้อมูล..."}
           </p>

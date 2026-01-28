@@ -27,6 +27,7 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isReady, setIsReady] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isInClient, setIsInClient] = useState(false);
+  const [isMockMode, setIsMockMode] = useState(false);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -42,6 +43,7 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({
           if (import.meta.env.DEV) {
             console.log("🔧 Development Mode: Using mock LIFF profile");
           }
+          setIsMockMode(true);
           setIsReady(true);
           setIsLoggedIn(true);
           setIsInClient(false);
@@ -112,10 +114,13 @@ export const LiffProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const logout = () => {
     if (isLoggedIn) {
-      liff.logout();
+      // Only call liff.logout() if not in mock mode
+      if (!isMockMode) {
+        liff.logout();
+      }
       setIsLoggedIn(false);
       setProfile(null);
-      window.location.reload();
+      window.location.href = "/register";
     }
   };
 

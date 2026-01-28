@@ -123,7 +123,7 @@ export function useBankForm(
     []
   );
 
-  const handleSave = useCallback(async () => {
+  const handleSave = useCallback(async (): Promise<boolean> => {
     if (!userId || !selectedBank || !accountNumber || !accountName) {
       if (toast) {
         toast.warning("กรุณากรอกข้อมูลให้ครบถ้วน");
@@ -131,7 +131,7 @@ export function useBankForm(
         alert("กรุณากรอกข้อมูลให้ครบถ้วน");
       }
       triggerHaptic("medium");
-      return;
+      return false;
     }
 
     const digitsOnly = accountNumber.replace(/\D/g, "");
@@ -142,7 +142,7 @@ export function useBankForm(
         alert("เลขที่บัญชีต้องเป็นตัวเลข 10-12 หลัก");
       }
       triggerHaptic("medium");
-      return;
+      return false;
     }
 
     setSaveButtonState("loading");
@@ -195,6 +195,8 @@ export function useBankForm(
         setTimeout(() => {
           setSaveButtonState("idle");
         }, 3000);
+
+        return true;
       } else {
         throw new Error(data.message);
       }
@@ -210,6 +212,7 @@ export function useBankForm(
       }
       setSaveButtonState("idle");
       triggerHaptic("medium");
+      return false;
     }
   }, [
     userId,

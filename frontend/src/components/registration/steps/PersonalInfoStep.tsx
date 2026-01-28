@@ -99,7 +99,7 @@ export default function PersonalInfoStep({
       whileTap={{ scale: 0.98 }}
       onClick={onNext}
       disabled={!name || !email || !phone}
-      className="w-full py-4 rounded-2xl bg-yellow-400 text-black font-bold text-lg shadow-lg shadow-yellow-400/20 disabled:bg-white/10 disabled:text-white/30 disabled:shadow-none transition-all"
+      className="w-full py-4 rounded-2xl bg-gradient-to-r from-primary-dark to-primary text-white font-bold text-lg shadow-lg shadow-primary/30 disabled:bg-white/10 disabled:text-white/30 disabled:shadow-none disabled:from-white/10 disabled:to-white/10 transition-all"
     >
       ถัดไป
     </motion.button>
@@ -131,7 +131,7 @@ export default function PersonalInfoStep({
               className={`w-full bg-[#1A1D21] border rounded-xl px-4 py-4 text-white placeholder:text-white/30 focus:outline-none transition-colors ${
                 errors.name
                   ? "border-red-400/50 focus:border-red-400"
-                  : "border-white/10 focus:border-yellow-400/50"
+                  : "border-white/10 focus:border-primary/50"
               }`}
             />
           </div>
@@ -163,7 +163,7 @@ export default function PersonalInfoStep({
                   ? "border-red-400/50 focus:border-red-400"
                   : emailAvailability === "available"
                     ? "border-green-400/50 focus:border-green-400"
-                    : "border-white/10 focus:border-yellow-400/50"
+                    : "border-white/10 focus:border-primary/50"
               }`}
             />
             {/* Email Status Indicator */}
@@ -219,7 +219,7 @@ export default function PersonalInfoStep({
               className={`w-full bg-[#1A1D21] border rounded-xl px-4 py-4 text-white placeholder:text-white/30 focus:outline-none transition-colors font-mono tracking-wide ${
                 errors.phone
                   ? "border-red-400/50 focus:border-red-400"
-                  : "border-white/10 focus:border-yellow-400/50"
+                  : "border-white/10 focus:border-primary/50"
               }`}
             />
           </div>
