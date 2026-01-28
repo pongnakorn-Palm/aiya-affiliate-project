@@ -60,6 +60,16 @@ export default function RegistrationFlow({
     pdpaConsent: false,
   });
 
+  // Sync initialData when LINE profile loads (async)
+  useEffect(() => {
+    if (initialData?.name && !formData.name) {
+      setFormData((prev) => ({ ...prev, name: initialData.name || "" }));
+    }
+    if (initialData?.email && !formData.email) {
+      setFormData((prev) => ({ ...prev, email: initialData.email || "" }));
+    }
+  }, [initialData?.name, initialData?.email]);
+
   const [errors, setErrors] = useState<FormErrors>({});
   const [, setTouched] = useState<Set<string>>(new Set());
   const [isLoading, setIsLoading] = useState(false);
