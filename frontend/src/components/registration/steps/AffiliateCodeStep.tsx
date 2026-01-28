@@ -66,22 +66,24 @@ export default function AffiliateCodeStep({
     !isLoading;
 
   const header = (
-    <div className="space-y-2">
-      <div className="flex items-center gap-3">
-        <motion.button
-          whileTap={{ scale: 0.95 }}
-          onClick={onBack}
-          className="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center active:bg-white/10 transition-colors"
-        >
-          <span className="material-symbols-outlined text-white text-lg">
-            arrow_back
-          </span>
-        </motion.button>
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center text-white font-bold text-sm">
-            2
+    <div className="space-y-3">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            onClick={onBack}
+            className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center active:bg-white/10 transition-colors"
+          >
+            <span className="material-symbols-outlined text-white text-base">
+              arrow_back
+            </span>
+          </motion.button>
+          {/* Minimalist Step Indicator */}
+          <div className="flex items-center gap-2">
+            <div className="w-2.5 h-2.5 rounded-full bg-primary" />
+            <div className="w-8 h-0.5 bg-primary" />
+            <div className="w-2.5 h-2.5 rounded-full bg-primary" />
           </div>
-          <span className="text-xs text-white/40">ขั้นตอนที่ 2 จาก 2</span>
         </div>
       </div>
       <h1 className="text-xl font-bold text-white">รหัส Affiliate ของคุณ</h1>

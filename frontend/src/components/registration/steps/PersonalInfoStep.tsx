@@ -83,13 +83,13 @@ export default function PersonalInfoStep({
   };
 
   const header = (
-    <div className="space-y-2">
+    <div className="space-y-3">
       <div className="flex items-center justify-between">
+        {/* Minimalist Step Indicator */}
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center text-white font-bold text-sm">
-            1
-          </div>
-          <span className="text-xs text-white/40">ขั้นตอนที่ 1 จาก 2</span>
+          <div className="w-2.5 h-2.5 rounded-full bg-primary" />
+          <div className="w-8 h-0.5 bg-white/20" />
+          <div className="w-2.5 h-2.5 rounded-full bg-white/20" />
         </div>
         {isLineLoggedIn && (
           <span className="flex items-center gap-1.5 text-xs text-green-400 bg-green-400/10 px-2 py-0.5 rounded-full">
@@ -98,8 +98,10 @@ export default function PersonalInfoStep({
           </span>
         )}
       </div>
-      <h1 className="text-xl font-bold text-white">กรอกข้อมูลส่วนตัว</h1>
-      <p className="text-sm text-white/50">กรุณากรอกข้อมูลให้ครบถ้วนเพื่อสมัครเป็นพาร์ทเนอร์</p>
+      <div>
+        <h1 className="text-xl font-bold text-white">กรอกข้อมูลส่วนตัว</h1>
+        <p className="text-sm text-white/50 mt-1">กรุณากรอกข้อมูลให้ครบถ้วนเพื่อสมัครเป็นพาร์ทเนอร์</p>
+      </div>
     </div>
   );
 
