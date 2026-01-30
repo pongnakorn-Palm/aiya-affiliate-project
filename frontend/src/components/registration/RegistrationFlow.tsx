@@ -21,10 +21,16 @@ interface FormErrors {
   pdpaConsent?: string;
 }
 
+interface LineProfile {
+  displayName: string;
+  pictureUrl?: string;
+}
+
 interface RegistrationFlowProps {
   initialData?: Partial<FormData>;
   lineUserId?: string;
   isLineLoggedIn?: boolean;
+  lineProfile?: LineProfile;
   onBack?: () => void;
 }
 
@@ -47,6 +53,7 @@ export default function RegistrationFlow({
   initialData,
   lineUserId,
   isLineLoggedIn,
+  lineProfile,
 }: RegistrationFlowProps) {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
@@ -433,7 +440,7 @@ export default function RegistrationFlow({
   }, [formData, lineUserId, validateField, checkCodeAvailability, navigate]);
 
   return (
-    <div className="relative h-full bg-[#0F1216] overflow-hidden">
+    <div className="relative h-[100dvh] bg-[#0F1216] overflow-hidden">
       {/* Steps */}
       <AnimatePresence mode="wait" custom={direction} initial={false}>
         <motion.div
@@ -463,6 +470,7 @@ export default function RegistrationFlow({
               onFieldBlur={handleFieldBlur}
               onNext={handleStep1Next}
               isLineLoggedIn={isLineLoggedIn}
+              lineProfile={lineProfile}
             />
           )}
 
