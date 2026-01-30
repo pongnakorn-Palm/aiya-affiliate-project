@@ -1,4 +1,5 @@
 import { useState, useEffect, lazy, Suspense } from "react";
+import { useNavigate } from "react-router-dom";
 import { useLiff } from "../contexts/LiffContext";
 import { useLanguage } from "../contexts/LanguageContext";
 import DashboardSkeleton from "./DashboardSkeleton";
@@ -35,6 +36,7 @@ const TabLoadingFallback = () => (
 );
 
 export default function PartnerPortal() {
+  const navigate = useNavigate();
   const { isLoggedIn, profile, login, isReady, liffObject, isInClient } =
     useLiff();
   const { t } = useLanguage();
@@ -163,7 +165,27 @@ export default function PartnerPortal() {
     );
   }
 
-  // Show error state
+  // Redirect to registration if affiliate not found
+  const isNotFoundError = error && error.toLowerCase().includes("not found");
+  useEffect(() => {
+    if (isNotFoundError) {
+      navigate("/register", { replace: true });
+    }
+  }, [isNotFoundError, navigate]);
+
+  // Show loading while redirecting to registration
+  if (isNotFoundError) {
+    return (
+      <div className="min-h-[100dvh] flex items-center justify-center bg-aiya-dark">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-primary mb-4"></div>
+          <p className="text-white/70 text-sm">กำลังไปยังหน้าลงทะเบียน...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state (for errors other than "not found")
   if (error) {
     return (
       <div className="min-h-[100dvh] flex items-center justify-center bg-aiya-dark px-4">
