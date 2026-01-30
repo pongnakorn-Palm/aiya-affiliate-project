@@ -1,6 +1,12 @@
 import { motion } from "framer-motion";
 import { useRef, useEffect } from "react";
 import StepLayout from "../components/StepLayout";
+import StepIndicator from "../components/StepIndicator";
+
+interface LineProfile {
+  displayName: string;
+  pictureUrl?: string;
+}
 
 interface PersonalInfoStepProps {
   name: string;
@@ -18,6 +24,7 @@ interface PersonalInfoStepProps {
   onFieldBlur: (field: string) => void;
   onNext: () => void;
   isLineLoggedIn?: boolean;
+  lineProfile?: LineProfile;
 }
 
 const fadeInUp = {
@@ -37,6 +44,7 @@ export default function PersonalInfoStep({
   onFieldBlur,
   onNext,
   isLineLoggedIn,
+  lineProfile,
 }: PersonalInfoStepProps) {
   const nameRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
@@ -85,17 +93,25 @@ export default function PersonalInfoStep({
   const header = (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        {/* Minimalist Step Indicator */}
-        <div className="flex items-center gap-2">
-          <div className="w-2.5 h-2.5 rounded-full bg-primary" />
-          <div className="w-8 h-0.5 bg-white/20" />
-          <div className="w-2.5 h-2.5 rounded-full bg-white/20" />
-        </div>
-        {isLineLoggedIn && (
-          <span className="flex items-center gap-1.5 text-xs text-green-400 bg-green-400/10 px-2 py-0.5 rounded-full">
-            <span className="w-1.5 h-1.5 bg-green-400 rounded-full" />
-            LINE
-          </span>
+        {/* Step Indicator */}
+        <StepIndicator total={2} current={0} variant="bars" />
+
+        {/* LINE Badge */}
+        {isLineLoggedIn && lineProfile && (
+          <div className="flex items-center gap-2 bg-[#06C755]/10 pl-1 pr-2.5 py-1 rounded-full border border-[#06C755]/20">
+            {lineProfile.pictureUrl ? (
+              <img
+                src={lineProfile.pictureUrl}
+                alt={lineProfile.displayName}
+                className="w-5 h-5 rounded-full"
+              />
+            ) : (
+              <div className="w-5 h-5 rounded-full bg-[#06C755]/30 flex items-center justify-center text-white text-[10px] font-semibold">
+                {lineProfile.displayName?.charAt(0)}
+              </div>
+            )}
+            <span className="text-[11px] text-[#06C755] font-medium">LINE</span>
+          </div>
         )}
       </div>
       <div>

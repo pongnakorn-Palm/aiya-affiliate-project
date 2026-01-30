@@ -6,7 +6,6 @@ import { useBankForm } from "../hooks/useBankForm";
 import type { DashboardData } from "../hooks/useReferralData";
 import BankSelectorSheet from "../shared/BankSelectorSheet";
 import { useLanguage } from "../../../contexts/LanguageContext";
-import { useLiff } from "../../../contexts/LiffContext";
 import { useToast } from "../../../hooks/useToast";
 
 interface ProfileTabProps {
@@ -43,7 +42,6 @@ export default function ProfileTab({
   onBankFormChange,
 }: ProfileTabProps) {
   const { language, toggleLanguage, t, isTransitioning } = useLanguage();
-  const { logout } = useLiff();
   const toast = useToast();
   const [showBankSheet, setShowBankSheet] = useState(false);
   const [showBankForm, setShowBankForm] = useState(false);
@@ -235,20 +233,6 @@ export default function ProfileTab({
             </div>
           </button>
         )}
-      </motion.div>
-
-      {/* Logout Button */}
-      <motion.div variants={fadeInUp} className="px-5 mb-6">
-        <button
-          onClick={() => {
-            triggerHaptic("medium");
-            logout();
-          }}
-          className="w-full bg-background-card rounded-2xl p-4 border border-red-500/20 flex items-center justify-center gap-3 hover:bg-red-500/10 transition-colors"
-        >
-          <span className="material-symbols-outlined text-red-400 text-xl">logout</span>
-          <span className="text-red-400 font-medium">{t("profile.logout")}</span>
-        </button>
       </motion.div>
 
       {/* Bank Form Modal */}
