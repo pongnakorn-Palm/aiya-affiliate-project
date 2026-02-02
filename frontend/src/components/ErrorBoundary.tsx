@@ -9,6 +9,16 @@ interface State {
   error: Error | null;
 }
 
+// Check if error is a chunk loading error (happens after new deployments)
+function isChunkLoadError(error: Error): boolean {
+  return (
+    error.message.includes('Failed to fetch dynamically imported module') ||
+    error.message.includes('Loading chunk') ||
+    error.message.includes('Loading CSS chunk') ||
+    error.message.includes('ChunkLoadError')
+  );
+}
+
 class ErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
@@ -27,6 +37,20 @@ class ErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error("ErrorBoundary caught an error:", error, errorInfo);
+
+    // Auto-reload for chunk loading errors (new deployment invalidated old chunks)
+    if (isChunkLoadError(error)) {
+      const storageKey = 'chunk_error_reload';
+      const lastReload = sessionStorage.getItem(storageKey);
+      const now = Date.now();
+
+      // Only auto-reload once per 10 seconds to prevent infinite loops
+      if (!lastReload || now - parseInt(lastReload) > 10000) {
+        sessionStorage.setItem(storageKey, now.toString());
+        window.location.reload();
+        return;
+      }
+    }
   }
 
   handleReset = () => {
