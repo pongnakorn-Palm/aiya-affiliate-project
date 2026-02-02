@@ -1,11 +1,12 @@
-import { lazy, Suspense } from 'react';
+import { Suspense } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import ErrorBoundary from './components/ErrorBoundary';
 import PageTransition from './components/PageTransition';
+import { lazyWithRetry } from './utils/lazyWithRetry';
 
-const AffiliateRegisterForm = lazy(() => import('./components/AffiliateRegisterForm'));
-const ThankYou = lazy(() => import('./components/ThankYou'));
-const PartnerPortal = lazy(() => import('./components/PartnerPortal'));
+const AffiliateRegisterForm = lazyWithRetry(() => import('./components/AffiliateRegisterForm'));
+const ThankYou = lazyWithRetry(() => import('./components/ThankYou'));
+const PartnerPortal = lazyWithRetry(() => import('./components/PartnerPortal'));
 
 const RouteLoadingFallback = () => (
     <div className="min-h-[100dvh] flex items-center justify-center bg-[#0F1216]">
