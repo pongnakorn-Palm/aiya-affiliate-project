@@ -17,7 +17,7 @@ interface PersonalInfoStepProps {
     email?: string;
     phone?: string;
   };
-  emailAvailability: "checking" | "available" | "taken" | null;
+  emailAvailability: "checking" | "available" | "taken" | "error" | null;
   onNameChange: (value: string) => void;
   onEmailChange: (value: string) => void;
   onPhoneChange: (value: string) => void;
@@ -215,6 +215,11 @@ export default function PersonalInfoStep({
                     cancel
                   </span>
                 )}
+                {emailAvailability === "error" && (
+                  <span className="material-symbols-outlined text-amber-400 text-lg">
+                    wifi_off
+                  </span>
+                )}
               </div>
             )}
           </div>
@@ -222,6 +227,12 @@ export default function PersonalInfoStep({
             <p className="text-red-400 text-xs mt-1.5 flex items-center gap-1">
               <span className="material-symbols-outlined text-sm">error</span>
               อีเมลนี้ถูกลงทะเบียนแล้ว
+            </p>
+          )}
+          {emailAvailability === "error" && !errors.email && (
+            <p className="text-amber-400 text-xs mt-1.5 flex items-center gap-1">
+              <span className="material-symbols-outlined text-sm">wifi_off</span>
+              ไม่สามารถตรวจสอบอีเมลได้ กรุณาลองใหม่
             </p>
           )}
           {errors.email && (

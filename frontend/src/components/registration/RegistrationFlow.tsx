@@ -81,11 +81,12 @@ export default function RegistrationFlow({
   const [, setTouched] = useState<Set<string>>(new Set());
   const [isLoading, setIsLoading] = useState(false);
   const [codeAvailability, setCodeAvailability] = useState<
-    "checking" | "available" | "taken" | null
+    "checking" | "available" | "taken" | "error" | null
   >(null);
   const [emailAvailability, setEmailAvailability] = useState<
-    "checking" | "available" | "taken" | null
+    "checking" | "available" | "taken" | "error" | null
   >(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
   const emailDebounceTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -172,7 +173,7 @@ export default function RegistrationFlow({
       setEmailAvailability(isTaken ? "taken" : "available");
       return isTaken;
     } catch {
-      setEmailAvailability(null);
+      setEmailAvailability("error");
       return false;
     }
   }, []);
@@ -193,7 +194,7 @@ export default function RegistrationFlow({
       setCodeAvailability(isTaken ? "taken" : "available");
       return isTaken;
     } catch {
-      setCodeAvailability(null);
+      setCodeAvailability("error");
       return false;
     }
   }, []);
@@ -251,6 +252,7 @@ export default function RegistrationFlow({
       setFormData((prev) => ({ ...prev, affiliateCode: value }));
       setErrors((prev) => ({ ...prev, affiliateCode: undefined }));
       setCodeAvailability(null);
+      setSubmitError(null);
 
       if (debounceTimerRef.current) {
         clearTimeout(debounceTimerRef.current);
@@ -433,6 +435,8 @@ export default function RegistrationFlow({
       });
     } catch (err: unknown) {
       console.error("Registration error:", err);
+      const errorMessage = err instanceof Error ? err.message : "การลงทะเบียนล้มเหลว กรุณาลองใหม่อีกครั้ง";
+      setSubmitError(errorMessage);
       triggerHaptic("light");
     } finally {
       setIsLoading(false);
@@ -481,6 +485,7 @@ export default function RegistrationFlow({
               codeAvailability={codeAvailability}
               errors={errors}
               isLoading={isLoading}
+              submitError={submitError}
               onCodeChange={handleCodeChange}
               onPdpaChange={handlePdpaChange}
               onBack={handleBackToStep1}

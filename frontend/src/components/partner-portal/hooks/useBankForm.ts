@@ -80,10 +80,17 @@ export function useBankForm(
       const formatted = formatAccountNumber(text);
       setAccountNumber(formatted);
       triggerHaptic("light");
+      if (toast) {
+        toast.success("วางเลขบัญชีสำเร็จ", 1500);
+      }
     } catch (err) {
       console.error("Failed to read clipboard:", err);
+      triggerHaptic("medium");
+      if (toast) {
+        toast.warning("ไม่สามารถวางได้ กรุณาพิมพ์เอง");
+      }
     }
-  }, []);
+  }, [toast]);
 
   const handleImageSelect = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {

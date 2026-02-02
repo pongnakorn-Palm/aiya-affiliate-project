@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import liff from "@line/liff";
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -40,7 +40,7 @@ const ConfettiParticle = ({
 export default function ThankYou() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [copied, setCopied] = useState(false);
+  const [copyState, setCopyState] = useState<"idle" | "copied" | "error">("idle");
   const [showConfetti, setShowConfetti] = useState(true);
 
   // Protected Route: Redirect if accessed directly without registration data
@@ -70,16 +70,19 @@ export default function ThankYou() {
   const emailSent = location.state?.emailSent ?? true;
   const mainSystemSuccess = location.state?.mainSystemSuccess ?? true;
 
-  const handleCopyCode = async () => {
+  const handleCopyCode = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(affiliateCode);
-      setCopied(true);
+      setCopyState("copied");
       triggerHaptic("light");
-      setTimeout(() => setCopied(false), 2000);
+      setTimeout(() => setCopyState("idle"), 2000);
     } catch (err) {
       console.error("Failed to copy:", err);
+      setCopyState("error");
+      triggerHaptic("medium");
+      setTimeout(() => setCopyState("idle"), 2000);
     }
-  };
+  }, [affiliateCode]);
 
   const handleClose = () => {
     const isDesktop = window.innerWidth >= 1024;
@@ -205,15 +208,17 @@ export default function ThankYou() {
               whileTap={{ scale: 0.95 }}
               onClick={handleCopyCode}
               className={`px-2.5 py-1 rounded-lg text-xs font-medium flex items-center gap-1 transition-colors ${
-                copied
+                copyState === "copied"
                   ? "bg-green-500/20 text-green-400"
-                  : "bg-white/10 text-white/70 active:bg-white/20"
+                  : copyState === "error"
+                    ? "bg-red-500/20 text-red-400"
+                    : "bg-white/10 text-white/70 active:bg-white/20"
               }`}
             >
               <span className="material-symbols-outlined text-sm">
-                {copied ? "check" : "content_copy"}
+                {copyState === "copied" ? "check" : copyState === "error" ? "error" : "content_copy"}
               </span>
-              {copied ? "คัดลอกแล้ว" : "คัดลอก"}
+              {copyState === "copied" ? "คัดลอกแล้ว" : copyState === "error" ? "คัดลอกไม่ได้" : "คัดลอก"}
             </motion.button>
           </div>
 

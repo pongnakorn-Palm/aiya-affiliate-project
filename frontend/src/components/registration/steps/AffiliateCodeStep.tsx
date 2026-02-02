@@ -6,12 +6,13 @@ import StepIndicator from "../components/StepIndicator";
 interface AffiliateCodeStepProps {
   affiliateCode: string;
   pdpaConsent: boolean;
-  codeAvailability: "checking" | "available" | "taken" | null;
+  codeAvailability: "checking" | "available" | "taken" | "error" | null;
   errors: {
     affiliateCode?: string;
     pdpaConsent?: string;
   };
   isLoading: boolean;
+  submitError?: string | null;
   onCodeChange: (value: string) => void;
   onPdpaChange: (checked: boolean) => void;
   onBack: () => void;
@@ -29,6 +30,7 @@ export default function AffiliateCodeStep({
   codeAvailability,
   errors,
   isLoading,
+  submitError,
   onCodeChange,
   onPdpaChange,
   onBack,
@@ -64,6 +66,7 @@ export default function AffiliateCodeStep({
     pdpaConsent &&
     codeAvailability !== "taken" &&
     codeAvailability !== "checking" &&
+    codeAvailability !== "error" &&
     !isLoading;
 
   const header = (
@@ -158,6 +161,11 @@ export default function AffiliateCodeStep({
                   cancel
                 </span>
               )}
+              {codeAvailability === "error" && (
+                <span className="material-symbols-outlined text-amber-400 text-2xl">
+                  wifi_off
+                </span>
+              )}
             </div>
           </div>
 
@@ -176,6 +184,12 @@ export default function AffiliateCodeStep({
               รหัสนี้ถูกใช้งานแล้ว กรุณาเลือกรหัสอื่น
             </p>
           )}
+          {codeAvailability === "error" && (
+            <p className="text-amber-400 text-sm mt-3 flex items-center justify-center gap-1">
+              <span className="material-symbols-outlined text-base">wifi_off</span>
+              ไม่สามารถตรวจสอบรหัสได้ กรุณาลองใหม่
+            </p>
+          )}
           {errors.affiliateCode && (
             <p className="text-red-400 text-sm mt-3 flex items-center justify-center gap-1">
               <span className="material-symbols-outlined text-base">error</span>
@@ -183,6 +197,16 @@ export default function AffiliateCodeStep({
             </p>
           )}
         </div>
+
+        {/* Submit Error */}
+        {submitError && (
+          <div className="mb-4 p-4 bg-red-500/10 border border-red-500/30 rounded-2xl flex items-center gap-3">
+            <span className="material-symbols-outlined text-red-400 text-xl shrink-0">
+              error
+            </span>
+            <p className="text-red-200 text-sm">{submitError}</p>
+          </div>
+        )}
 
         {/* PDPA Consent */}
         <div
